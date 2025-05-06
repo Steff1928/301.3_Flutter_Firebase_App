@@ -5,6 +5,8 @@ class IntroPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return Scaffold(
+      body: Center(child: Text("EduBot", style: TextStyle(fontSize: 64),)),
+    );
   }
 }
