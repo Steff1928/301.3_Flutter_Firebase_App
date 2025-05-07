@@ -1,4 +1,6 @@
 import 'package:edubot/pages/intro_page.dart';
+import 'package:edubot/themes/dark_mode.dart';
+import 'package:edubot/themes/light_mode.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -16,10 +18,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: "EduBot",
       debugShowCheckedModeBanner: false,
-      home: IntroPage(),
+      home: const IntroPage(),
+      theme: lightmode,
+      darkTheme: darkmode,
     );
   }
 }

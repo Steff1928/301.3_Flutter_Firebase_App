@@ -88,3 +88,77 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+  fonts:
+    - family: Cabin
+      fonts:
+        - asset: lib/assets/fonts/Cabin-Regular.ttf
+        - asset: lib/assets/fonts/Cabin-Italic.ttf
+          weight: 400
+        - asset: lib/assets/fonts/Cabin-Medium.ttf
+        - asset: lib/assets/fonts/Cabin-MediumItalic.ttf
+          weight: 500
+        - asset: lib/assets/fonts/Cabin-SemiBold.ttf
+        - asset: lib/assets/fonts/Cabin-SemiBoldItalic.ttf
+          weight: 600
+        - asset: lib/assets/fonts/Cabin-Bold.ttf
+        - asset: lib/assets/fonts/Cabin-BoldItalic.ttf
+          weight: 700
+    - family: Nunito
+      fonts:
+        - asset: lib/assets/fonts/Nunito-ExtraLight.ttf
+        - asset: lib/assets/fonts/Nunito-ExtraLightItalic.ttf
+          weight: 200
+        - asset: lib/assets/fonts/Nunito-Light.ttf
+        - asset: lib/assets/fonts/Nunito-LightItalic.ttf
+          weight: 300
+        - asset: lib/assets/fonts/Nunito-Regular.ttf
+        - asset: lib/assets/fonts/Nunito-Italic.ttf
+          weight: 400
+        - asset: lib/assets/fonts/Nunito-Medium.ttf
+        - asset: lib/assets/fonts/Nunito-MediumItalic.ttf
+          weight: 500
+        - asset: lib/assets/fonts/Nunito-SemiBold.ttf
+        - asset: lib/assets/fonts/Nunito-SemiBoldItalic.ttf
+          weight: 600
+        - asset: lib/assets/fonts/Nunito-Bold.ttf
+        - asset: lib/assets/fonts/Nunito-BoldItalic.ttf
+          weight: 700
+        - asset: lib/assets/fonts/Nunito-ExtraBold.ttf
+        - asset: lib/assets/fonts/Nunito-ExtraBoldItalic.ttf
+          weight: 800
+        - asset: lib/assets/fonts/Nunito-Black.ttf
+        - asset: lib/assets/fonts/Nunito-BlackItalic.ttf
+          weight: 900
+    - family: Montserrat
+      fonts:
+        - asset: lib/assets/fonts/Montserrat-Thin.ttf
+        - asset: lib/assets/fonts/Montserrat-ThinItalic.ttf
+          weight: 100
+        - asset: lib/assets/fonts/Montserrat-ExtraLight.ttf
+        - asset: lib/assets/fonts/Montserrat-ExtraLightItalic.ttf
+          weight: 200
+        - asset: lib/assets/fonts/Montserrat-Light.ttf
+        - asset: lib/assets/fonts/Montserrat-LightItalic.ttf
+          weight: 300
+        - asset: lib/assets/fonts/Montserrat-Regular.ttf
+        - asset: lib/assets/fonts/Montserrat-Italic.ttf
+          weight: 400
+        - asset: lib/assets/fonts/Montserrat-Medium.ttf
+        - asset: lib/assets/fonts/Montserrat-MediumItalic.ttf
+          weight: 500
+        - asset: lib/assets/fonts/Montserrat-SemiBold.ttf
+        - asset: lib/assets/fonts/Montserrat-SemiBoldItalic.ttf
+          weight: 600
+        - asset: lib/assets/fonts/Montserrat-Bold.ttf
+        - asset: lib/assets/fonts/Montserrat-BoldItalic.ttf
+          weight: 700
+        - asset: lib/assets/fonts/Montserrat-ExtraBold.ttf
+        - asset: lib/assets/fonts/Montserrat-ExtraBoldItalic.ttf
+          weight: 800
+        - asset: lib/assets/fonts/Montserrat-Black.ttf
+        - asset: lib/assets/fonts/Montserrat-Italic.ttf
+          weight: 900
+
+
+
