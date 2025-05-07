@@ -3,18 +3,47 @@ import 'package:edubot/components/primary_text_field.dart';
 import 'package:edubot/components/sso_tile.dart';
 import 'package:edubot/pages/user_login_page.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class RegisterAccountPage extends StatelessWidget {
+class RegisterAccountPage extends StatefulWidget {
+
+  const RegisterAccountPage({super.key});
+
+  @override
+  State<RegisterAccountPage> createState() => _RegisterAccountPageState();
+}
+
+class _RegisterAccountPageState extends State<RegisterAccountPage> {
   final TextEditingController _fullName = TextEditingController();
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
   final TextEditingController _confirmPassword = TextEditingController();
 
-  RegisterAccountPage({super.key});
-
   // Create new user account method
-  void registerNewUser() {
-    
+  void registerNewUser() async {
+    try {
+      // Create user account if confirm password matches password
+      // THE FOLLOWING CODE IS ALL TEST CODE AND WILL BE CHANGED
+      if (_confirmPassword.text == _password.text) {
+        final credential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+            email: _email.text,
+            password: _password.text,
+          );
+          await credential.user?.updateDisplayName(_fullName.text); // Update display name with full name
+          print("Account created successfully");
+      } else {
+        print("Confirm password does not much password");
+      }
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') { // Don't accept weak passwords
+        print('The password is too weak.');
+      } else if (e.code == 'email-already-in-use') { // Don't accept duplicate emails
+        print('The account already exists for that email');
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
@@ -130,7 +159,12 @@ class RegisterAccountPage extends StatelessWidget {
                   ),
                   GestureDetector(
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => UserLoginPage()));
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => UserLoginPage(),
+                        ),
+                      );
                     },
                     child: Text(
                       "Sign In",
