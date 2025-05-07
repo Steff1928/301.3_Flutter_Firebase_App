@@ -12,6 +12,11 @@ class RegisterAccountPage extends StatelessWidget {
 
   RegisterAccountPage({super.key});
 
+  // Create new user account method
+  void registerNewUser() {
+    
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -75,13 +80,13 @@ class RegisterAccountPage extends StatelessWidget {
 
               SizedBox(height: 35),
 
-              // Login button
+              // Register button
               Center(
                 child: PrimaryButton(
                   text: "Sign Up",
                   width: 318,
                   height: 45,
-                  onPressed: () {},
+                  onPressed: registerNewUser,
                 ),
               ),
             ],

@@ -1,3 +1,4 @@
+import 'package:edubot/pages/chat_page.dart';
 import 'package:edubot/pages/intro_page.dart';
 import 'package:edubot/themes/dark_mode.dart';
 import 'package:edubot/themes/light_mode.dart';
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: "EduBot",
       debugShowCheckedModeBanner: false,
-      home: const IntroPage(),
+      home: const ChatPage(),
       theme: lightmode,
       darkTheme: darkmode,
     );

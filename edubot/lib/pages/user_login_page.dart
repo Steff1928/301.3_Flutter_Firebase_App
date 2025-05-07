@@ -10,6 +10,11 @@ class UserLoginPage extends StatelessWidget {
 
   UserLoginPage({super.key});
 
+  // Sign user in method
+  void signUserIn() {
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -75,7 +80,7 @@ class UserLoginPage extends StatelessWidget {
                   text: "Login",
                   width: 318,
                   height: 45,
-                  onPressed: () {},
+                  onPressed: signUserIn,
                 ),
               ),
             ],
