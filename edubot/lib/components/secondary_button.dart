@@ -2,9 +2,17 @@ import 'package:flutter/material.dart';
 
 class SecondaryButton extends StatelessWidget {
   final String text;
+  final double width;
+  final double height;
   final void Function()? onPressed;
 
-  const SecondaryButton({super.key, required this.text, required this.onPressed});
+  const SecondaryButton({
+    super.key,
+    required this.text,
+    required this.width,
+    required this.height,
+    required this.onPressed,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -13,10 +21,15 @@ class SecondaryButton extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         backgroundColor: Color(0xFFFAFAFA),
         foregroundColor: Color(0xFF05455B),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
-        fixedSize: Size(318, 45),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.0),
+        ),
+        fixedSize: Size(width, height),
       ),
-      label: Text(text, style: TextStyle(fontFamily: "Montserrat", fontSize: 16),),
+      label: Text(
+        text,
+        style: TextStyle(fontFamily: "Montserrat", fontSize: 16),
+      ),
     );
   }
 }

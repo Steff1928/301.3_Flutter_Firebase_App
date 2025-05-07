@@ -1,5 +1,7 @@
 import 'package:edubot/components/primary_button.dart';
 import 'package:edubot/components/secondary_button.dart';
+import 'package:edubot/pages/register_account_page.dart';
+import 'package:edubot/pages/user_login_page.dart';
 import 'package:flutter/material.dart';
 
 class IntroPage extends StatelessWidget {
@@ -23,7 +25,6 @@ class IntroPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-
               // Title
               Padding(
                 padding: const EdgeInsets.only(top: 25),
@@ -39,32 +40,36 @@ class IntroPage extends StatelessWidget {
                         letterSpacing: 1.28,
                       ),
                     ),
-                    
+
                     SizedBox(height: 7), // Spacing
-                    
                     // Subtitle #1
-                    Text(
-                      "Welcome to Edubot - The Educational Chatbot for Classrooms.",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Color(0xFF364B55),
-                        fontFamily: "Nunito",
-                        letterSpacing: 0.32,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 25),
+                      child: Text(
+                        "Welcome to Edubot - The Educational Chatbot for Classrooms.",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Color(0xFF364B55),
+                          fontFamily: "Nunito",
+                          letterSpacing: 0.32,
+                        ),
                       ),
                     ),
-                    
+
                     SizedBox(height: 7), // Spacing
-                    
                     // Subtitle #2
-                    Text(
-                      "Sign in or create an account to get started.",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Color(0xFF364B55),
-                        fontFamily: "Nunito",
-                        letterSpacing: 0.32,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 25),
+                      child: Text(
+                        "Sign in or create an account to get started.",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Color(0xFF364B55),
+                          fontFamily: "Nunito",
+                          letterSpacing: 0.32,
+                        ),
                       ),
                     ),
                   ],
@@ -74,17 +79,43 @@ class IntroPage extends StatelessWidget {
               // Image
               Padding(
                 padding: const EdgeInsets.only(top: 17),
-                child: Image.asset('lib/assets/images/intro-image.png', height: 207,),
+                child: Image.asset(
+                  'lib/assets/images/intro-image.png',
+                  height: 207,
+                ),
               ),
 
               SizedBox(height: 58), // Spacing
-
               // Sign In/Register Buttons
               Column(
                 children: [
-                  PrimaryButton(text: "Sign In", onPressed: () {}),
+                  PrimaryButton(
+                    text: "Sign In",
+                    width: 318,
+                    height: 45,
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => UserLoginPage(),
+                        ),
+                      );
+                    },
+                  ),
                   SizedBox(height: 10),
-                  SecondaryButton(text: "Create Account", onPressed: () {},)
+                  SecondaryButton(
+                    text: "Create Account",
+                    width: 318,
+                    height: 45,
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => RegisterAccountPage(),
+                        ),
+                      );
+                    },
+                  ),
                 ],
               ),
 
