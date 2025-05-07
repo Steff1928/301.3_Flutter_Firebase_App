@@ -18,7 +18,7 @@ class IntroPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Logo
+              // Title
               Text(
                 "EduBot",
                 style: TextStyle(
@@ -57,6 +57,13 @@ class IntroPage extends StatelessWidget {
                   letterSpacing: 0.32,
                 ),
               ),
+
+              // Image
+              // Image.asset('lib/assets/images/intro-image.png', height: 207,)
+
+              // Sign In Btn
+
+              // Register Btn
             ],
           ),
         ),
