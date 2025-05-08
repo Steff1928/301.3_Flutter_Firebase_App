@@ -27,9 +27,9 @@ class _ChatPageState extends State<ChatPage> {
     return Scaffold(
       // Navgiation bar
       appBar: AppBar(
-        actionsPadding: EdgeInsets.only(right: 0, top: 10),
+        actionsPadding: EdgeInsets.only(top: 10),
         title: Padding(
-          padding: const EdgeInsets.only(left: 0, top: 10),
+          padding: const EdgeInsets.only(top: 10),
           child: Text(
             "Edubot",
             style: TextStyle(
@@ -103,40 +103,43 @@ class _ChatPageState extends State<ChatPage> {
             ),
 
             // User input box
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                // TO DO: Upload file functionality
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                  child: IconButton(
-                    onPressed: () {},
-                    icon: Icon(
-                      Icons.folder_open_rounded,
-                      size: 24,
-                      color: Color(0xFF074F67),
-                    ),
-                  ),
-                ),
-
-                // User input box
-                Expanded(child: SecondaryTextField(controller: _userInput)),
-
-                // Send message button
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Color(0xFF2B656B),
-                      borderRadius: BorderRadius.circular(25),
-                    ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  // TO DO: Upload file functionality
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
                     child: IconButton(
                       onPressed: () {},
-                      icon: Icon(Icons.send_rounded, color: Color(0xFFFAFAFA)),
+                      icon: Icon(
+                        Icons.folder_open_rounded,
+                        size: 24,
+                        color: Color(0xFF074F67),
+                      ),
                     ),
                   ),
-                ),
-              ],
+              
+                  // User input box
+                  Expanded(child: SecondaryTextField(controller: _userInput)),
+              
+                  // Send message button
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Color(0xFF2B656B),
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                      child: IconButton(
+                        onPressed: () {},
+                        icon: Icon(Icons.send_rounded, color: Color(0xFFFAFAFA)),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

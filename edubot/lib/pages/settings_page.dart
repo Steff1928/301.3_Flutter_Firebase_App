@@ -25,9 +25,16 @@ class SettingsPage extends StatelessWidget {
     return Scaffold(
       // Navgiation bar
       appBar: AppBar(
-        actionsPadding: EdgeInsets.only(right: 0, top: 0),
+        leading: Padding(
+          padding: const EdgeInsets.only(top: 10.0, left: 10),
+          child: IconButton(
+            icon: Icon(Icons.arrow_back, color: Color(0xFF074F67)),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+        ),
+        actionsPadding: EdgeInsets.only(top: 10),
         title: Padding(
-          padding: const EdgeInsets.only(left: 0, top: 0),
+          padding: const EdgeInsets.only(top: 10),
           child: Text(
             "Settings",
             style: TextStyle(
