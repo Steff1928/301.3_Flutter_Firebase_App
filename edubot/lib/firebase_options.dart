@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -65,4 +62,14 @@ class DefaultFirebaseOptions {
     storageBucket: 'ai-chatbot-app-716bd.firebasestorage.app',
     iosBundleId: 'com.example.edubot',
   );
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyA_iOoM-kWLiRKe9Q470z8GdbOm-Kv8tUw',
+    appId: '1:329699147077:web:47ddecb54c36865d9e522c',
+    messagingSenderId: '329699147077',
+    projectId: 'ai-chatbot-app-716bd',
+    authDomain: 'ai-chatbot-app-716bd.firebaseapp.com',
+    storageBucket: 'ai-chatbot-app-716bd.firebasestorage.app',
+  );
+
 }
