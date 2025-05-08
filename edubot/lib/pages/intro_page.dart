@@ -1,7 +1,6 @@
 import 'package:edubot/components/primary_button.dart';
 import 'package:edubot/components/secondary_button.dart';
-import 'package:edubot/pages/register_account_page.dart';
-import 'package:edubot/pages/user_login_page.dart';
+import 'package:edubot/services/authentication/login_or_register.dart';
 import 'package:flutter/material.dart';
 
 class IntroPage extends StatelessWidget {
@@ -97,7 +96,7 @@ class IntroPage extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => UserLoginPage(),
+                          builder: (context) => LoginOrRegister(showLoginPage: true,),
                         ),
                       );
                     },
@@ -111,7 +110,7 @@ class IntroPage extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => RegisterAccountPage(),
+                          builder: (context) => LoginOrRegister(showLoginPage: false,),
                         ),
                       );
                     },

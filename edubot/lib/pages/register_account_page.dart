@@ -1,17 +1,19 @@
 import 'package:edubot/components/primary_button.dart';
 import 'package:edubot/components/primary_text_field.dart';
 import 'package:edubot/components/sso_tile.dart';
-import 'package:edubot/pages/user_login_page.dart';
 import 'package:edubot/services/authentication/auth_gate.dart';
 import 'package:edubot/services/authentication/auth_manager.dart';
 import 'package:flutter/material.dart';
 
 class RegisterAccountPage extends StatelessWidget {
-  RegisterAccountPage({super.key});
+  RegisterAccountPage({super.key, required this.onTap});
+  // Text controllers for the text fields
   final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPassController = TextEditingController();
+
+  final void Function()? onTap;
 
   // Create new user account method
   void registerNewUser(BuildContext context) async {
@@ -158,14 +160,15 @@ class RegisterAccountPage extends StatelessWidget {
                     ),
                   ),
                   GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => UserLoginPage(),
-                        ),
-                      );
-                    },
+                    // onTap: () {
+                    //   Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //       builder: (context) => UserLoginPage(),
+                    //     ),
+                    //   );
+                    // },
+                    onTap: onTap,
                     child: Text(
                       "Sign In",
                       style: TextStyle(
