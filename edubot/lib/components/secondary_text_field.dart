@@ -11,11 +11,12 @@ class SecondaryTextField extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 0),
       child: ConstrainedBox(
         constraints: BoxConstraints(
-          maxHeight: 100
+          maxHeight: 200
         ),
         child: TextField(
           controller: controller,
           cursorColor: Color(0xFF1A1A1A),
+          style: TextStyle(color: Color(0xFF1A1A1A)),
         
           // Enable multiline text wrapping
           keyboardType: TextInputType.multiline,

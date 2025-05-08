@@ -1,4 +1,4 @@
-import 'package:edubot/pages/intro_page.dart';
+import 'package:edubot/services/authentication/auth_gate.dart';
 import 'package:edubot/themes/dark_mode.dart';
 import 'package:edubot/themes/light_mode.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: "EduBot",
       debugShowCheckedModeBanner: false,
-      home: const IntroPage(),
+      home: AuthGate(),
       theme: lightmode,
       darkTheme: darkmode,
     );

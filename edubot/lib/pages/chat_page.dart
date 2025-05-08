@@ -1,4 +1,5 @@
 import 'package:edubot/components/secondary_text_field.dart';
+import 'package:edubot/services/authentication/auth_manager.dart';
 import 'package:flutter/material.dart';
 
 class ChatPage extends StatefulWidget {
@@ -9,7 +10,16 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
-  final _userInput = TextEditingController();
+  final TextEditingController _userInput = TextEditingController();
+
+  String? getFirstName() {
+    final AuthManager authManager = AuthManager();
+
+    final fullName = authManager.getCurrentUser()?.displayName;
+    final firstName = fullName.toString().split(" ")[0];
+    
+    return firstName;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +64,7 @@ class _ChatPageState extends State<ChatPage> {
         ],
       ),
 
-      // TO DO: Chat container
+      // TODO: Chat container
       body: SafeArea(
         child: Column(
           children: [
@@ -64,7 +74,7 @@ class _ChatPageState extends State<ChatPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "Welcome, User",
+                      "Welcome, ${getFirstName()}",
                       style: TextStyle(
                         fontFamily: "Nunito",
                         fontSize: 24,
@@ -89,6 +99,7 @@ class _ChatPageState extends State<ChatPage> {
 
             // User input box
             Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 // TO DO: Upload file functionality
                 Padding(

@@ -20,8 +20,9 @@ class PrimaryTextField extends StatelessWidget {
       child: TextField(
         controller: controller,
         obscureText: obscureText,
+        style: TextStyle(color: Color(0xFF1A1A1A)),
 
-        // Style
+        // Decoration Style
         decoration: InputDecoration(
           contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
           labelText: label,

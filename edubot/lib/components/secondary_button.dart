@@ -18,6 +18,8 @@ class SecondaryButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton.icon(
       onPressed: onPressed,
+
+      // Decoration Style
       style: ElevatedButton.styleFrom(
         backgroundColor: Color(0xFFFAFAFA),
         foregroundColor: Color(0xFF05455B),

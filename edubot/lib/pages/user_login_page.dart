@@ -2,17 +2,25 @@ import 'package:edubot/components/primary_button.dart';
 import 'package:edubot/components/primary_text_field.dart';
 import 'package:edubot/components/sso_tile.dart';
 import 'package:edubot/pages/register_account_page.dart';
+import 'package:edubot/services/authentication/auth_manager.dart';
 import 'package:flutter/material.dart';
 
 class UserLoginPage extends StatelessWidget {
-  final TextEditingController _email = TextEditingController();
-  final TextEditingController _password = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   UserLoginPage({super.key});
 
   // Sign user in method
   void signUserIn() {
+    // Try login
+    try {
+      final AuthManager authManager = AuthManager();
 
+      authManager.signIn(_emailController.text, _passwordController.text);
+    } catch (e) {
+      print(e); // TODO: UI Element for unsuccessful login
+    }
   }
 
   @override
@@ -46,7 +54,7 @@ class UserLoginPage extends StatelessWidget {
               PrimaryTextField(
                 label: "Email",
                 obscureText: false,
-                controller: _email,
+                controller: _emailController,
               ),
 
               SizedBox(height: 25),
@@ -55,7 +63,7 @@ class UserLoginPage extends StatelessWidget {
               PrimaryTextField(
                 label: "Password",
                 obscureText: true,
-                controller: _password,
+                controller: _passwordController,
               ),
 
               // Forgot password
@@ -124,7 +132,12 @@ class UserLoginPage extends StatelessWidget {
                   ),
                   GestureDetector(
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => RegisterAccountPage()));
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => RegisterAccountPage(),
+                        ),
+                      );
                     },
                     child: Text(
                       "Sign Up",

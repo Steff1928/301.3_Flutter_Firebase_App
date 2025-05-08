@@ -2,11 +2,10 @@ import 'package:edubot/components/primary_button.dart';
 import 'package:edubot/components/primary_text_field.dart';
 import 'package:edubot/components/sso_tile.dart';
 import 'package:edubot/pages/user_login_page.dart';
+import 'package:edubot/services/authentication/auth_manager.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class RegisterAccountPage extends StatefulWidget {
-
   const RegisterAccountPage({super.key});
 
   @override
@@ -14,35 +13,26 @@ class RegisterAccountPage extends StatefulWidget {
 }
 
 class _RegisterAccountPageState extends State<RegisterAccountPage> {
-  final TextEditingController _fullName = TextEditingController();
-  final TextEditingController _email = TextEditingController();
-  final TextEditingController _password = TextEditingController();
-  final TextEditingController _confirmPassword = TextEditingController();
+  final TextEditingController _fullNameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPassController = TextEditingController();
 
   // Create new user account method
   void registerNewUser() async {
-    try {
-      // Create user account if confirm password matches password
-      // THE FOLLOWING CODE IS ALL TEST CODE AND WILL BE CHANGED
-      if (_confirmPassword.text == _password.text) {
-        final credential = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(
-            email: _email.text,
-            password: _password.text,
-          );
-          await credential.user?.updateDisplayName(_fullName.text); // Update display name with full name
-          print("Account created successfully");
-      } else {
-        print("Confirm password does not much password");
+    // Get auth manager
+    final AuthManager authManager = AuthManager();
+
+    if (_confirmPassController.text == _passwordController.text) {
+      try {
+        authManager.createAccount(_emailController.text, _passwordController.text, _fullNameController.text);
+      } catch (e) {
+        print(e);
       }
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'weak-password') { // Don't accept weak passwords
-        print('The password is too weak.');
-      } else if (e.code == 'email-already-in-use') { // Don't accept duplicate emails
-        print('The account already exists for that email');
-      }
-    } catch (e) {
-      print(e);
+    } 
+    // Throw an error if passwords don't match
+    else {
+      print("Confirm password doesn't match password"); // TODO: UI element for confirm password error
     }
   }
 
@@ -77,7 +67,7 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
               PrimaryTextField(
                 label: "Full Name",
                 obscureText: false,
-                controller: _fullName,
+                controller: _fullNameController,
               ),
 
               SizedBox(height: 25),
@@ -86,7 +76,7 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
               PrimaryTextField(
                 label: "Email",
                 obscureText: false,
-                controller: _email,
+                controller: _emailController,
               ),
 
               SizedBox(height: 25),
@@ -95,7 +85,7 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
               PrimaryTextField(
                 label: "Password",
                 obscureText: true,
-                controller: _password,
+                controller: _passwordController,
               ),
 
               SizedBox(height: 25),
@@ -104,7 +94,7 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
               PrimaryTextField(
                 label: "Confirm Password",
                 obscureText: true,
-                controller: _confirmPassword,
+                controller: _confirmPassController,
               ),
 
               SizedBox(height: 35),
