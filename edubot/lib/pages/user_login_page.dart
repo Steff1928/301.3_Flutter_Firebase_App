@@ -2,6 +2,7 @@ import 'package:edubot/components/primary_button.dart';
 import 'package:edubot/components/primary_text_field.dart';
 import 'package:edubot/components/sso_tile.dart';
 import 'package:edubot/pages/register_account_page.dart';
+import 'package:edubot/services/authentication/auth_gate.dart';
 import 'package:edubot/services/authentication/auth_manager.dart';
 import 'package:flutter/material.dart';
 
@@ -12,14 +13,23 @@ class UserLoginPage extends StatelessWidget {
   UserLoginPage({super.key});
 
   // Sign user in method
-  void signUserIn() {
+  void signUserIn(BuildContext context) async {
+    // Get AuthManager and a context reference
+    final AuthManager authManager = AuthManager();
+    final navigator = Navigator.of(context);
+
     // Try login
     try {
-      final AuthManager authManager = AuthManager();
-
-      authManager.signIn(_emailController.text, _passwordController.text);
+      await authManager.signIn(_emailController.text, _passwordController.text);
     } catch (e) {
       print(e); // TODO: UI Element for unsuccessful login
+    }
+
+    if (authManager.getCurrentUser() != null) {
+      navigator.pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => AuthGate()),
+          (route) => false,
+        );
     }
   }
 
@@ -88,7 +98,7 @@ class UserLoginPage extends StatelessWidget {
                   text: "Login",
                   width: 318,
                   height: 45,
-                  onPressed: signUserIn,
+                  onPressed: () => signUserIn(context),
                 ),
               ),
             ],

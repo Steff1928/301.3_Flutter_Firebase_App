@@ -2,37 +2,47 @@ import 'package:edubot/components/primary_button.dart';
 import 'package:edubot/components/primary_text_field.dart';
 import 'package:edubot/components/sso_tile.dart';
 import 'package:edubot/pages/user_login_page.dart';
+import 'package:edubot/services/authentication/auth_gate.dart';
 import 'package:edubot/services/authentication/auth_manager.dart';
 import 'package:flutter/material.dart';
 
-class RegisterAccountPage extends StatefulWidget {
-  const RegisterAccountPage({super.key});
-
-  @override
-  State<RegisterAccountPage> createState() => _RegisterAccountPageState();
-}
-
-class _RegisterAccountPageState extends State<RegisterAccountPage> {
+class RegisterAccountPage extends StatelessWidget {
+  RegisterAccountPage({super.key});
   final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPassController = TextEditingController();
 
   // Create new user account method
-  void registerNewUser() async {
+  void registerNewUser(BuildContext context) async {
     // Get auth manager
     final AuthManager authManager = AuthManager();
 
+    // Get the context reference
+    final navigator = Navigator.of(context);
+
     if (_confirmPassController.text == _passwordController.text) {
       try {
-        authManager.createAccount(_emailController.text, _passwordController.text, _fullNameController.text);
+        await authManager.createAccount(
+          _emailController.text,
+          _passwordController.text,
+          _fullNameController.text,
+        );
       } catch (e) {
         print(e);
       }
-    } 
+      if (authManager.getCurrentUser() != null) {
+        navigator.pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => AuthGate()),
+          (route) => false,
+        );
+      }
+    }
     // Throw an error if passwords don't match
     else {
-      print("Confirm password doesn't match password"); // TODO: UI element for confirm password error
+      print(
+        "Confirm password doesn't match password",
+      ); // TODO: UI element for confirm password error
     }
   }
 
@@ -105,7 +115,7 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
                   text: "Sign Up",
                   width: 318,
                   height: 45,
-                  onPressed: registerNewUser,
+                  onPressed: () => registerNewUser(context),
                 ),
               ),
             ],

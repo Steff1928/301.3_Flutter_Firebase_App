@@ -12,11 +12,7 @@ class AuthManager {
   }
 
   // sign up
-  Future<void> createAccount(
-    String email,
-    String password,
-    String fullName,
-  ) async {
+  Future<void> createAccount(String email, String password, String fullName) async {
     try {
       // Register new user
       final UserCredential userCredential = await _auth
@@ -74,4 +70,7 @@ class AuthManager {
   }
 
   // sign out
+  Future<void> signOut() async {
+    return await _auth.signOut();
+  }
 }

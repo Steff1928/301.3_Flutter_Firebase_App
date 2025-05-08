@@ -1,4 +1,5 @@
 import 'package:edubot/components/secondary_text_field.dart';
+import 'package:edubot/pages/settings_page.dart';
 import 'package:edubot/services/authentication/auth_manager.dart';
 import 'package:flutter/material.dart';
 
@@ -17,7 +18,7 @@ class _ChatPageState extends State<ChatPage> {
 
     final fullName = authManager.getCurrentUser()?.displayName;
     final firstName = fullName.toString().split(" ")[0];
-    
+
     return firstName;
   }
 
@@ -59,7 +60,12 @@ class _ChatPageState extends State<ChatPage> {
               size: 24,
               color: Color(0xFF074F67),
             ),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SettingsPage()),
+              );
+            },
           ),
         ],
       ),
@@ -79,19 +85,18 @@ class _ChatPageState extends State<ChatPage> {
                         fontFamily: "Nunito",
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF1A1A1A)
+                        color: Color(0xFF1A1A1A),
                       ),
                     ),
-                    SizedBox(height: 10,),
+                    SizedBox(height: 10),
                     Text(
                       "Start typing to get started",
                       style: TextStyle(
                         fontFamily: "Nunito",
                         fontSize: 16,
-                        color: Color(0xFF364B55)
+                        color: Color(0xFF364B55),
                       ),
                     ),
-
                   ],
                 ),
               ),
