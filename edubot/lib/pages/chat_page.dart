@@ -1,4 +1,5 @@
 import 'package:edubot/components/secondary_text_field.dart';
+import 'package:edubot/pages/chat_history.dart';
 import 'package:edubot/pages/settings_page.dart';
 import 'package:edubot/services/authentication/auth_manager.dart';
 import 'package:flutter/material.dart';
@@ -52,7 +53,12 @@ class _ChatPageState extends State<ChatPage> {
               color: Color(0xFF074F67),
               weight: 30,
             ),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ChatHistory()),
+              );
+            },
           ),
           IconButton(
             icon: Icon(
@@ -120,10 +126,10 @@ class _ChatPageState extends State<ChatPage> {
                       ),
                     ),
                   ),
-              
+
                   // User input box
                   Expanded(child: SecondaryTextField(controller: _userInput)),
-              
+
                   // Send message button
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 5.0),
@@ -134,7 +140,10 @@ class _ChatPageState extends State<ChatPage> {
                       ),
                       child: IconButton(
                         onPressed: () {},
-                        icon: Icon(Icons.send_rounded, color: Color(0xFFFAFAFA)),
+                        icon: Icon(
+                          Icons.send_rounded,
+                          color: Color(0xFFFAFAFA),
+                        ),
                       ),
                     ),
                   ),

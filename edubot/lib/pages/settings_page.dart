@@ -26,7 +26,7 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Navgiation bar
+      // Top bar
       appBar: AppBar(
         leading: Padding(
           padding: const EdgeInsets.only(top: 10.0, left: 10),
@@ -49,25 +49,6 @@ class SettingsPage extends StatelessWidget {
           ),
         ),
       ),
-
-      // body: Column(
-      //   crossAxisAlignment: CrossAxisAlignment.start,
-      //   children: [
-      //     // Display name
-      //     Padding(
-      //       padding: const EdgeInsets.only(left: 27, top: 33),
-      //       child: Text(
-      //         "${authManager.getCurrentUser()?.displayName}",
-      //         style: TextStyle(
-      //           fontFamily: "Nunito",
-      //           fontSize: 20,
-      //           fontWeight: FontWeight.bold,
-      //           color: Color(0xFF1A1A1A),
-      //         ),
-      //       ),
-      //     ),
-
-      //     SizedBox(height: 61),
 
       // Settings options
       body: Column(
