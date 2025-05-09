@@ -5,15 +5,22 @@ import 'package:edubot/services/authentication/auth_gate.dart';
 import 'package:edubot/services/authentication/auth_manager.dart';
 import 'package:flutter/material.dart';
 
-class RegisterAccountPage extends StatelessWidget {
-  RegisterAccountPage({super.key, required this.onTap});
+class RegisterAccountPage extends StatefulWidget {
+  const RegisterAccountPage({super.key, required this.onTap});
+  final void Function()? onTap;
+
+  @override
+  State<RegisterAccountPage> createState() => _RegisterAccountPageState();
+}
+
+class _RegisterAccountPageState extends State<RegisterAccountPage> {
   // Text controllers for the text fields
   final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPassController = TextEditingController();
-
-  final void Function()? onTap;
+  // String to store error messages
+  String? _errorMessage;
 
   // Create new user account method
   void registerNewUser(BuildContext context) async {
@@ -22,6 +29,11 @@ class RegisterAccountPage extends StatelessWidget {
 
     // Get the context reference
     final navigator = Navigator.of(context);
+
+     // Clear previous errors
+    setState(() {
+      _errorMessage = null;
+    });
 
     // Show loading circle
     showDialog(
@@ -32,6 +44,15 @@ class RegisterAccountPage extends StatelessWidget {
       },
     );
 
+    // Check for full name
+    if (_fullNameController.text == "") {
+      setState(() {
+        _errorMessage = "All fields are required";
+      });
+      navigator.pop();
+      return;
+    }
+
     if (_confirmPassController.text == _passwordController.text) {
       try {
         await authManager.createAccount(
@@ -41,6 +62,10 @@ class RegisterAccountPage extends StatelessWidget {
         );
       } catch (e) {
         print(e);
+        // Set the value of _errorMessage (removing "Exception: " prefix)
+        setState(() {
+         _errorMessage = e is Exception ? e.toString().replaceFirst('Exception: ', '') : e.toString();
+        });
         navigator.pop();
       }
       if (authManager.getCurrentUser() != null) {
@@ -52,7 +77,9 @@ class RegisterAccountPage extends StatelessWidget {
     }
     // Throw an error if passwords don't match
     else {
-      print("Confirm password doesn't match password"); // TODO: UI element for confirm password error
+      setState(() {
+        _errorMessage = "Confirm password doesn't match password";
+      });
       navigator.pop();
     }
   }
@@ -78,7 +105,11 @@ class RegisterAccountPage extends StatelessWidget {
             ),
           ),
 
-          SizedBox(height: 45),
+          // Display error message
+          if (_errorMessage != null)
+            Text("$_errorMessage"),
+
+          SizedBox(height: 25),
 
           // Text fields
           Column(
@@ -177,7 +208,7 @@ class RegisterAccountPage extends StatelessWidget {
                     //     ),
                     //   );
                     // },
-                    onTap: onTap,
+                    onTap: widget.onTap,
                     child: Text(
                       "Sign In",
                       style: TextStyle(

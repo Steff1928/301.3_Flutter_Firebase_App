@@ -15,8 +15,11 @@ class UserLoginPage extends StatefulWidget {
 }
 
 class _UserLoginPageState extends State<UserLoginPage> {
+  // Text controllers for the text fields
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  // String to store error messages
   String? _errorMessage;
 
   // Sign user in method
@@ -44,7 +47,6 @@ class _UserLoginPageState extends State<UserLoginPage> {
       await authManager.signIn(_emailController.text, _passwordController.text);
     } 
     catch (e) {
-      print(e);
       navigator.pop();
       // Set the value of _errorMessage (removing "Exception: " prefix)
       setState(() {
