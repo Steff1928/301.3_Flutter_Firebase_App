@@ -17,7 +17,7 @@ class PrimaryTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 47),
-      child: TextField(
+      child: TextFormField(
         controller: controller,
         obscureText: obscureText,
         style: TextStyle(color: Color(0xFF1A1A1A)),
@@ -31,7 +31,7 @@ class PrimaryTextField extends StatelessWidget {
             fontSize: 16,
             color: Color.fromARGB(200, 26, 26, 26),
           ),
-          
+
           // Background colour
           filled: true,
           fillColor: Color(0xFFE6E6E6),
