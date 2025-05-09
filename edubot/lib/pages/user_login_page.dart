@@ -5,13 +5,19 @@ import 'package:edubot/services/authentication/auth_gate.dart';
 import 'package:edubot/services/authentication/auth_manager.dart';
 import 'package:flutter/material.dart';
 
-class UserLoginPage extends StatelessWidget {
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-
+class UserLoginPage extends StatefulWidget {
   final void Function()? onTap;
 
-  UserLoginPage({super.key, required this.onTap});
+  const UserLoginPage({super.key, required this.onTap});
+
+  @override
+  State<UserLoginPage> createState() => _UserLoginPageState();
+}
+
+class _UserLoginPageState extends State<UserLoginPage> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  String? _errorMessage;
 
   // Sign user in method
   void signUserIn(BuildContext context) async {
@@ -19,18 +25,38 @@ class UserLoginPage extends StatelessWidget {
     final AuthManager authManager = AuthManager();
     final navigator = Navigator.of(context);
 
+    // Clear previous errors
+    setState(() {
+      _errorMessage = null;
+    });
+
+    // Show loading circle
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (context) {
+        return Center(child: CircularProgressIndicator(color: Colors.blue));
+      },
+    );
+
     // Try login
     try {
       await authManager.signIn(_emailController.text, _passwordController.text);
-    } catch (e) {
-      print(e); // TODO: UI Element for unsuccessful login
+    } 
+    catch (e) {
+      print(e);
+      navigator.pop();
+      // Set the value of _errorMessage (removing "Exception: " prefix)
+      setState(() {
+        _errorMessage = e is Exception ? e.toString().replaceFirst('Exception: ', '') : e.toString();
+      });
     }
 
     if (authManager.getCurrentUser() != null) {
       navigator.pushAndRemoveUntil(
-          MaterialPageRoute(builder: (_) => AuthGate()),
-          (route) => false,
-        );
+        MaterialPageRoute(builder: (_) => AuthGate()),
+        (route) => false,
+      );
     }
   }
 
@@ -55,7 +81,11 @@ class UserLoginPage extends StatelessWidget {
             ),
           ),
 
-          SizedBox(height: 45),
+          // Display error message
+          if (_errorMessage != null)
+            Text("$_errorMessage"),
+
+          SizedBox(height: 25),
 
           // Text fields
           Column(
@@ -142,15 +172,7 @@ class UserLoginPage extends StatelessWidget {
                     ),
                   ),
                   GestureDetector(
-                    // onTap: () {
-                    //   Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //       builder: (context) => RegisterAccountPage(),
-                    //     ),
-                    //   );
-                    // },
-                    onTap: onTap,
+                    onTap: widget.onTap,
                     child: Text(
                       "Sign Up",
                       style: TextStyle(

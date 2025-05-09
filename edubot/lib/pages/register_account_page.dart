@@ -23,6 +23,15 @@ class RegisterAccountPage extends StatelessWidget {
     // Get the context reference
     final navigator = Navigator.of(context);
 
+    // Show loading circle
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (context) {
+        return Center(child: CircularProgressIndicator(color: Colors.blue));
+      },
+    );
+
     if (_confirmPassController.text == _passwordController.text) {
       try {
         await authManager.createAccount(
@@ -32,6 +41,7 @@ class RegisterAccountPage extends StatelessWidget {
         );
       } catch (e) {
         print(e);
+        navigator.pop();
       }
       if (authManager.getCurrentUser() != null) {
         navigator.pushAndRemoveUntil(
@@ -42,9 +52,8 @@ class RegisterAccountPage extends StatelessWidget {
     }
     // Throw an error if passwords don't match
     else {
-      print(
-        "Confirm password doesn't match password",
-      ); // TODO: UI element for confirm password error
+      print("Confirm password doesn't match password"); // TODO: UI element for confirm password error
+      navigator.pop();
     }
   }
 

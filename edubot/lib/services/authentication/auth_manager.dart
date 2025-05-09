@@ -35,37 +35,52 @@ class AuthManager {
           'email': user.email,
           'fullName': user.displayName,
         });
-        print("User registered with name: ${user.displayName}"); // TODO: UI for success message
+        print("User registered with name: ${user.displayName}",); // TODO: UI for success message
       }
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'Weak Password') {
-        print('Password must be at least 8 characters long.'); // TODO: UI element for if the password is too short
+      if (e.code == 'weak-password') {
+        throw Exception('Password must be at least 8 characters long.'); // TODO: UI element for if the password is too short
       } else if (e.code == 'email-already-in-use') {
-        print('An account already exists for this email.'); // TODO: UI element for if email already exists
+        throw Exception('An account already exists for this email.'); // TODO: UI element for if email already exists
+      } else if (e.code == 'channel-error') {
+        throw Exception('All fields are required');
+      } 
+      else {
+        throw Exception("Authentication Error: ${e.code}");
       }
-    }
+
+    } 
   }
 
   // sign in
-  Future<void> signIn(String email, String password) async {
+  Future<UserCredential> signIn(String email, String password) async {
     try {
       // Sign user in
       final UserCredential userCredential = await _auth
           .signInWithEmailAndPassword(email: email, password: password);
 
       // Save user info if it doesn't already exist
-      _firestore.collection("Users").doc(userCredential.user?.uid).set({
+      _firestore.collection("Users").doc(userCredential.user?.uid).set(
+        {
         'uid': userCredential.user!.uid,
         'email': email,
         'fullName': userCredential.user!.displayName,
-      });
+        },
+      );
       print("Successful login for ${userCredential.user?.displayName}");
+      return userCredential;
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        print('No user found for that email.'); // TODO: UI element if email doesn't exist
-      } else if (e.code == 'wrong-password') {
-        print('Wrong password provided for that user.'); // TODO: UI element if password is invalid
+      if (e.code == 'invalid-credential') {
+        throw Exception('Invalid email or password');
+      } else if (e.code == 'channel-error') {
+        throw Exception('Email and Password is required');
+      } else if (e.code == 'invalid-email') {
+        throw Exception('Invalid Email');
       }
+      else {
+        throw Exception('Authentication Error: ${e.code} ');
+      }
+      
     }
   }
 

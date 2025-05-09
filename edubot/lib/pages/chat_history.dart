@@ -30,12 +30,12 @@ class ChatHistory extends StatelessWidget {
           ),
         ),
       ),
-
       // TODO: Add conversation history items
       body: Column(
         children: [
+          SizedBox(height: 10), 
           ChatHistoryTile()
-        ],
+        ]
       ),
     );
   }

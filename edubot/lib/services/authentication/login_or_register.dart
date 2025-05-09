@@ -9,7 +9,7 @@ class LoginOrRegister extends StatefulWidget {
   const LoginOrRegister({super.key, required this.showLoginPage});
 
   @override
-  State<LoginOrRegister> createState() => _LoginOrRegisterState();
+  State<LoginOrRegister> createState() => _LoginOrRegisterState();  
 }
 
 class _LoginOrRegisterState extends State<LoginOrRegister> {
