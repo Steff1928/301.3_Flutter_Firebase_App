@@ -110,7 +110,7 @@ class _ChatPageState extends State<ChatPage> {
                 children: [
                   // TO DO: Upload file functionality
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 5.0),
                     child: IconButton(
                       onPressed: () {},
                       icon: Icon(
@@ -126,7 +126,7 @@ class _ChatPageState extends State<ChatPage> {
               
                   // Send message button
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 5.0),
                     child: Container(
                       decoration: BoxDecoration(
                         color: Color(0xFF2B656B),
