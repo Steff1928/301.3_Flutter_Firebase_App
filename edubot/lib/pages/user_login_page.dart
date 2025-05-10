@@ -4,6 +4,7 @@ import 'package:edubot/components/primary_text_field.dart';
 import 'package:edubot/components/sso_tile.dart';
 import 'package:edubot/services/authentication/auth_gate.dart';
 import 'package:edubot/services/authentication/auth_manager.dart';
+import 'package:edubot/services/authentication/google_service.dart';
 import 'package:flutter/material.dart';
 
 class UserLoginPage extends StatefulWidget {
@@ -23,7 +24,40 @@ class _UserLoginPageState extends State<UserLoginPage> {
   // String to store error messages
   String? _errorMessage;
 
-  // Sign user in method
+  // Sign user in with Google method
+  void signInWithGoogle() async {
+    final GoogleService googleService = GoogleService();
+    final AuthManager authManager = AuthManager();
+    final navigator = Navigator.of(context);
+
+    // Clear previous errors
+    setState(() {
+      _errorMessage = null;
+    });
+
+    // Show loading circle
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (context) {
+        return Center(child: CircularProgressIndicator(color: Colors.blue));
+      },
+    );
+
+    await googleService.signInWithGoogle();
+
+    
+    if (authManager.getCurrentUser() != null) {
+      navigator.pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => AuthGate()),
+        (route) => false,
+      );
+    }
+
+    
+  }
+
+  // Sign user in with email method
   void signUserIn(BuildContext context) async {
     // Get AuthManager and a context reference
     final AuthManager authManager = AuthManager();
@@ -156,10 +190,11 @@ class _UserLoginPageState extends State<UserLoginPage> {
         
             SizedBox(height: 50),
         
-            // Sign in with Google
+            // Google sign in button
             Column(
               children: [
                 SsoTile(
+                  onPressed: signInWithGoogle,
                   imagePath: "lib/assets/images/google.png",
                   width: 318,
                   height: 52,

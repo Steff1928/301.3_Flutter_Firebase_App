@@ -43,10 +43,10 @@ class AuthManager {
       } else if (e.code == 'email-already-in-use') {
         throw Exception('An account already exists for this email.'); // TODO: UI element for if email already exists
       } else if (e.code == 'invalid-email') {
-        throw Exception('Invalid email');
+        throw Exception('Invalid email.');
       }
        else if (e.code == 'channel-error') {
-        throw Exception('All fields are required');
+        throw Exception('All fields are required.');
       } 
       else {
         throw Exception("Authentication Error: ${e.code}");
@@ -70,15 +70,16 @@ class AuthManager {
         'fullName': userCredential.user!.displayName,
         },
       );
-      print("Successful login for ${userCredential.user?.displayName}");
+      
+      print("Successful login for ${userCredential.user?.displayName}"); // TODO: Snackbar to notify users of successful login
       return userCredential;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'invalid-credential') {
-        throw Exception('Invalid email or password');
+        throw Exception('Invalid email or password.');
       } else if (e.code == 'channel-error') {
-        throw Exception('Email and Password is required');
+        throw Exception('Email and Password is required.');
       } else if (e.code == 'invalid-email') {
-        throw Exception('Invalid Email');
+        throw Exception('Invalid Email.');
       }
       else {
         throw Exception('Authentication Error: ${e.code} ');
