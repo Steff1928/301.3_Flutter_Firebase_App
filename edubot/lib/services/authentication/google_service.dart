@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class GoogleService {
+  // Get Firestore instance
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // Google sign in
@@ -22,11 +23,11 @@ class GoogleService {
     // Sign in with credential
     final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
 
-    // Save details to database
-    _firestore.collection("Users").doc(gUser.id).set({
-          'uid': gUser.id,
-          'email': gUser.email,
-          'fullName': gUser.displayName,
+    // Save details to Firestore database
+    _firestore.collection("Users").doc(userCredential.user?.uid).set({
+          'uid': userCredential.user!.uid,
+          'email': userCredential.user!.email,
+          'fullName': userCredential.user!.displayName,
         });
 
     // Return userCredential
