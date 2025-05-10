@@ -39,10 +39,13 @@ class AuthManager {
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
-        throw Exception('Password must be at least 8 characters long.'); // TODO: UI element for if the password is too short
+        throw Exception('Password must be at least 6 characters long.'); // TODO: UI element for if the password is too short
       } else if (e.code == 'email-already-in-use') {
         throw Exception('An account already exists for this email.'); // TODO: UI element for if email already exists
-      } else if (e.code == 'channel-error') {
+      } else if (e.code == 'invalid-email') {
+        throw Exception('Invalid email');
+      }
+       else if (e.code == 'channel-error') {
         throw Exception('All fields are required');
       } 
       else {

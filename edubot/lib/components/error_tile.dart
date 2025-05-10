@@ -1,0 +1,37 @@
+import 'package:flutter/material.dart';
+
+class ErrorTile extends StatelessWidget {
+  const ErrorTile({super.key, required this.errorMessage});
+
+  final String errorMessage;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 10.0, left: 48, right: 48),
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(width: 1, color: Color(0xFFCC0000)),
+          borderRadius: BorderRadius.circular(5),
+          color: Colors.red.shade100,
+        ),
+        padding: EdgeInsets.all(15),
+        child: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(right: 15.0),
+              child: Icon(Icons.error_outline, color: Color(0xFFCC0000)),
+            ),
+            // Allow text wrapping
+            Flexible(
+              child: Text(
+                errorMessage,
+                style: TextStyle(fontSize: 16, color: Color(0xFF1A1A1A)),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

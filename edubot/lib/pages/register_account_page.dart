@@ -1,3 +1,4 @@
+import 'package:edubot/components/error_tile.dart';
 import 'package:edubot/components/primary_button.dart';
 import 'package:edubot/components/primary_text_field.dart';
 import 'package:edubot/components/sso_tile.dart';
@@ -30,7 +31,7 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
     // Get the context reference
     final navigator = Navigator.of(context);
 
-     // Clear previous errors
+    // Clear previous errors
     setState(() {
       _errorMessage = null;
     });
@@ -61,10 +62,12 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
           _fullNameController.text,
         );
       } catch (e) {
-        print(e);
         // Set the value of _errorMessage (removing "Exception: " prefix)
         setState(() {
-         _errorMessage = e is Exception ? e.toString().replaceFirst('Exception: ', '') : e.toString();
+          _errorMessage =
+              e is Exception
+                  ? e.toString().replaceFirst('Exception: ', '')
+                  : e.toString();
         });
         navigator.pop();
       }
@@ -87,143 +90,146 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Color(0xFFFAFAFA),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Heading
-          Padding(
-            padding: const EdgeInsets.only(left: 48, top: 133),
-            child: Text(
-              "Register",
-              style: TextStyle(
-                fontFamily: "Cabin",
-                fontSize: 48,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF074F67),
-              ),
-            ),
-          ),
-
-          // Display error message
-          if (_errorMessage != null)
-            Text("$_errorMessage"),
-
-          SizedBox(height: 25),
-
-          // Text fields
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              // Full name
-              PrimaryTextField(
-                label: "Full Name",
-                obscureText: false,
-                controller: _fullNameController,
-              ),
-
-              SizedBox(height: 25),
-
-              // Email
-              PrimaryTextField(
-                label: "Email",
-                obscureText: false,
-                controller: _emailController,
-              ),
-
-              SizedBox(height: 25),
-
-              // Password
-              PrimaryTextField(
-                label: "Password",
-                obscureText: true,
-                controller: _passwordController,
-              ),
-
-              SizedBox(height: 25),
-
-              // Confirm password
-              PrimaryTextField(
-                label: "Confirm Password",
-                obscureText: true,
-                controller: _confirmPassController,
-              ),
-
-              SizedBox(height: 35),
-
-              // Register button
-              Center(
-                child: PrimaryButton(
-                  text: "Sign Up",
-                  width: 318,
-                  height: 45,
-                  onPressed: () => registerNewUser(context),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Heading
+            Padding(
+              padding: const EdgeInsets.only(left: 48, top: 100),
+              child: Text(
+                "Register",
+                style: TextStyle(
+                  fontFamily: "Cabin",
+                  fontSize: 48,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF074F67),
                 ),
               ),
-            ],
-          ),
-
-          SizedBox(height: 50),
-
-          Center(
-            child: Text(
-              "OR",
-              style: TextStyle(
-                fontFamily: "Nunito",
-                fontSize: 16,
-                color: Color(0xFF364B55),
+            ),
+        
+            // Display error message
+            if (_errorMessage != null) 
+              ErrorTile(errorMessage: _errorMessage.toString()),
+        
+            SizedBox(height: 25),
+        
+            // Text fields
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                // Full name
+                PrimaryTextField(
+                  label: "Full Name",
+                  obscureText: false,
+                  controller: _fullNameController,
+                ),
+        
+                SizedBox(height: 25),
+        
+                // Email
+                PrimaryTextField(
+                  label: "Email",
+                  obscureText: false,
+                  controller: _emailController,
+                ),
+        
+                SizedBox(height: 25),
+        
+                // Password
+                PrimaryTextField(
+                  label: "Password",
+                  obscureText: true,
+                  controller: _passwordController,
+                ),
+        
+                SizedBox(height: 25),
+        
+                // Confirm password
+                PrimaryTextField(
+                  label: "Confirm Password",
+                  obscureText: true,
+                  controller: _confirmPassController,
+                ),
+        
+                SizedBox(height: 35),
+        
+                // Register button
+                Center(
+                  child: PrimaryButton(
+                    text: "Sign Up",
+                    width: 318,
+                    height: 45,
+                    onPressed: () => registerNewUser(context),
+                  ),
+                ),
+              ],
+            ),
+        
+            SizedBox(height: 50),
+        
+            Center(
+              child: Text(
+                "OR",
+                style: TextStyle(
+                  fontFamily: "Nunito",
+                  fontSize: 16,
+                  color: Color(0xFF364B55),
+                ),
               ),
             ),
-          ),
-
-          SizedBox(height: 50),
-
-          // Sign in with Google
-          Column(
-            children: [
-              SsoTile(
-                imagePath: "lib/assets/images/google.png",
-                width: 318,
-                height: 52,
-              ),
-              SizedBox(height: 15),
-              // Register Link
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "Already have an account? ",
-                    style: TextStyle(
-                      fontFamily: "Nunito",
-                      fontSize: 16,
-                      color: Color(0xFF364B55),
-                    ),
-                  ),
-                  GestureDetector(
-                    // onTap: () {
-                    //   Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //       builder: (context) => UserLoginPage(),
-                    //     ),
-                    //   );
-                    // },
-                    onTap: widget.onTap,
-                    child: Text(
-                      "Sign In",
+        
+            SizedBox(height: 50),
+        
+            // Sign in with Google
+            Column(
+              children: [
+                SsoTile(
+                  imagePath: "lib/assets/images/google.png",
+                  width: 318,
+                  height: 52,
+                ),
+                SizedBox(height: 15),
+                // Register Link
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Already have an account? ",
                       style: TextStyle(
                         fontFamily: "Nunito",
                         fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF05455B),
+                        color: Color(0xFF364B55),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
+                    GestureDetector(
+                      // onTap: () {
+                      //   Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //       builder: (context) => UserLoginPage(),
+                      //     ),
+                      //   );
+                      // },
+                      onTap: widget.onTap,
+                      child: Text(
+                        "Sign In",
+                        style: TextStyle(
+                          fontFamily: "Nunito",
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF05455B),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
