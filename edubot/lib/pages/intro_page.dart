@@ -9,9 +9,11 @@ class IntroPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Center(
         // Background gradient
         child: Container(
+          width: double.infinity,
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
@@ -21,105 +23,115 @@ class IntroPage extends StatelessWidget {
             ),
           ),
           // Main content
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              // Title
-              Padding(
-                padding: const EdgeInsets.only(top: 25),
+          child: SingleChildScrollView(
+            child: Center(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: MediaQuery.of(context).size.height,
+                  maxWidth: 600,
+                ),
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Text(
-                      "EduBot",
-                      style: TextStyle(
-                        fontSize: 64,
-                        color: Color(0xFF074F67),
-                        fontFamily: "Cabin",
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1.28,
-                      ),
-                    ),
-
-                    SizedBox(height: 7), // Spacing
-                    // Subtitle #1
+                    // Title
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 25),
-                      child: Text(
-                        "Welcome to Edubot - The Educational Chatbot for Classrooms.",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Color(0xFF364B55),
-                          fontFamily: "Nunito",
-                          letterSpacing: 0.32,
-                        ),
+                      padding: const EdgeInsets.only(top: 25),
+                      child: Column(
+                        children: [
+                          Text(
+                            "EduBot",
+                            style: TextStyle(
+                              fontSize: 64,
+                              color: Color(0xFF074F67),
+                              fontFamily: "Cabin",
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.28,
+                            ),
+                          ),
+                        
+                          SizedBox(height: 7), // Spacing
+                          // Subtitle #1
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 25),
+                            child: Text(
+                              "Welcome to Edubot - The Educational Chatbot for Classrooms.",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Color(0xFF364B55),
+                                fontFamily: "Nunito",
+                                letterSpacing: 0.32,
+                              ),
+                            ),
+                          ),
+                        
+                          SizedBox(height: 7), // Spacing
+                          // Subtitle #2
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 25),
+                            child: Text(
+                              "Sign in or create an account to get started.",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Color(0xFF364B55),
+                                fontFamily: "Nunito",
+                                letterSpacing: 0.32,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-
-                    SizedBox(height: 7), // Spacing
-                    // Subtitle #2
+                        
+                    // Image
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 25),
-                      child: Text(
-                        "Sign in or create an account to get started.",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Color(0xFF364B55),
-                          fontFamily: "Nunito",
-                          letterSpacing: 0.32,
-                        ),
+                      padding: const EdgeInsets.only(top: 17),
+                      child: Image.asset(
+                        'lib/assets/images/intro-image.png',
+                        height: 207,
                       ),
                     ),
+                        
+                    SizedBox(height: 58), // Spacing
+                    // Sign In/Register Buttons
+                    Column(
+                      children: [
+                        PrimaryButton(
+                          text: "Sign In",
+                          width: 318,
+                          height: 45,
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => LoginOrRegister(showLoginPage: true,),
+                              ),
+                            );
+                          },
+                        ),
+                        SizedBox(height: 10),
+                        SecondaryButton(
+                          text: "Create Account",
+                          width: 318,
+                          height: 45,
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => LoginOrRegister(showLoginPage: false,),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                        
+                    SizedBox(height: 58), // Spacing
                   ],
                 ),
               ),
-
-              // Image
-              Padding(
-                padding: const EdgeInsets.only(top: 17),
-                child: Image.asset(
-                  'lib/assets/images/intro-image.png',
-                  height: 207,
-                ),
-              ),
-
-              SizedBox(height: 58), // Spacing
-              // Sign In/Register Buttons
-              Column(
-                children: [
-                  PrimaryButton(
-                    text: "Sign In",
-                    width: 318,
-                    height: 45,
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => LoginOrRegister(showLoginPage: true,),
-                        ),
-                      );
-                    },
-                  ),
-                  SizedBox(height: 10),
-                  SecondaryButton(
-                    text: "Create Account",
-                    width: 318,
-                    height: 45,
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => LoginOrRegister(showLoginPage: false,),
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-
-              SizedBox(height: 58), // Spacing
-            ],
+            ),
           ),
         ),
       ),
