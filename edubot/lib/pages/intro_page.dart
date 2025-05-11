@@ -10,8 +10,9 @@ class IntroPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
+
+      // Background gradient
       body: Center(
-        // Background gradient
         child: Container(
           width: double.infinity,
           decoration: BoxDecoration(
@@ -22,6 +23,7 @@ class IntroPage extends StatelessWidget {
               colors: <Color>[Color(0xFFFAFAFA), Color(0xFF96C0CA)],
             ),
           ),
+
           // Main content
           child: SingleChildScrollView(
             child: Center(
@@ -33,6 +35,7 @@ class IntroPage extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
+
                     // Title
                     Padding(
                       padding: const EdgeInsets.only(top: 25),
@@ -50,6 +53,7 @@ class IntroPage extends StatelessWidget {
                           ),
                         
                           SizedBox(height: 7), // Spacing
+
                           // Subtitle #1
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 25),
@@ -66,6 +70,7 @@ class IntroPage extends StatelessWidget {
                           ),
                         
                           SizedBox(height: 7), // Spacing
+
                           // Subtitle #2
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 25),
@@ -94,7 +99,8 @@ class IntroPage extends StatelessWidget {
                     ),
                         
                     SizedBox(height: 58), // Spacing
-                    // Sign In/Register Buttons
+
+                    // Login button
                     Column(
                       children: [
                         PrimaryButton(
@@ -110,7 +116,10 @@ class IntroPage extends StatelessWidget {
                             );
                           },
                         ),
+
                         SizedBox(height: 10),
+
+                        // Register button
                         SecondaryButton(
                           text: "Create Account",
                           width: 318,

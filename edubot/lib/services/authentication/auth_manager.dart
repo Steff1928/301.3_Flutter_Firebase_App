@@ -45,9 +45,6 @@ class AuthManager {
       } else if (e.code == 'invalid-email') {
         throw Exception('Invalid email.');
       }
-       else if (e.code == 'channel-error') {
-        throw Exception('All fields are required.');
-      } 
       else {
         throw Exception("Authentication Error: ${e.code}");
       }
@@ -76,8 +73,6 @@ class AuthManager {
     } on FirebaseAuthException catch (e) {
       if (e.code == 'invalid-credential') {
         throw Exception('Invalid email or password.');
-      } else if (e.code == 'channel-error') {
-        throw Exception('Email and Password is required.');
       } else if (e.code == 'invalid-email') {
         throw Exception('Invalid Email.');
       }

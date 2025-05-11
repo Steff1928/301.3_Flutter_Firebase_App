@@ -49,7 +49,7 @@ class _UserLoginPageState extends State<UserLoginPage> {
 
     // Dismiss loading circle after user is finished with pop up (either closing it or signing in)
     navigator.pop();
-    
+
     // Remove all pages in the navigation stack
     if (authManager.getCurrentUser() != null) {
       navigator.pushAndRemoveUntil(
@@ -79,16 +79,30 @@ class _UserLoginPageState extends State<UserLoginPage> {
       },
     );
 
-    // Try login
-    try {
-      await authManager.signIn(_emailController.text, _passwordController.text);
+    if (_emailController.text != "" && _passwordController.text != "") {
+      // Try login
+      try {
+        await authManager.signIn(
+          _emailController.text,
+          _passwordController.text,
+        );
+      } catch (e) {
+        navigator.pop();
+        // Set the value of _errorMessage (removing "Exception: " prefix)
+        setState(() {
+          _errorMessage =
+              e is Exception
+                  ? e.toString().replaceFirst('Exception: ', '')
+                  : e.toString();
+        });
+      }
     } 
-    catch (e) {
-      navigator.pop();
-      // Set the value of _errorMessage (removing "Exception: " prefix)
+    else {
       setState(() {
-        _errorMessage = e is Exception ? e.toString().replaceFirst('Exception: ', '') : e.toString();
-      });
+          _errorMessage = "All fields are required.";
+        });
+        navigator.pop();
+        return;
     }
 
     if (authManager.getCurrentUser() != null) {
@@ -107,9 +121,7 @@ class _UserLoginPageState extends State<UserLoginPage> {
       body: SingleChildScrollView(
         child: Center(
           child: ConstrainedBox(
-            constraints: BoxConstraints(
-              maxWidth: 500,
-            ),
+            constraints: BoxConstraints(maxWidth: 500),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -126,13 +138,13 @@ class _UserLoginPageState extends State<UserLoginPage> {
                     ),
                   ),
                 ),
-            
+
                 // Display error message
                 if (_errorMessage != null)
                   ErrorTile(errorMessage: _errorMessage.toString()),
-            
+
                 SizedBox(height: 25),
-            
+
                 // Text fields
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -143,16 +155,16 @@ class _UserLoginPageState extends State<UserLoginPage> {
                       obscureText: false,
                       controller: _emailController,
                     ),
-            
+
                     SizedBox(height: 25),
-            
+
                     // Password
                     PrimaryTextField(
                       label: "Password",
                       obscureText: true,
                       controller: _passwordController,
                     ),
-            
+
                     // Forgot password
                     Padding(
                       padding: const EdgeInsets.only(right: 48, top: 10),
@@ -166,9 +178,9 @@ class _UserLoginPageState extends State<UserLoginPage> {
                         ),
                       ),
                     ),
-            
+
                     SizedBox(height: 35),
-            
+
                     // Login button
                     Center(
                       child: PrimaryButton(
@@ -180,9 +192,9 @@ class _UserLoginPageState extends State<UserLoginPage> {
                     ),
                   ],
                 ),
-            
+
                 SizedBox(height: 50),
-            
+
                 Center(
                   child: Text(
                     "OR",
@@ -193,9 +205,9 @@ class _UserLoginPageState extends State<UserLoginPage> {
                     ),
                   ),
                 ),
-            
+
                 SizedBox(height: 50),
-            
+
                 // Google sign in button
                 SafeArea(
                   child: Padding(
@@ -208,7 +220,7 @@ class _UserLoginPageState extends State<UserLoginPage> {
                           width: 318,
                           height: 52,
                         ),
-                    
+
                         // Register Link
                         SizedBox(height: 15),
                         Row(

@@ -84,7 +84,8 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
     // Check if confirm pass matches pass
     if (_confirmPassController.text == _passwordController.text) {
       // Check for full name
-      if (_fullNameController.text != "") {
+      // TODO: Clean up code
+      if (_fullNameController.text != "" && _emailController.text != "" && _passwordController.text != "" && _confirmPassController.text != "") {
         try {
           await authManager.createAccount(
             _emailController.text,
