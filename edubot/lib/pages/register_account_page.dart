@@ -224,7 +224,7 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
                   ),
                 ),
             
-                SizedBox(height: 25),
+                SizedBox(height: 50),
             
                 // Sign in with Google
                 SafeArea(

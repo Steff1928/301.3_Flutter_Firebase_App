@@ -44,8 +44,11 @@ class _UserLoginPageState extends State<UserLoginPage> {
       },
     );
 
-    await googleService.signInWithGoogle();
-
+    try {
+      await googleService.signInWithGoogle();
+    } catch (e) {
+      navigator.pop();
+    }
     
     if (authManager.getCurrentUser() != null) {
       navigator.pushAndRemoveUntil(
@@ -53,8 +56,6 @@ class _UserLoginPageState extends State<UserLoginPage> {
         (route) => false,
       );
     }
-
-    
   }
 
   // Sign user in with email method
@@ -192,7 +193,7 @@ class _UserLoginPageState extends State<UserLoginPage> {
                   ),
                 ),
             
-                SizedBox(height: 25),
+                SizedBox(height: 50),
             
                 // Google sign in button
                 SafeArea(

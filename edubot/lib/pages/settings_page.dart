@@ -54,168 +54,163 @@ class SettingsPage extends StatelessWidget {
       // Settings options
       body: LayoutBuilder(
         builder: (context, constraints) {
-          return SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Display name
-                Padding(
-                  padding: const EdgeInsets.only(left: 27, top: 33),
-                  child: Text(
-                    "${authManager.getCurrentUser()?.displayName}",
-                    style: TextStyle(
-                      fontFamily: "Nunito",
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF1A1A1A),
-                    ),
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Display name
+              Padding(
+                padding: const EdgeInsets.only(left: 27, top: 33),
+                child: Text(
+                  "${authManager.getCurrentUser()?.displayName}",
+                  style: TextStyle(
+                    fontFamily: "Nunito",
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF1A1A1A),
                   ),
                 ),
-            
-                SizedBox(height: 33),
-            
-                // Body Content
-            
-                // Parent widget
-                Flexible(
-                  // Material widget to allow ListTile splash colours
-                  child: Material(
-                    color: Color(0xFFF1F5F8),
-                    borderRadius: BorderRadius.circular(12),
-                            
-                    // Container to allow padding
-                    child: Container(
-                      padding: EdgeInsets.only(top: 33),
-                            
-                      // Parent column for both settings options and logout list tile
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          // Secondary column for only settings tiles
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Account header
-                              Padding(
-                                padding: const EdgeInsets.only(left: 27.0),
-                                child: Text(
-                                  "ACCOUNT",
-                                  style: TextStyle(
-                                    fontFamily: "Nunito",
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF364B55),
-                                  ),
-                                ),
-                              ),
-                            
-                              SizedBox(height: 23),
-                            
-                              // Email
-                              SettingsTile(
-                                title: "Email",
-                                icon: Icons.email_outlined,
-                                onTap: () {},
-                              ),
-                            
-                              SizedBox(height: 23),
-                            
-                              // Appearance header
-                              Padding(
-                                padding: const EdgeInsets.only(left: 27.0),
-                                child: Text(
-                                  "APPEARANCE",
-                                  style: TextStyle(
-                                    fontFamily: "Nunito",
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF364B55),
-                                  ),
-                                ),
-                              ),
-                            
-                              SizedBox(height: 23),
-                            
-                              // Theme
-                              SettingsTile(
-                                title: "Theme",
-                                icon: Icons.contrast,
-                                onTap: () {},
-                              ),
-                            
-                              SizedBox(height: 23),
-                            
-                              // Chatbot customisation header
-                              Padding(
-                                padding: const EdgeInsets.only(left: 27.0),
-                                child: Text(
-                                  "CHATBOT PREFERENCES",
-                                  style: TextStyle(
-                                    fontFamily: "Nunito",
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF364B55),
-                                  ),
-                                ),
-                              ),
-                            
-                              SizedBox(height: 23),
-                            
-                              // Theme
-                              SettingsTile(
-                                title: "Response Length",
-                                icon: Icons.square_foot_rounded,
-                                onTap: () {},
-                              ),
-                              SettingsTile(
-                                title: "Response Tone",
-                                icon: Icons.record_voice_over_rounded,
-                                onTap: () {},
-                              ),
-                              SettingsTile(
-                                title: "Vocabulary",
-                                icon: Icons.spellcheck_rounded,
-                                onTap: () {},
-                              ),
-                            ],
-                          ),
-                            
-                          // Temporary solution to space out logout list tile while fixing scroll view
-                          SizedBox(height: 150),
-                            
-                          // SafeArea for logout list tile
-                          SafeArea(
-                            child: ListTile(
-                              contentPadding: EdgeInsets.symmetric(
-                                horizontal: 27,
-                              ),
-                              leading: Icon(
-                                Icons.logout,
-                                color: Color(0xFFCC0000),
-                              ),
-                              title: Text(
-                                "Logout",
+              ),
+          
+              SizedBox(height: 33),
+          
+              // Body Content
+          
+              // Parent widget
+              Flexible(
+                // Material widget to allow ListTile splash colours
+                child: Material(
+                  color: Color(0xFFF1F5F8),
+                  borderRadius: BorderRadius.circular(12),
+                          
+                  // Container to allow padding
+                  child: Container(
+                    padding: EdgeInsets.only(top: 33),
+                          
+                    // Parent column for both settings options and logout list tile
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // Secondary column for only settings tiles
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Account header
+                            Padding(
+                              padding: const EdgeInsets.only(left: 27.0),
+                              child: Text(
+                                "ACCOUNT",
                                 style: TextStyle(
                                   fontFamily: "Nunito",
-                                  fontSize: 16,
-                                  color: Color(0xFFCC0000),
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF364B55),
                                 ),
                               ),
-                              trailing: Icon(
-                                Icons.arrow_forward_ios,
+                            ),
+                          
+                            SizedBox(height: 23),
+                          
+                            // Email
+                            SettingsTile(
+                              title: "Email",
+                              icon: Icons.email_outlined,
+                              onTap: () {},
+                            ),
+                          
+                            SizedBox(height: 23),
+                          
+                            // Appearance header
+                            Padding(
+                              padding: const EdgeInsets.only(left: 27.0),
+                              child: Text(
+                                "APPEARANCE",
+                                style: TextStyle(
+                                  fontFamily: "Nunito",
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF364B55),
+                                ),
+                              ),
+                            ),
+                          
+                            SizedBox(height: 23),
+                          
+                            // Theme
+                            SettingsTile(
+                              title: "Theme",
+                              icon: Icons.contrast,
+                              onTap: () {},
+                            ),
+                          
+                            SizedBox(height: 23),
+                          
+                            // Chatbot customisation header
+                            Padding(
+                              padding: const EdgeInsets.only(left: 27.0),
+                              child: Text(
+                                "CHATBOT PREFERENCES",
+                                style: TextStyle(
+                                  fontFamily: "Nunito",
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF364B55),
+                                ),
+                              ),
+                            ),
+                          
+                            SizedBox(height: 23),
+                          
+                            // Theme
+                            SettingsTile(
+                              title: "Response Length",
+                              icon: Icons.square_foot_rounded,
+                              onTap: () {},
+                            ),
+                            SettingsTile(
+                              title: "Response Tone",
+                              icon: Icons.record_voice_over_rounded,
+                              onTap: () {},
+                            ),
+                            SettingsTile(
+                              title: "Vocabulary",
+                              icon: Icons.spellcheck_rounded,
+                              onTap: () {},
+                            ),
+                          ],
+                        ),
+                          
+                        // SafeArea for logout list tile
+                        SafeArea(
+                          child: ListTile(
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 27,
+                            ),
+                            leading: Icon(
+                              Icons.logout,
+                              color: Color(0xFFCC0000),
+                            ),
+                            title: Text(
+                              "Logout",
+                              style: TextStyle(
+                                fontFamily: "Nunito",
+                                fontSize: 16,
                                 color: Color(0xFFCC0000),
                               ),
-                              onTap: () => logout(context),
                             ),
+                            trailing: Icon(
+                              Icons.arrow_forward_ios,
+                              color: Color(0xFFCC0000),
+                            ),
+                            onTap: () => logout(context),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           );
         },
       ),

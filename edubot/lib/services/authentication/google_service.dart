@@ -7,30 +7,40 @@ class GoogleService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // Google sign in
-  signInWithGoogle() async {
-    // Begin interactive sign in process
-    final GoogleSignInAccount? gUser = await GoogleSignIn().signIn();
-
-    // Obtain auth details from request
-    final GoogleSignInAuthentication gAuth = await gUser!.authentication;
-
-    // Create new user credential
-    final credential = GoogleAuthProvider.credential(
-      idToken: gAuth.idToken,
-      accessToken: gAuth.accessToken,
-    );
-
+  Future<void> signInWithGoogle() async {
     // Sign in with credential
-    final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
 
-    // Save details to Firestore database
-    _firestore.collection("Users").doc(userCredential.user?.uid).set({
+    final GoogleSignIn googleSignIn = GoogleSignIn();
+    try {
+      // Begin interactive sign in process
+      final GoogleSignInAccount? gUser = await googleSignIn.signIn();
+
+      if (gUser == null) {
+        // User closed the pop-up or cancelled sign in
+        print('Sign in cancelled by user');
+      } else {
+        // Obtain auth details from request
+        final GoogleSignInAuthentication gAuth = await gUser.authentication;
+
+        // Create new user credential
+        final credential = GoogleAuthProvider.credential(
+          idToken: gAuth.idToken,
+          accessToken: gAuth.accessToken,
+        );
+
+        final userCredential = await FirebaseAuth.instance.signInWithCredential(
+          credential,
+        );
+
+        // Save details to Firestore database
+        _firestore.collection("Users").doc(userCredential.user?.uid).set({
           'uid': userCredential.user!.uid,
           'email': userCredential.user!.email,
           'fullName': userCredential.user!.displayName,
         });
-
-    // Return userCredential
-    return userCredential;
+      }
+    } catch (e) {
+      print('Authentication Error $e');
+    }
   }
 }
