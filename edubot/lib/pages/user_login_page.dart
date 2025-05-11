@@ -44,11 +44,11 @@ class _UserLoginPageState extends State<UserLoginPage> {
       },
     );
 
-    try {
-      await googleService.signInWithGoogle();
-    } catch (e) {
-      navigator.pop();
-    }
+    
+    await googleService.signInWithGoogle();
+
+    navigator.pop(); // Dismiss loading circle after user is finished with pop up (either closing it or signing in)
+    
     
     if (authManager.getCurrentUser() != null) {
       navigator.pushAndRemoveUntil(

@@ -46,6 +46,8 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
 
     await googleService.signInWithGoogle();
 
+    navigator.pop();
+
     if (authManager.getCurrentUser() != null) {
       navigator.pushAndRemoveUntil(
         MaterialPageRoute(builder: (_) => AuthGate()),
