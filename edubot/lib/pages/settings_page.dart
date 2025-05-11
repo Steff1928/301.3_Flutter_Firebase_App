@@ -58,18 +58,32 @@ class SettingsPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Display name
-              Padding(
-                padding: const EdgeInsets.only(left: 27, top: 33),
-                child: Text(
-                  "${authManager.getCurrentUser()?.displayName}",
-                  style: TextStyle(
-                    fontFamily: "Nunito",
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF1A1A1A),
+              // Display name (and Google Profile Pic if appplicable)
+              Row(
+                children: [
+                  if (authManager.getCurrentUser()?.photoURL != null)
+                    Padding(
+                      padding: const EdgeInsets.only(left: 23, top: 33),
+                      child: CircleAvatar(
+                        radius: 20,
+                        backgroundImage: NetworkImage('${authManager.getCurrentUser()?.photoURL}'),
+                      ),
+                    ),
+                  Flexible(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 23, top: 33),
+                      child: Text(
+                        "${authManager.getCurrentUser()?.displayName}",
+                        style: TextStyle(
+                          fontFamily: "Nunito",
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF1A1A1A),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
           
               SizedBox(height: 33),
@@ -169,7 +183,7 @@ class SettingsPage extends StatelessWidget {
                             ),
                             SettingsTile(
                               title: "Response Tone",
-                              icon: Icons.record_voice_over_rounded,
+                              icon: Icons.record_voice_over_outlined,
                               onTap: () {},
                             ),
                             SettingsTile(
