@@ -17,7 +17,7 @@ class GoogleService {
 
       if (gUser == null) {
         // User closed the pop-up or cancelled sign in
-        print('Sign in cancelled by user');
+        return;
       } else {
         // Obtain auth details from request
         final GoogleSignInAuthentication gAuth = await gUser.authentication;
@@ -40,7 +40,7 @@ class GoogleService {
         });
       }
     } catch (e) {
-      print('Authentication Error $e');
+      return;
     }
   }
 }

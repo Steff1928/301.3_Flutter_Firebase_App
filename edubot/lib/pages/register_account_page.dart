@@ -44,10 +44,13 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
       },
     );
 
+    // Attempt google sign in
     await googleService.signInWithGoogle();
 
+    // Dismiss loading circle after user is finished with pop up (either closing it or signing in)
     navigator.pop();
 
+    // Remove all pages in the navigation stack
     if (authManager.getCurrentUser() != null) {
       navigator.pushAndRemoveUntil(
         MaterialPageRoute(builder: (_) => AuthGate()),

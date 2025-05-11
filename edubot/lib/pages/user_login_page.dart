@@ -44,12 +44,13 @@ class _UserLoginPageState extends State<UserLoginPage> {
       },
     );
 
-    
+    // Attempt google sign in
     await googleService.signInWithGoogle();
 
-    navigator.pop(); // Dismiss loading circle after user is finished with pop up (either closing it or signing in)
+    // Dismiss loading circle after user is finished with pop up (either closing it or signing in)
+    navigator.pop();
     
-    
+    // Remove all pages in the navigation stack
     if (authManager.getCurrentUser() != null) {
       navigator.pushAndRemoveUntil(
         MaterialPageRoute(builder: (_) => AuthGate()),
@@ -58,8 +59,8 @@ class _UserLoginPageState extends State<UserLoginPage> {
     }
   }
 
-  // Sign user in with email method
-  void signUserIn(BuildContext context) async {
+  // Sign user in with email and password method
+  void signInWithEmailAndPassword(BuildContext context) async {
     // Get AuthManager and a context reference
     final AuthManager authManager = AuthManager();
     final navigator = Navigator.of(context);
@@ -174,7 +175,7 @@ class _UserLoginPageState extends State<UserLoginPage> {
                         text: "Login",
                         width: 318,
                         height: 45,
-                        onPressed: () => signUserIn(context),
+                        onPressed: () => signInWithEmailAndPassword(context),
                       ),
                     ),
                   ],
