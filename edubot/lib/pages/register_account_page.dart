@@ -48,9 +48,7 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
     // Attempt google sign in
     await googleService.signInWithGoogle();
 
-    // Attempt google sign in
-    await googleService.signInWithGoogle();
-
+    // Check if user is signed in
     if (authManager.getCurrentUser() != null) {
       final snackBar = SnackBar(
         content: Row(
@@ -70,6 +68,26 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
         showCloseIcon: true,
       );
 
+      scaffoldMessenger.showSnackBar(snackBar);
+    } else {
+      // Show error notification if Goole sign in fails
+      final snackBar = SnackBar(
+        content: Row(
+          children: [
+            Icon(Icons.error, color: Colors.red),
+            SizedBox(width: 16),
+            Flexible(
+              child: Text(
+                "Error signing in with Google",
+                style: TextStyle(fontFamily: "Nunito", fontSize: 16),
+              ),
+            ),
+          ],
+        ),
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: Color(0xFF1A1A1A),
+      );
+      
       scaffoldMessenger.showSnackBar(snackBar);
     }
 

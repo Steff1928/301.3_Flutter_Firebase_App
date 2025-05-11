@@ -71,6 +71,26 @@ class _UserLoginPageState extends State<UserLoginPage> {
       );
 
       scaffoldMessenger.showSnackBar(snackBar);
+    } else {
+      // Show error notification if Goole sign in fails
+      final snackBar = SnackBar(
+        content: Row(
+          children: [
+            Icon(Icons.error, color: Colors.red),
+            SizedBox(width: 16),
+            Flexible(
+              child: Text(
+                "Error signing in with Google",
+                style: TextStyle(fontFamily: "Nunito", fontSize: 16),
+              ),
+            ),
+          ],
+        ),
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: Color(0xFF1A1A1A),
+      );
+
+      scaffoldMessenger.showSnackBar(snackBar);
     }
 
     // Dismiss loading circle after user is finished with pop up (either closing it or signing in)
