@@ -11,6 +11,20 @@ class AuthManager {
     return _auth.currentUser;
   }
 
+  // Reset password
+  Future<void> resetPassword(String email) async {
+    try {
+      // Send user reset email
+      await _auth.sendPasswordResetEmail(email: email);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'invalid-email') {
+        throw Exception("Invalid Email");
+      } else {
+        throw Exception("Error: ${e.code}");
+      }
+    }
+  }
+
   // sign up
   Future<void> createAccount(String email, String password, String fullName) async {
     try {
@@ -35,7 +49,6 @@ class AuthManager {
           'email': user.email,
           'name': user.displayName,
         });
-        print("User registered with name: ${user.displayName}",); // TODO: UI for success message
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
@@ -68,7 +81,6 @@ class AuthManager {
         },
       );
       
-      print("Successful login for ${userCredential.user?.displayName}"); // TODO: Snackbar to notify users of successful login
       return userCredential;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'invalid-credential') {

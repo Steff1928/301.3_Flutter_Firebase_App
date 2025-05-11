@@ -29,6 +29,7 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
     final GoogleService googleService = GoogleService();
     final AuthManager authManager = AuthManager();
     final navigator = Navigator.of(context);
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
 
     // Clear previous errors
     setState(() {
@@ -46,6 +47,29 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
 
     // Attempt google sign in
     await googleService.signInWithGoogle();
+
+    // Attempt google sign in
+    await googleService.signInWithGoogle();
+
+    final snackBar = SnackBar(
+      content: Row(
+        children: [
+          Icon(Icons.check_circle, color: Colors.green),
+          SizedBox(width: 16),
+          Flexible(
+            child: Text(
+              "Successful login with: ${authManager.getCurrentUser()?.email}",
+              style: TextStyle(fontFamily: "Nunito", fontSize: 16),
+            ),
+          ),
+        ],
+      ),
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: Color(0xFF1A1A1A),
+      showCloseIcon: true,
+    );
+
+    scaffoldMessenger.showSnackBar(snackBar);
 
     // Dismiss loading circle after user is finished with pop up (either closing it or signing in)
     navigator.pop();
@@ -66,6 +90,7 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
 
     // Get the context reference
     final navigator = Navigator.of(context);
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
 
     // Clear previous errors
     setState(() {
@@ -85,13 +110,34 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
     if (_confirmPassController.text == _passwordController.text) {
       // Check for full name
       // TODO: Clean up code
-      if (_displayNameController.text != "" && _emailController.text != "" && _passwordController.text != "" && _confirmPassController.text != "") {
+      if (_displayNameController.text != "" &&
+          _emailController.text != "" &&
+          _passwordController.text != "" &&
+          _confirmPassController.text != "") {
         try {
           await authManager.createAccount(
             _emailController.text,
             _passwordController.text,
             _displayNameController.text,
           );
+          final snackBar = SnackBar(
+            content: Row(
+              children: [
+                Icon(Icons.check_circle, color: Colors.green),
+                SizedBox(width: 16),
+                Flexible(
+                  child: Text(
+                    "User registered with name: ${authManager.getCurrentUser()?.displayName}",
+                    style: TextStyle(fontFamily: "Nunito", fontSize: 16),
+                  ),
+                ),
+              ],
+            ),
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Color(0xFF1A1A1A),
+            showCloseIcon: true,
+          );
+          scaffoldMessenger.showSnackBar(snackBar);
         } catch (e) {
           // Set the value of _errorMessage (removing "Exception: " prefix)
           setState(() {
@@ -139,15 +185,13 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
       body: SingleChildScrollView(
         child: Center(
           child: ConstrainedBox(
-            constraints: BoxConstraints(
-              maxWidth: 500,
-            ),
+            constraints: BoxConstraints(maxWidth: 500),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Heading
                 Padding(
-                  padding: const EdgeInsets.only(left: 48, top: 100),
+                  padding: const EdgeInsets.only(left: 48, top: 133),
                   child: Text(
                     "Register",
                     style: TextStyle(
@@ -158,13 +202,13 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
                     ),
                   ),
                 ),
-            
+
                 // Display error message
                 if (_errorMessage != null)
                   ErrorTile(errorMessage: _errorMessage.toString()),
-            
+
                 SizedBox(height: 25),
-            
+
                 // Text fields
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -175,36 +219,36 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
                       obscureText: false,
                       controller: _displayNameController,
                     ),
-            
+
                     SizedBox(height: 25),
-            
+
                     // Email
                     PrimaryTextField(
                       label: "Email",
                       obscureText: false,
                       controller: _emailController,
                     ),
-            
+
                     SizedBox(height: 25),
-            
+
                     // Password
                     PrimaryTextField(
                       label: "Password",
                       obscureText: true,
                       controller: _passwordController,
                     ),
-            
+
                     SizedBox(height: 25),
-            
+
                     // Confirm password
                     PrimaryTextField(
                       label: "Confirm Password",
                       obscureText: true,
                       controller: _confirmPassController,
                     ),
-            
+
                     SizedBox(height: 35),
-            
+
                     // Register button
                     Center(
                       child: PrimaryButton(
@@ -216,9 +260,9 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
                     ),
                   ],
                 ),
-            
+
                 SizedBox(height: 50),
-            
+
                 Center(
                   child: Text(
                     "OR",
@@ -229,9 +273,9 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
                     ),
                   ),
                 ),
-            
-                SizedBox(height: 50),
-            
+
+                SizedBox(height: 25),
+
                 // Sign in with Google
                 SafeArea(
                   child: Padding(

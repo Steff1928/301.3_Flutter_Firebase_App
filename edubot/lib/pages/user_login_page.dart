@@ -2,6 +2,7 @@ import 'package:edubot/components/error_tile.dart';
 import 'package:edubot/components/primary_button.dart';
 import 'package:edubot/components/primary_text_field.dart';
 import 'package:edubot/components/sso_tile.dart';
+import 'package:edubot/pages/password_recovery_page.dart';
 import 'package:edubot/services/authentication/auth_gate.dart';
 import 'package:edubot/services/authentication/auth_manager.dart';
 import 'package:edubot/services/authentication/google_service.dart';
@@ -26,9 +27,12 @@ class _UserLoginPageState extends State<UserLoginPage> {
 
   // Sign user in with Google method
   void signInWithGoogle() async {
+    // Get required services
     final GoogleService googleService = GoogleService();
     final AuthManager authManager = AuthManager();
+
     final navigator = Navigator.of(context);
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
 
     // Clear previous errors
     setState(() {
@@ -47,6 +51,26 @@ class _UserLoginPageState extends State<UserLoginPage> {
     // Attempt google sign in
     await googleService.signInWithGoogle();
 
+    final snackBar = SnackBar(
+      content: Row(
+        children: [
+          Icon(Icons.check_circle, color: Colors.green),
+          SizedBox(width: 16),
+          Flexible(
+            child: Text(
+              "Successful login with: ${authManager.getCurrentUser()?.email}",
+              style: TextStyle(fontFamily: "Nunito", fontSize: 16),
+            ),
+          ),
+        ],
+      ),
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: Color(0xFF1A1A1A),
+      showCloseIcon: true,
+    );
+
+    scaffoldMessenger.showSnackBar(snackBar);
+
     // Dismiss loading circle after user is finished with pop up (either closing it or signing in)
     navigator.pop();
 
@@ -61,9 +85,10 @@ class _UserLoginPageState extends State<UserLoginPage> {
 
   // Sign user in with email and password method
   void signInWithEmailAndPassword(BuildContext context) async {
-    // Get AuthManager and a context reference
+    // Get AuthManager instance
     final AuthManager authManager = AuthManager();
     final navigator = Navigator.of(context);
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
 
     // Clear previous errors
     setState(() {
@@ -86,6 +111,24 @@ class _UserLoginPageState extends State<UserLoginPage> {
           _emailController.text,
           _passwordController.text,
         );
+        final snackBar = SnackBar(
+          content: Row(
+            children: [
+              Icon(Icons.check_circle, color: Colors.green),
+              SizedBox(width: 16),
+              Flexible(
+                child: Text(
+                  "Successfully logged in as: ${authManager.getCurrentUser()?.displayName}",
+                  style: TextStyle(fontFamily: "Nunito", fontSize: 16),
+                ),
+              ),
+            ],
+          ),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Color(0xFF1A1A1A),
+          showCloseIcon: true,
+        );
+        scaffoldMessenger.showSnackBar(snackBar);
       } catch (e) {
         navigator.pop();
         // Set the value of _errorMessage (removing "Exception: " prefix)
@@ -96,13 +139,12 @@ class _UserLoginPageState extends State<UserLoginPage> {
                   : e.toString();
         });
       }
-    } 
-    else {
+    } else {
       setState(() {
-          _errorMessage = "All fields are required.";
-        });
-        navigator.pop();
-        return;
+        _errorMessage = "All fields are required.";
+      });
+      navigator.pop();
+      return;
     }
 
     if (authManager.getCurrentUser() != null) {
@@ -168,13 +210,22 @@ class _UserLoginPageState extends State<UserLoginPage> {
                     // Forgot password
                     Padding(
                       padding: const EdgeInsets.only(right: 48, top: 10),
-                      child: Text(
-                        "Forgot Password?",
-                        style: TextStyle(
-                          fontFamily: "Nunito",
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF05455B),
+                      child: GestureDetector(
+                        onTap:
+                            () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => PasswordRecoveryPage(),
+                              ),
+                            ),
+                        child: Text(
+                          "Forgot Password?",
+                          style: TextStyle(
+                            fontFamily: "Nunito",
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF05455B),
+                          ),
                         ),
                       ),
                     ),
@@ -206,7 +257,7 @@ class _UserLoginPageState extends State<UserLoginPage> {
                   ),
                 ),
 
-                SizedBox(height: 50),
+                SizedBox(height: 25),
 
                 // Google sign in button
                 SafeArea(
