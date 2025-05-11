@@ -51,25 +51,27 @@ class _UserLoginPageState extends State<UserLoginPage> {
     // Attempt google sign in
     await googleService.signInWithGoogle();
 
-    final snackBar = SnackBar(
-      content: Row(
-        children: [
-          Icon(Icons.check_circle, color: Colors.green),
-          SizedBox(width: 16),
-          Flexible(
-            child: Text(
-              "Successful login with: ${authManager.getCurrentUser()?.email}",
-              style: TextStyle(fontFamily: "Nunito", fontSize: 16),
+    if (authManager.getCurrentUser() != null) {
+      final snackBar = SnackBar(
+        content: Row(
+          children: [
+            Icon(Icons.check_circle, color: Colors.green),
+            SizedBox(width: 16),
+            Flexible(
+              child: Text(
+                "Successful login with: ${authManager.getCurrentUser()?.email}",
+                style: TextStyle(fontFamily: "Nunito", fontSize: 16),
+              ),
             ),
-          ),
-        ],
-      ),
-      behavior: SnackBarBehavior.floating,
-      backgroundColor: Color(0xFF1A1A1A),
-      showCloseIcon: true,
-    );
+          ],
+        ),
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: Color(0xFF1A1A1A),
+        showCloseIcon: true,
+      );
 
-    scaffoldMessenger.showSnackBar(snackBar);
+      scaffoldMessenger.showSnackBar(snackBar);
+    }
 
     // Dismiss loading circle after user is finished with pop up (either closing it or signing in)
     navigator.pop();
