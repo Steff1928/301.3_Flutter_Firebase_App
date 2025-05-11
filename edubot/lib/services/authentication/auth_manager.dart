@@ -33,15 +33,15 @@ class AuthManager {
         _firestore.collection("Users").doc(userCredential.user?.uid).set({
           'uid': user!.uid,
           'email': user.email,
-          'fullName': user.displayName,
+          'name': user.displayName,
         });
         print("User registered with name: ${user.displayName}",); // TODO: UI for success message
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
-        throw Exception('Password must be at least 6 characters long.'); // TODO: UI element for if the password is too short
+        throw Exception('Password must be at least 6 characters long.');
       } else if (e.code == 'email-already-in-use') {
-        throw Exception('An account already exists for this email.'); // TODO: UI element for if email already exists
+        throw Exception('An account already exists for this email.');
       } else if (e.code == 'invalid-email') {
         throw Exception('Invalid email.');
       }
@@ -64,7 +64,7 @@ class AuthManager {
         {
         'uid': userCredential.user!.uid,
         'email': email,
-        'fullName': userCredential.user!.displayName,
+        'name': userCredential.user!.displayName,
         },
       );
       

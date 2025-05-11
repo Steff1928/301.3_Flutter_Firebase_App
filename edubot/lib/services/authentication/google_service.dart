@@ -36,7 +36,7 @@ class GoogleService {
         _firestore.collection("Users").doc(userCredential.user?.uid).set({
           'uid': userCredential.user!.uid,
           'email': userCredential.user!.email,
-          'fullName': userCredential.user!.displayName,
+          'name': userCredential.user!.displayName,
         });
       }
     } catch (e) {

@@ -17,7 +17,7 @@ class RegisterAccountPage extends StatefulWidget {
 
 class _RegisterAccountPageState extends State<RegisterAccountPage> {
   // Text controllers for the text fields
-  final TextEditingController _fullNameController = TextEditingController();
+  final TextEditingController _displayNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPassController = TextEditingController();
@@ -85,12 +85,12 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
     if (_confirmPassController.text == _passwordController.text) {
       // Check for full name
       // TODO: Clean up code
-      if (_fullNameController.text != "" && _emailController.text != "" && _passwordController.text != "" && _confirmPassController.text != "") {
+      if (_displayNameController.text != "" && _emailController.text != "" && _passwordController.text != "" && _confirmPassController.text != "") {
         try {
           await authManager.createAccount(
             _emailController.text,
             _passwordController.text,
-            _fullNameController.text,
+            _displayNameController.text,
           );
         } catch (e) {
           // Set the value of _errorMessage (removing "Exception: " prefix)
@@ -169,11 +169,11 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    // Full name
+                    // Display name
                     PrimaryTextField(
-                      label: "Full Name",
+                      label: "Display Name",
                       obscureText: false,
-                      controller: _fullNameController,
+                      controller: _displayNameController,
                     ),
             
                     SizedBox(height: 25),
