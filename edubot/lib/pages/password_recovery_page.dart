@@ -39,7 +39,6 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
       },
     );
 
-
     // Try reset password
     try {
       if (_emailController.text != "") {
@@ -47,14 +46,18 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
         final snackBar = SnackBar(
           content: Row(
             children: [
-              Icon(Icons.check_circle, color: Colors.green,),
-              SizedBox(width: 16,),
-              Flexible(child: Text("Email sent to: ${_emailController.text}", style: TextStyle(fontFamily: "Nunito", fontSize: 16),)),
+              Icon(Icons.check_circle, color: Colors.green),
+              SizedBox(width: 16),
+              Flexible(
+                child: Text(
+                  "Email sent to: ${_emailController.text}",
+                  style: TextStyle(fontFamily: "Nunito", fontSize: 16),
+                ),
+              ),
             ],
           ),
           behavior: SnackBarBehavior.floating,
           backgroundColor: Color(0xFF1A1A1A),
-          
         );
         scaffoldMessager.showSnackBar(snackBar);
       } else {
@@ -106,6 +109,18 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
                       color: Color(0xFF074F67),
+                    ),
+                  ),
+                ),
+
+                Padding(
+                  padding: const EdgeInsets.only(left: 48.0, right: 48, top: 5),
+                  child: Text(
+                    "Enter your email address to receive a password reset link with instructions on what to do next.",
+                    style: TextStyle(
+                      fontFamily: "Nunito",
+                      fontSize: 16,
+                      color: Color(0xFF364B55),
                     ),
                   ),
                 ),
