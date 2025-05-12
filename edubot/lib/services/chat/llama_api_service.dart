@@ -21,14 +21,13 @@ class LlamaApiService {
       "message": content,
       "context": [
         {"role": "user", "content": "Hi"},
-        {"role": "system", "content": "You are extremely helpful and descriptive"},
+        {"role": "system", "content": "You are extremely helpful."},
       ],
     });
 
     // Try send post request to Flask server
     try {
       final response = await http.post(url, headers: headers, body: body);
-
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         return data['response'];

@@ -1,3 +1,4 @@
+import 'package:edubot/components/loading_anim.dart';
 import 'package:edubot/services/chat/message.dart';
 import 'package:flutter/material.dart';
 
@@ -32,13 +33,14 @@ class ChatBubble extends StatelessWidget {
                   ? Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const CircularProgressIndicator(),
+                      const LoadingAnim(),
                       SizedBox(width: 16,),
                       Text(
                         message.content,
                         style: TextStyle(
                           fontFamily: "Nunito",
                           fontSize: 16,
+                          fontStyle: FontStyle.italic,
                           color: Color(0xFF1A1A1A),
                         ),
                       ),

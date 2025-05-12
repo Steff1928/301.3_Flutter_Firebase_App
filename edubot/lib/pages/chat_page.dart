@@ -16,8 +16,18 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
+  // Get the required controllers
   final TextEditingController _userInput = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+  late List<Message> _previousMessages;
 
+  @override
+  void initState() {
+    super.initState();
+    _previousMessages = [];
+  }
+
+  // Get the user's first name in their display name
   String? getFirstName() {
     final AuthManager authManager = AuthManager();
 
@@ -27,6 +37,7 @@ class _ChatPageState extends State<ChatPage> {
     return firstName;
   }
 
+  // Send a response to ChatProvider
   void sendMessage() {
     final chatProvider = context.read<ChatProvider>();
     chatProvider.sendMessage(_userInput.text);
@@ -99,6 +110,20 @@ class _ChatPageState extends State<ChatPage> {
             Expanded(
               child: Consumer<ChatProvider>(
                 builder: (context, chatProvider, child) {
+                  // Scroll to most recent message sent
+                  if (_previousMessages.length != chatProvider.messages.length) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (_scrollController.hasClients) {
+                        _scrollController.animateTo(
+                          _scrollController.position.maxScrollExtent,
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeOut,
+                        );
+                      }
+                    });
+                    _previousMessages = List.from(chatProvider.messages);
+                  }
+
                   // If empty, display welcome message
                   if (chatProvider.messages.isEmpty) {
                     return Column(
@@ -128,6 +153,8 @@ class _ChatPageState extends State<ChatPage> {
 
                   // Return a list of messages from ChatProvider, both from roles 'user' and 'assistant'
                   return ListView.builder(
+                    controller: _scrollController,
+                    // Add an additonal message onto the chat provider messages count to communicate loading times
                     itemCount:
                         chatProvider.messages.length +
                         (chatProvider.isLoading ? 1 : 0),
