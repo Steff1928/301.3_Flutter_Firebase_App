@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 
 class SecondaryButton extends StatelessWidget {
   final String text;
-  final double width;
   final double height;
   final void Function()? onPressed;
 
   const SecondaryButton({
     super.key,
     required this.text,
-    required this.width,
     required this.height,
     required this.onPressed,
   });
@@ -17,6 +15,7 @@ class SecondaryButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
+      // Set the width of the button to be full and add padding
       width: double.infinity,
       height: height,
       child: Padding(
@@ -31,7 +30,6 @@ class SecondaryButton extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15.0),
             ),
-            fixedSize: Size(width, height),
           ),
           label: Text(
             text,

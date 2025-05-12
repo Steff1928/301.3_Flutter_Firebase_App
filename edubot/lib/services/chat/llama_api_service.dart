@@ -35,6 +35,7 @@ class LlamaApiService {
         throw Exception("Server error: ${response.statusCode}");
       }
     } catch (e) {
+      // Handle errors
       throw Exception("Request failed: $e");
     }
 

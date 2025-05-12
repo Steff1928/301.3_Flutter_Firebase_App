@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class SsoTile extends StatelessWidget {
+  // Initialise the required variables
   final String imagePath;
   final double width;
   final double height;
@@ -17,10 +18,12 @@ class SsoTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
+      // Set the width of the button tile to be full and add padding
       width: double.infinity,
       height: height,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 48),
+        // Add button styling
         child: OutlinedButton(
           onPressed: onPressed,
           style: OutlinedButton.styleFrom(
@@ -32,6 +35,7 @@ class SsoTile extends StatelessWidget {
               borderRadius: BorderRadius.circular(5),
             ),
           ),
+          // Set the tile content to text passed in and the image
           child: Row(
             children: [
               Padding(

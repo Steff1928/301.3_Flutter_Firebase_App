@@ -9,10 +9,10 @@ class GoogleService {
   // Google sign in
   Future<void> signInWithGoogle() async {
     // Sign in with credential
-
     final GoogleSignIn googleSignIn = GoogleSignIn();
+
     try {
-      // Begin interactive sign in process
+      // Try begin interactive sign in process
       final GoogleSignInAccount? gUser = await googleSignIn.signIn();
 
       if (gUser == null) {
@@ -28,6 +28,7 @@ class GoogleService {
           accessToken: gAuth.accessToken,
         );
 
+        // Sign in to Firebase with credential
         final userCredential = await FirebaseAuth.instance.signInWithCredential(
           credential,
         );
@@ -40,6 +41,7 @@ class GoogleService {
         });
       }
     } catch (e) {
+      // Handle errors silently
       return;
     }
   }

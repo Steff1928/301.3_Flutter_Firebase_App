@@ -6,9 +6,11 @@ class ChatHistoryTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
+      // Set the width of the tile to be full and add padding
       width: double.infinity,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15),
+        // Create an OutlinedButtom with rounded corners and shadow
         child: OutlinedButton(
           style: OutlinedButton.styleFrom(
             foregroundColor: Color(0xFF05455B),
@@ -19,7 +21,8 @@ class ChatHistoryTile extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
             ),
           ),
-          onPressed: () {},
+          onPressed: () {}, // TODO: Load conversation item from chat memory
+          // Set the button content to be a Row
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

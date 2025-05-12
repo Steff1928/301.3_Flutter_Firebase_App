@@ -8,6 +8,7 @@ class ErrorTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
+      // Set the padding for the error tile and establish container style
       padding: const EdgeInsets.only(top: 10.0, left: 48, right: 48),
       child: Container(
         decoration: BoxDecoration(

@@ -2,21 +2,22 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthManager {
-  // instance of auth & firestore
+  // Get instance of auth & firestore
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // get current user
+  // Get current user method
   User? getCurrentUser() {
     return _auth.currentUser;
   }
 
-  // Reset password
+  // Reset password method
   Future<void> resetPassword(String email) async {
     try {
       // Send user reset email
       await _auth.sendPasswordResetEmail(email: email);
     } on FirebaseAuthException catch (e) {
+      // Handle errors
       if (e.code == 'invalid-email') {
         throw Exception("Invalid Email");
       } else {
@@ -25,7 +26,7 @@ class AuthManager {
     }
   }
 
-  // sign up
+  // Sign up method
   Future<void> createAccount(String email, String password, String fullName) async {
     try {
       // Register new user
@@ -44,6 +45,7 @@ class AuthManager {
         // Get the updated user
         user = getCurrentUser();
 
+        // Save user info to Firestore
         _firestore.collection("Users").doc(userCredential.user?.uid).set({
           'uid': user!.uid,
           'email': user.email,
@@ -51,6 +53,7 @@ class AuthManager {
         });
       }
     } on FirebaseAuthException catch (e) {
+      // Handle errors
       if (e.code == 'weak-password') {
         throw Exception('Password must be at least 6 characters long.');
       } else if (e.code == 'email-already-in-use') {
@@ -65,10 +68,10 @@ class AuthManager {
     } 
   }
 
-  // sign in
+  // Sign in method
   Future<UserCredential> signIn(String email, String password) async {
     try {
-      // Sign user in
+      // Try sign user in
       final UserCredential userCredential = await _auth
           .signInWithEmailAndPassword(email: email, password: password);
 
@@ -83,6 +86,7 @@ class AuthManager {
       
       return userCredential;
     } on FirebaseAuthException catch (e) {
+      // Handle errors
       if (e.code == 'invalid-credential') {
         throw Exception('Invalid email or password.');
       } else if (e.code == 'invalid-email') {
@@ -95,8 +99,8 @@ class AuthManager {
     }
   }
 
-  // sign out
+  // Sign out method
   Future<void> signOut() async {
-    return await _auth.signOut();
+    return await _auth.signOut(); // Sign out user
   }
 }

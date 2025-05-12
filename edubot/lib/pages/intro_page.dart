@@ -105,7 +105,6 @@ class IntroPage extends StatelessWidget {
                       children: [
                         PrimaryButton(
                           text: "Sign In",
-                          width: 318,
                           height: 45,
                           onPressed: () {
                             Navigator.push(
@@ -122,7 +121,6 @@ class IntroPage extends StatelessWidget {
                         // Register button
                         SecondaryButton(
                           text: "Create Account",
-                          width: 318,
                           height: 45,
                           onPressed: () {
                             Navigator.push(

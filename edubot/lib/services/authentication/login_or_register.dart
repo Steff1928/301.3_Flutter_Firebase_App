@@ -31,6 +31,7 @@ class _LoginOrRegisterState extends State<LoginOrRegister> {
 
   @override
   Widget build(BuildContext context) {
+    // Return the appropriate page based on the boolean value
     if (_showLoginPage) {
       return UserLoginPage(onTap: togglePages,);
     } else {

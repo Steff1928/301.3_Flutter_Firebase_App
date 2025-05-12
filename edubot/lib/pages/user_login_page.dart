@@ -9,7 +9,7 @@ import 'package:edubot/services/authentication/google_service.dart';
 import 'package:flutter/material.dart';
 
 class UserLoginPage extends StatefulWidget {
-  final void Function()? onTap;
+  final void Function()? onTap; // Function to navigate to the sign up page
 
   const UserLoginPage({super.key, required this.onTap});
 
@@ -51,6 +51,7 @@ class _UserLoginPageState extends State<UserLoginPage> {
     // Attempt google sign in
     await googleService.signInWithGoogle();
 
+    // Check if user is signed in (all messages displayed in the snackbar)
     if (authManager.getCurrentUser() != null) {
       final snackBar = SnackBar(
         content: Row(
@@ -126,13 +127,14 @@ class _UserLoginPageState extends State<UserLoginPage> {
       },
     );
 
+    // If all fields are filled, try login
     if (_emailController.text != "" && _passwordController.text != "") {
-      // Try login
       try {
         await authManager.signIn(
           _emailController.text,
           _passwordController.text,
         );
+        // Show snackbar if login is successful
         final snackBar = SnackBar(
           content: Row(
             children: [
@@ -162,6 +164,7 @@ class _UserLoginPageState extends State<UserLoginPage> {
         });
       }
     } else {
+      // Show error message if any field is empty
       setState(() {
         _errorMessage = "All fields are required.";
       });
@@ -169,6 +172,7 @@ class _UserLoginPageState extends State<UserLoginPage> {
       return;
     }
 
+    // Remove all pages in the navigation stack
     if (authManager.getCurrentUser() != null) {
       navigator.pushAndRemoveUntil(
         MaterialPageRoute(builder: (_) => AuthGate()),
@@ -233,6 +237,7 @@ class _UserLoginPageState extends State<UserLoginPage> {
                     Padding(
                       padding: const EdgeInsets.only(right: 48, top: 10),
                       child: GestureDetector(
+                        // Navigate to password recovery page
                         onTap:
                             () => Navigator.push(
                               context,
@@ -258,7 +263,6 @@ class _UserLoginPageState extends State<UserLoginPage> {
                     Center(
                       child: PrimaryButton(
                         text: "Login",
-                        width: 318,
                         height: 45,
                         onPressed: () => signInWithEmailAndPassword(context),
                       ),
@@ -279,7 +283,7 @@ class _UserLoginPageState extends State<UserLoginPage> {
                   ),
                 ),
 
-                SizedBox(height: 25),
+                SizedBox(height: 50),
 
                 // Google sign in button
                 SafeArea(

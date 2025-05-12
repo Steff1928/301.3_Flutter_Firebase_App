@@ -3,6 +3,7 @@ import 'package:edubot/services/chat/message.dart';
 import 'package:flutter/material.dart';
 
 class ChatBubble extends StatelessWidget {
+  // Get the message and loading state
   final Message message;
   final bool isLoading;
   const ChatBubble({super.key, required this.message, this.isLoading = false});
@@ -10,7 +11,12 @@ class ChatBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Align(
-      alignment: message.isUser ? Alignment.centerRight : Alignment.centerLeft,
+      alignment:
+          message.isUser
+              ? Alignment.centerRight
+              : Alignment
+                  .centerLeft, // Check if the message is from the user and align accordingly
+      // Set the padding based on the message sender
       child: Padding(
         padding:
             message.isUser
@@ -20,7 +26,13 @@ class ChatBubble extends StatelessWidget {
           padding: EdgeInsets.all(15),
           margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
           decoration: BoxDecoration(
-            color: message.isUser ? Color(0xFF99DAE6) : Color(0xFFF0F0F0),
+            color:
+                message.isUser
+                    ? Color(0xFF99DAE6)
+                    : Color(
+                      0xFFF0F0F0,
+                    ), // Set the background color based on the message sender
+            // Set the border radius based on the message sender
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(12),
               topRight: Radius.circular(12),
@@ -28,13 +40,14 @@ class ChatBubble extends StatelessWidget {
               bottomRight: message.isUser ? Radius.zero : Radius.circular(12),
             ),
           ),
+          // If AI message is loading, show loading animation, else display the message
           child:
               isLoading
                   ? Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       const LoadingAnim(),
-                      SizedBox(width: 16,),
+                      SizedBox(width: 16),
                       Text(
                         message.content,
                         style: TextStyle(

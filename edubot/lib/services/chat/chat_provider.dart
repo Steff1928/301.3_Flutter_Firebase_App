@@ -58,6 +58,4 @@ class ChatProvider extends ChangeNotifier {
     // Update UI
     notifyListeners();
   }
-
-
 }

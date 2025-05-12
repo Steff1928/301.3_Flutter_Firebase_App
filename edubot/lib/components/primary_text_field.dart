@@ -18,10 +18,13 @@ class PrimaryTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
+      // Set the padding for the text field and establish required properties
       padding: const EdgeInsets.symmetric(horizontal: 47),
       child: TextFormField(
         controller: controller,
         obscureText: obscureText,
+        
+        // Text field styling
         style: TextStyle(color: Color(0xFF1A1A1A)),
         cursorColor: Color(0xFF074F67),
         

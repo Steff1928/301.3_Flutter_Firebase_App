@@ -8,9 +8,12 @@ import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 
 void main() async {
+  // Initialize Firebase
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(
+    // Initialize the app within a ChangeNotifierProvider
+    // to provide the ChatProvider to the entire app
     ChangeNotifierProvider(
       create: (context) => ChatProvider(),
       child: const MyApp(),
@@ -23,6 +26,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Set the app theme, itle and additional properties
     return MaterialApp(
       title: "EduBot",
       debugShowCheckedModeBanner: false,

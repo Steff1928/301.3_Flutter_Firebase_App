@@ -13,7 +13,7 @@ class PasswordRecoveryPage extends StatefulWidget {
 class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
   final TextEditingController _emailController = TextEditingController();
 
-  String? _errorMessage;
+  String? _errorMessage; // Variable to store error message
 
   // Password recovery method
   void resestPassword(BuildContext context) async {
@@ -38,7 +38,7 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
       },
     );
 
-    // Try reset password
+    // Try reset password (Show snackbar if successful)
     try {
       if (_emailController.text != "") {
         await authManager.resetPassword(_emailController.text);
@@ -60,7 +60,7 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
         );
         scaffoldMessager.showSnackBar(snackBar);
       } else {
-        // Email is required
+        // Catch error if email is empty
         setState(() {
           _errorMessage = "Email is required";
         });
@@ -80,6 +80,7 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // Top bar
       appBar: AppBar(
         forceMaterialTransparency: true,
         leading: Padding(
@@ -113,6 +114,7 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
                   ),
                 ),
 
+                // Subheading
                 Padding(
                   padding: const EdgeInsets.only(left: 48.0, right: 48, top: 5),
                   child: Text(
@@ -127,7 +129,7 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
 
                 SizedBox(height: 25),
 
-                // Text fields
+                // Text field & button
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
@@ -145,7 +147,6 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
                     Center(
                       child: PrimaryButton(
                         text: "Submit",
-                        width: 318,
                         height: 45,
                         onPressed: () => resestPassword(context),
                       ),

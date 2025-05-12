@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 
 class RegisterAccountPage extends StatefulWidget {
   const RegisterAccountPage({super.key, required this.onTap});
-  final void Function()? onTap;
+  final void Function()? onTap; // Callback function to switch to login page
 
   @override
   State<RegisterAccountPage> createState() => _RegisterAccountPageState();
@@ -48,7 +48,7 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
     // Attempt google sign in
     await googleService.signInWithGoogle();
 
-    // Check if user is signed in
+    // Check if user is signed in (all messages displayed in the snackbar)
     if (authManager.getCurrentUser() != null) {
       final snackBar = SnackBar(
         content: Row(
@@ -128,7 +128,7 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
 
     // Check if confirm pass matches pass
     if (_confirmPassController.text == _passwordController.text) {
-      // Check for full name
+      // Check to see if all fields are filled, if so, attempt to create an account
       // TODO: Clean up code
       if (_displayNameController.text != "" &&
           _emailController.text != "" &&
@@ -140,6 +140,7 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
             _passwordController.text,
             _displayNameController.text,
           );
+          // Show snackbar if account creation is successful
           final snackBar = SnackBar(
             content: Row(
               children: [
@@ -159,7 +160,7 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
           );
           scaffoldMessenger.showSnackBar(snackBar);
         } catch (e) {
-          // Set the value of _errorMessage (removing "Exception: " prefix)
+          // Set the value of "_errorMessage" (removing "Exception: " prefix)
           setState(() {
             _errorMessage =
                 e is Exception
@@ -201,6 +202,7 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // Page style
       backgroundColor: Color(0xFFFAFAFA),
       body: SingleChildScrollView(
         child: Center(
@@ -223,7 +225,7 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
                   ),
                 ),
 
-                // Display error message
+                // Display error message if it exists
                 if (_errorMessage != null)
                   ErrorTile(errorMessage: _errorMessage.toString()),
 
@@ -273,7 +275,6 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
                     Center(
                       child: PrimaryButton(
                         text: "Sign Up",
-                        width: 318,
                         height: 45,
                         onPressed: () => registerNewUser(context),
                       ),
@@ -294,7 +295,7 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
                   ),
                 ),
 
-                SizedBox(height: 25),
+                SizedBox(height: 50),
 
                 // Sign in with Google
                 SafeArea(

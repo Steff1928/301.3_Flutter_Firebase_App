@@ -21,6 +21,7 @@ class _ChatPageState extends State<ChatPage> {
   final ScrollController _scrollController = ScrollController();
   late List<Message> _previousMessages;
 
+  // Initialise the state for the previous messages
   @override
   void initState() {
     super.initState();
@@ -47,7 +48,7 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Navgiation bar
+      // Top bar
       appBar: AppBar(
         forceMaterialTransparency: true,
         actionsPadding: EdgeInsets.symmetric(vertical: 10),
@@ -110,7 +111,7 @@ class _ChatPageState extends State<ChatPage> {
             Expanded(
               child: Consumer<ChatProvider>(
                 builder: (context, chatProvider, child) {
-                  // Scroll to most recent message sent
+                  // Scroll to most recent message sent if the message count has changed
                   if (_previousMessages.length != chatProvider.messages.length) {
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       if (_scrollController.hasClients) {
@@ -121,7 +122,7 @@ class _ChatPageState extends State<ChatPage> {
                         );
                       }
                     });
-                    _previousMessages = List.from(chatProvider.messages);
+                    _previousMessages = List.from(chatProvider.messages); // Add a copy of the messages to the previous messages
                   }
 
                   // If empty, display welcome message
@@ -153,8 +154,8 @@ class _ChatPageState extends State<ChatPage> {
 
                   // Return a list of messages from ChatProvider, both from roles 'user' and 'assistant'
                   return ListView.builder(
-                    controller: _scrollController,
-                    // Add an additonal message onto the chat provider messages count to communicate loading times
+                    controller: _scrollController, // Assign the scroll controller
+                    // Add an additonal message onto the chat provider messages count if loading
                     itemCount:
                         chatProvider.messages.length +
                         (chatProvider.isLoading ? 1 : 0),
@@ -189,11 +190,11 @@ class _ChatPageState extends State<ChatPage> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  // TO DO: Upload file functionality
+                  // Attach file button
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 5.0),
                     child: IconButton(
-                      onPressed: () {},
+                      onPressed: () {}, // TODO: Upload file functionality
                       icon: Icon(
                         Icons.folder_open_rounded,
                         size: 24,
