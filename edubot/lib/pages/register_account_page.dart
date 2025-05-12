@@ -57,7 +57,7 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
             SizedBox(width: 16),
             Flexible(
               child: Text(
-                "Successful login with: ${authManager.getCurrentUser()?.email}",
+                "Login with Google successful",
                 style: TextStyle(fontFamily: "Nunito", fontSize: 16),
               ),
             ),
@@ -70,7 +70,7 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
 
       scaffoldMessenger.showSnackBar(snackBar);
     } else {
-      // Show error notification if Goole sign in fails
+      // Show error notification if Google sign in fails
       final snackBar = SnackBar(
         content: Row(
           children: [
@@ -147,7 +147,7 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
                 SizedBox(width: 16),
                 Flexible(
                   child: Text(
-                    "User registered with name: ${authManager.getCurrentUser()?.displayName}",
+                    "Account created successfully",
                     style: TextStyle(fontFamily: "Nunito", fontSize: 16),
                   ),
                 ),

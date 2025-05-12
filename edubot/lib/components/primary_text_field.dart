@@ -5,12 +5,14 @@ class PrimaryTextField extends StatelessWidget {
   final TextEditingController controller;
   final String label;
   final bool obscureText;
+  final String? errorMessage; // Optional
 
   const PrimaryTextField({
     super.key,
     required this.controller,
     required this.label,
     required this.obscureText,
+    this.errorMessage,
   });
 
   @override
@@ -21,15 +23,27 @@ class PrimaryTextField extends StatelessWidget {
         controller: controller,
         obscureText: obscureText,
         style: TextStyle(color: Color(0xFF1A1A1A)),
+        cursorColor: Color(0xFF074F67),
+        
 
         // Decoration Style
         decoration: InputDecoration(
           contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
           labelText: label,
+          error: errorMessage != null ? Padding(
+            padding: const EdgeInsets.only(top: 5.0),
+            child: Row(
+              children: [
+                Icon(Icons.error, color: Color(0xFFCC0000), size: 24,),
+                SizedBox(width: 10,),
+                Text("$errorMessage", style: TextStyle(color: Color(0xFFCC0000)),),
+              ],
+            ),
+          ) : null,
           labelStyle: TextStyle(
             fontFamily: "Nunito",
             fontSize: 16,
-            color: Color.fromARGB(200, 26, 26, 26),
+            color: errorMessage == null ? Color(0xFF1A1A1A) : Color(0xFFCC0000),
           ),
 
           // Background colour
@@ -38,7 +52,7 @@ class PrimaryTextField extends StatelessWidget {
 
           // Border management
           border: OutlineInputBorder(
-            borderSide: BorderSide.none,
+            borderSide: errorMessage == null ? BorderSide.none : BorderSide(),
             borderRadius: BorderRadius.circular(5),
           ),
           focusedBorder: OutlineInputBorder(

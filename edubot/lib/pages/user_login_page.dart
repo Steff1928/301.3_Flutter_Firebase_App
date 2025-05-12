@@ -59,7 +59,7 @@ class _UserLoginPageState extends State<UserLoginPage> {
             SizedBox(width: 16),
             Flexible(
               child: Text(
-                "Successful login with: ${authManager.getCurrentUser()?.email}",
+                "Login with Google successful",
                 style: TextStyle(fontFamily: "Nunito", fontSize: 16),
               ),
             ),
@@ -140,7 +140,7 @@ class _UserLoginPageState extends State<UserLoginPage> {
               SizedBox(width: 16),
               Flexible(
                 child: Text(
-                  "Successfully logged in as: ${authManager.getCurrentUser()?.displayName}",
+                  "Login successful",
                   style: TextStyle(fontFamily: "Nunito", fontSize: 16),
                 ),
               ),

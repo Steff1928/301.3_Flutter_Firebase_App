@@ -1,4 +1,3 @@
-import 'package:edubot/components/error_tile.dart';
 import 'package:edubot/components/primary_button.dart';
 import 'package:edubot/components/primary_text_field.dart';
 import 'package:edubot/services/authentication/auth_manager.dart';
@@ -82,6 +81,7 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        forceMaterialTransparency: true,
         leading: Padding(
           padding: const EdgeInsets.only(top: 10.0, left: 10),
           child: IconButton(
@@ -116,7 +116,7 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
                 Padding(
                   padding: const EdgeInsets.only(left: 48.0, right: 48, top: 5),
                   child: Text(
-                    "Enter your email address to receive a password reset link with instructions on what to do next.",
+                    "Enter your email address to receive a password reset link.",
                     style: TextStyle(
                       fontFamily: "Nunito",
                       fontSize: 16,
@@ -124,10 +124,6 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
                     ),
                   ),
                 ),
-
-                // Display error message
-                if (_errorMessage != null)
-                  ErrorTile(errorMessage: _errorMessage.toString()),
 
                 SizedBox(height: 25),
 
@@ -140,6 +136,7 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
                       label: "Email",
                       obscureText: false,
                       controller: _emailController,
+                      errorMessage: _errorMessage,
                     ),
 
                     SizedBox(height: 35),
