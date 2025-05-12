@@ -1,8 +1,12 @@
+import 'package:edubot/components/chat_bubble.dart';
 import 'package:edubot/components/secondary_text_field.dart';
 import 'package:edubot/pages/chat_history.dart';
 import 'package:edubot/pages/settings_page.dart';
 import 'package:edubot/services/authentication/auth_manager.dart';
+import 'package:edubot/services/chat/chat_provider.dart';
+import 'package:edubot/services/chat/message.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -23,14 +27,21 @@ class _ChatPageState extends State<ChatPage> {
     return firstName;
   }
 
+  void sendMessage() {
+    final chatProvider = context.read<ChatProvider>();
+    chatProvider.sendMessage(_userInput.text);
+    _userInput.clear();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       // Navgiation bar
       appBar: AppBar(
-        actionsPadding: EdgeInsets.only(top: 10),
+        forceMaterialTransparency: true,
+        actionsPadding: EdgeInsets.symmetric(vertical: 10),
         title: Padding(
-          padding: const EdgeInsets.only(top: 10),
+          padding: const EdgeInsets.symmetric(vertical: 10),
           child: Text(
             "Edubot",
             style: TextStyle(
@@ -41,11 +52,15 @@ class _ChatPageState extends State<ChatPage> {
             ),
           ),
         ),
+
+        // Navigation actions
         actions: [
+          // TODO: Start new chat
           IconButton(
             icon: Icon(Icons.loupe_rounded, size: 24, color: Color(0xFF074F67)),
             onPressed: () {},
           ),
+          // History
           IconButton(
             icon: Icon(
               Icons.history_rounded,
@@ -60,6 +75,7 @@ class _ChatPageState extends State<ChatPage> {
               );
             },
           ),
+          // Settings
           IconButton(
             icon: Icon(
               Icons.settings_rounded,
@@ -76,41 +92,73 @@ class _ChatPageState extends State<ChatPage> {
         ],
       ),
 
-      // TODO: Chat container
+      // Chat container
       body: SafeArea(
         child: Column(
           children: [
             Expanded(
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Welcome, ${getFirstName()}",
-                      style: TextStyle(
-                        fontFamily: "Nunito",
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF1A1A1A),
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      "Start typing to get started",
-                      style: TextStyle(
-                        fontFamily: "Nunito",
-                        fontSize: 16,
-                        color: Color(0xFF364B55),
-                      ),
-                    ),
-                  ],
-                ),
+              child: Consumer<ChatProvider>(
+                builder: (context, chatProvider, child) {
+                  // If empty, display welcome message
+                  if (chatProvider.messages.isEmpty) {
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Welcome, ${getFirstName()}",
+                          style: TextStyle(
+                            fontFamily: "Nunito",
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF1A1A1A),
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        Text(
+                          "Start typing to get started",
+                          style: TextStyle(
+                            fontFamily: "Nunito",
+                            fontSize: 16,
+                            color: Color(0xFF364B55),
+                          ),
+                        ),
+                      ],
+                    );
+                  }
+
+                  // Return a list of messages from ChatProvider, both from roles 'user' and 'assistant'
+                  return ListView.builder(
+                    itemCount:
+                        chatProvider.messages.length +
+                        (chatProvider.isLoading ? 1 : 0),
+                    itemBuilder: (context, index) {
+                      // If this is the last item we are loading, show the loading bubble
+                      if (chatProvider.isLoading &&
+                          index == chatProvider.messages.length) {
+                        return ChatBubble(
+                          message: Message(
+                            content: "Loading...",
+                            isUser: false,
+                            timeStamp: DateTime.now(),
+                          ),
+                          isLoading: true,
+                        );
+                      }
+
+                      // Get each message
+                      final message = chatProvider.messages[index];
+
+                      // return message
+                      return ChatBubble(message: message);
+                    },
+                  );
+                },
               ),
             ),
 
             // User input box
             Padding(
-              padding: const EdgeInsets.only(bottom: 10.0),
+              padding: const EdgeInsets.symmetric(vertical: 10.0),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
@@ -139,11 +187,10 @@ class _ChatPageState extends State<ChatPage> {
                         borderRadius: BorderRadius.circular(25),
                       ),
                       child: IconButton(
-                        onPressed: () {},
-                        icon: Icon(
-                          Icons.send_rounded,
-                          color: Color(0xFFFAFAFA),
-                        ),
+                        onPressed: sendMessage,
+                        icon: Icon(Icons.send_rounded),
+                        disabledColor: Colors.grey,
+                        color: Color(0xFFFAFAFA),
                       ),
                     ),
                   ),
