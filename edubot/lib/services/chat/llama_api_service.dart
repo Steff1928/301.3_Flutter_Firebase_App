@@ -11,20 +11,21 @@ class LlamaApiService {
   // Get the previous user and assistant responses
   late List<String> previousUserMessages = [];
   late List<String> previousAssistantMessages = [];
-  
-  Future<String> sendMessageToFlask(List<Map<String, String>> context) async {
 
+  Future<String> sendMessageToFlask(List<Map<String, String>> context) async {
     final url = Uri.parse(
-      'http://10.0.2.2:5000/safe_chat' // Flask Url (Android IP: 10.0.2.2 - Web IP: localhost or 127.0.0.0)
+      'http://10.0.2.2:5000/safe_chat', // Flask Url (Android IP: 10.0.2.2 - Web IP: localhost or 127.0.0.0)
     );
 
     // Headers
     final headers = {'Content-Type': 'application/json'};
 
     // JSON Payload
-    final body = jsonEncode({
-      "context": context,
-    });
+    final body = jsonEncode(
+      {
+        "context": context,
+      }
+    );
 
     // Try send post request to Flask server
     try {
@@ -40,6 +41,5 @@ class LlamaApiService {
       // Handle errors
       throw Exception("Request failed: $e");
     }
-
   }
 }

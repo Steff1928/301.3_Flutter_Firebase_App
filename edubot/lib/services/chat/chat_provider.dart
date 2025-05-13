@@ -89,6 +89,7 @@ class ChatProvider extends ChangeNotifier {
 
     // Try send message & recieve response
     try {
+      // Create a list of maps as a formattedContext to store message content and user/assistant roles
       List<Map<String, String>> formattedContext =
           _messages.map((m) {
             return {
@@ -97,6 +98,7 @@ class ChatProvider extends ChangeNotifier {
             };
           }).toList();
 
+      // Send through a response to Flask server with formattedContext
       final response = await _apiService.sendMessageToFlask(formattedContext);
 
       // Response message from Llama
