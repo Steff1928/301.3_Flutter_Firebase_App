@@ -14,7 +14,7 @@ class LlamaApiService {
 
   Future<String> sendMessageToFlask(List<Map<String, String>> context) async {
     final url = Uri.parse(
-      'http://10.0.2.2:5000/safe_chat', // Flask Url (Android IP: 10.0.2.2 - Web IP: localhost or 127.0.0.0)
+      'http://10.0.2.2:5001/safe_chat', // Flask Url (Android IP: 10.0.2.2 - Web IP: localhost or 127.0.0.0)
     );
 
     // Headers
