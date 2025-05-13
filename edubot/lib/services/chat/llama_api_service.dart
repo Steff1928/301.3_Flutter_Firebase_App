@@ -8,9 +8,14 @@ Service class to handle Llama API
 */
 
 class LlamaApiService {
-  Future<String> sendMessageToFlask(String content) async {
+  // Get the previous user and assistant responses
+  late List<String> previousUserMessages = [];
+  late List<String> previousAssistantMessages = [];
+  
+  Future<String> sendMessageToFlask(String context) async {
+
     final url = Uri.parse(
-      'http://localhost:5000/safe_chat' // Flask Url (Android IP: 10.0.2.2 - Web IP: localhost or 127.0.0.0)
+      'http://10.0.2.2:5000/safe_chat' // Flask Url (Android IP: 10.0.2.2 - Web IP: localhost or 127.0.0.0)
     );
 
     // Headers
@@ -18,9 +23,10 @@ class LlamaApiService {
 
     // JSON Payload
     final body = jsonEncode({
-      "message": content,
+      "message": context,
       "context": [
-        {"role": "user", "content": "Hi"},
+        {"role": "user", "content": context},
+        {"role": "assistant", "content": context},
         {"role": "system", "content": "You are a helpful assistant."},
       ],
     });
@@ -38,6 +44,5 @@ class LlamaApiService {
       // Handle errors
       throw Exception("Request failed: $e");
     }
-
   }
 }

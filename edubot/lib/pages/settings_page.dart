@@ -1,7 +1,9 @@
 import 'package:edubot/components/settings_tile.dart';
 import 'package:edubot/services/authentication/auth_gate.dart';
 import 'package:edubot/services/authentication/auth_manager.dart';
+import 'package:edubot/services/chat/chat_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class SettingsPage extends StatelessWidget {
   SettingsPage({super.key});
@@ -12,8 +14,10 @@ class SettingsPage extends StatelessWidget {
   void logout(BuildContext context) async {
     final AuthManager authManager = AuthManager();
     final navigator = Navigator.of(context);
+    final chatProviderContext = Provider.of<ChatProvider>(context, listen: false);
 
     await authManager.signOut();
+    chatProviderContext.removeMessage(); 
 
     if (authManager.getCurrentUser() == null) {
       navigator.pushAndRemoveUntil(

@@ -21,11 +21,15 @@ class _ChatPageState extends State<ChatPage> {
   final ScrollController _scrollController = ScrollController();
   late List<Message> _previousMessages;
 
-  // Initialise the state for the previous messages
+
   @override
   void initState() {
     super.initState();
+     // Initialise the state for the previous messages
     _previousMessages = [];
+
+    // Communicate with ChatProvider to load messages from Firestore
+    Provider.of<ChatProvider>(context, listen: false).loadMessagesFromFirestore(); 
   }
 
   // Get the user's first name in their display name
@@ -112,7 +116,9 @@ class _ChatPageState extends State<ChatPage> {
               child: Consumer<ChatProvider>(
                 builder: (context, chatProvider, child) {
                   // Scroll to most recent message sent if the message count has changed
-                  if (_previousMessages.length != chatProvider.messages.length) {
+                  // chatProvider.loadMessagesFromFirestore();
+                  if (_previousMessages.length !=
+                      chatProvider.messages.length) {
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       if (_scrollController.hasClients) {
                         _scrollController.animateTo(
@@ -122,7 +128,9 @@ class _ChatPageState extends State<ChatPage> {
                         );
                       }
                     });
-                    _previousMessages = List.from(chatProvider.messages); // Add a copy of the messages to the previous messages
+                    _previousMessages = List.from(
+                      chatProvider.messages,
+                    ); // Add a copy of the messages to the previous messages
                   }
 
                   // If empty, display welcome message
@@ -154,7 +162,8 @@ class _ChatPageState extends State<ChatPage> {
 
                   // Return a list of messages from ChatProvider, both from roles 'user' and 'assistant'
                   return ListView.builder(
-                    controller: _scrollController, // Assign the scroll controller
+                    controller:
+                        _scrollController, // Assign the scroll controller
                     // Add an additonal message onto the chat provider messages count if loading
                     itemCount:
                         chatProvider.messages.length +

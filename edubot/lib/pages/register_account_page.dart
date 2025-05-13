@@ -298,46 +298,44 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
                 SizedBox(height: 50),
 
                 // Sign in with Google
-                SafeArea(
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 10.0),
-                    child: Column(
-                      children: [
-                        SsoTile(
-                          onPressed: signInWithGoogle,
-                          imagePath: "lib/assets/images/google.png",
-                          width: 318,
-                          height: 52,
-                        ),
-                        SizedBox(height: 15),
-                        // Register Link
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "Already have an account? ",
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 50.0),
+                  child: Column(
+                    children: [
+                      SsoTile(
+                        onPressed: signInWithGoogle,
+                        imagePath: "lib/assets/images/google.png",
+                        width: 318,
+                        height: 52,
+                      ),
+                      SizedBox(height: 15),
+                      // Register Link
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Already have an account? ",
+                            style: TextStyle(
+                              fontFamily: "Nunito",
+                              fontSize: 16,
+                              color: Color(0xFF364B55),
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: widget.onTap,
+                            child: Text(
+                              "Sign In",
                               style: TextStyle(
                                 fontFamily: "Nunito",
                                 fontSize: 16,
-                                color: Color(0xFF364B55),
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF05455B),
                               ),
                             ),
-                            GestureDetector(
-                              onTap: widget.onTap,
-                              child: Text(
-                                "Sign In",
-                                style: TextStyle(
-                                  fontFamily: "Nunito",
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xFF05455B),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
               ],

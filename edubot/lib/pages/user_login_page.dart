@@ -286,21 +286,23 @@ class _UserLoginPageState extends State<UserLoginPage> {
                 SizedBox(height: 50),
 
                 // Google sign in button
-                SafeArea(
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 10.0),
-                    child: Column(
-                      children: [
-                        SsoTile(
-                          onPressed: signInWithGoogle,
-                          imagePath: "lib/assets/images/google.png",
-                          width: 318,
-                          height: 52,
-                        ),
-
-                        // Register Link
-                        SizedBox(height: 15),
-                        Row(
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 10.0),
+                  child: Column(
+                    children: [
+                      SsoTile(
+                        onPressed: signInWithGoogle,
+                        imagePath: "lib/assets/images/google.png",
+                        width: 318,
+                        height: 52,
+                      ),
+                
+                      // Register Link
+                      SizedBox(height: 15),
+                      
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 50.0),
+                        child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
@@ -325,8 +327,8 @@ class _UserLoginPageState extends State<UserLoginPage> {
                             ),
                           ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ],
