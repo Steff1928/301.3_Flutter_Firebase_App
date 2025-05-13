@@ -44,5 +44,6 @@ class LlamaApiService {
       // Handle errors
       throw Exception("Request failed: $e");
     }
+
   }
 }

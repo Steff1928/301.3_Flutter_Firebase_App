@@ -27,8 +27,10 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
 
   // Sign user in with Google method
   void signInWithGoogle() async {
+    // Get required services
     final GoogleService googleService = GoogleService();
     final AuthManager authManager = AuthManager();
+
     final navigator = Navigator.of(context);
     final scaffoldMessenger = ScaffoldMessenger.of(context);
 
@@ -71,7 +73,7 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
 
       scaffoldMessenger.showSnackBar(snackBar);
     } else {
-      // Show error notification if Google sign in fails
+      // Show error notification if Goole sign in fails
       final snackBar = SnackBar(
         content: Row(
           children: [
@@ -88,9 +90,12 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
         behavior: SnackBarBehavior.floating,
         backgroundColor: Color(0xFF1A1A1A),
       );
-      
+
       scaffoldMessenger.showSnackBar(snackBar);
     }
+
+    // Dismiss loading circle after user is finished with pop up (either closing it or signing in)
+    navigator.pop();
 
     // Remove all pages in the navigation stack
     if (authManager.getCurrentUser() != null) {
