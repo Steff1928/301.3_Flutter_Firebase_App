@@ -16,9 +16,13 @@ class ChatProvider extends ChangeNotifier {
   List<Message> get messages => _messages;
   bool get isLoading => _isLoading;
 
+  // Save messages to Firestore method
   Future<void> saveMessagesToFirestore() async {
+     // Get instance of auth & firestore
     final firestore = FirebaseFirestore.instance;
     final AuthManager authManager = AuthManager();
+
+    // Save the list of messages to Firebase in JSON format
     await firestore
         .collection("Messages")
         .doc(authManager.getCurrentUser()?.uid)
@@ -28,19 +32,24 @@ class ChatProvider extends ChangeNotifier {
         });
   }
 
+  // Remove message method
   void removeMessage() {
     _messages.removeRange(0, messages.length);
   }
 
+  // Get messages from Firestore database method
   Future<void> loadMessagesFromFirestore() async {
+    // Get instance of auth & firestore and set uid equal to the current user id
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
     final AuthManager authManager = AuthManager();
     final uid = authManager.getCurrentUser()?.uid;
 
-    if (uid == null) return;
+    if (uid == null) return; // Return nothing if a uid could not be found
 
+    // Get and store the collection of messages in a variable with the uid in mind
     final doc = await firestore.collection("Messages").doc(uid).get();
 
+    // If doc is not emptpy/exists and the uid matches the doc id, get the list of messages for that user account
     if (doc.exists && doc.data()?['messages'] != null && uid == doc.id) {
       final List<dynamic> messagesJson = doc.data()!['messages'];
       final loadedMessages =
@@ -50,7 +59,7 @@ class ChatProvider extends ChangeNotifier {
 
       _messages = loadedMessages;
 
-      notifyListeners();
+      notifyListeners(); // Update UI
     }
   }
 

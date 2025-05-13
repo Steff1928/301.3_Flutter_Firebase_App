@@ -1,5 +1,9 @@
+import 'dart:async';
+
 import 'package:edubot/components/chat_bubble.dart';
+import 'package:edubot/components/loading_dialog.dart';
 import 'package:edubot/components/secondary_text_field.dart';
+import 'package:edubot/main.dart';
 import 'package:edubot/pages/chat_history.dart';
 import 'package:edubot/pages/settings_page.dart';
 import 'package:edubot/services/authentication/auth_manager.dart';
@@ -21,15 +25,47 @@ class _ChatPageState extends State<ChatPage> {
   final ScrollController _scrollController = ScrollController();
   late List<Message> _previousMessages;
 
+  bool _conversationHasLoaded = false; // Prevent multiple loads
 
+  // Load message
+  Future<void> loadMessages(BuildContext providerContext) async {
+    // After widget tree is built, show loading circle with global context
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      navigatorKey.currentState?.push(
+        PageRouteBuilder(
+          opaque: false,
+          pageBuilder: (_, _, __) => const Center(child: LoadingDialog()),
+        ),
+      );
+    });
+
+    // Try load message from Firestore using the global context
+    try {
+      await Provider.of<ChatProvider>(
+        navigatorKey.currentContext!,
+        listen: false,
+      ).loadMessagesFromFirestore();
+    } finally {
+      // Safely close dialog
+      if (navigatorKey.currentState?.canPop() ?? false) {
+        navigatorKey.currentState?.pop();
+      }
+    }
+  }
+
+  // Only run this state when a dependency has changed   
   @override
-  void initState() {
-    super.initState();
-     // Initialise the state for the previous messages
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // Initialise previous messages
     _previousMessages = [];
 
-    // Communicate with ChatProvider to load messages from Firestore
-    Provider.of<ChatProvider>(context, listen: false).loadMessagesFromFirestore(); 
+    // Once dependency is changed, communicate with ChatProvider to load messages from Firestore (only do this once)
+    if (!_conversationHasLoaded) {
+      loadMessages(context);
+      _conversationHasLoaded = true;
+    }
   }
 
   // Get the user's first name in their display name

@@ -7,6 +7,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 
+// Global navigator key to avoid using Buildcontext across asynchronous gaps
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 void main() async {
   // Initialize Firebase
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,6 +33,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: "EduBot",
       debugShowCheckedModeBanner: false,
+      navigatorKey: navigatorKey,
       home: const AuthGate(),
       theme: lightmode,
       //darkTheme: darkmode,

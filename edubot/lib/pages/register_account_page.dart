@@ -2,6 +2,7 @@ import 'package:edubot/components/error_tile.dart';
 import 'package:edubot/components/primary_button.dart';
 import 'package:edubot/components/primary_text_field.dart';
 import 'package:edubot/components/sso_tile.dart';
+import 'package:edubot/pages/chat_page.dart';
 import 'package:edubot/services/authentication/auth_gate.dart';
 import 'package:edubot/services/authentication/auth_manager.dart';
 import 'package:edubot/services/authentication/google_service.dart';
@@ -23,6 +24,7 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
   final TextEditingController _confirmPassController = TextEditingController();
   // String to store error messages
   String? _errorMessage;
+
 
   // Sign user in with Google method
   void signInWithGoogle() async {
@@ -92,7 +94,12 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
     }
 
     // Dismiss loading circle after user is finished with pop up (either closing it or signing in)
-    navigator.pop();
+    if (authManager.getCurrentUser() != null) {
+      navigator.pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => ChatPage()),
+        (route) => false,
+      );
+    }
 
     // Remove all pages in the navigation stack
     if (authManager.getCurrentUser() != null) {
