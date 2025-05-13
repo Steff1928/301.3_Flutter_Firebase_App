@@ -18,7 +18,7 @@ class ChatProvider extends ChangeNotifier {
 
   // Save messages to Firestore method
   Future<void> saveMessagesToFirestore() async {
-     // Get instance of auth & firestore
+    // Get instance of auth & firestore
     final firestore = FirebaseFirestore.instance;
     final AuthManager authManager = AuthManager();
 
@@ -89,11 +89,15 @@ class ChatProvider extends ChangeNotifier {
 
     // Try send message & recieve response
     try {
-      // Record the entire conversation and pass to the LlamaApiService (this will prompt chatbot memory)
-      String context = _messages
-          .map((m) => (m.isUser ? "User: " : "Bot: ") + m.content)
-          .join("\n");
-      final response = await _apiService.sendMessageToFlask(context);
+      List<Map<String, String>> formattedContext =
+          _messages.map((m) {
+            return {
+              "role": m.isUser ? "user" : "assistant",
+              "content": m.content,
+            };
+          }).toList();
+
+      final response = await _apiService.sendMessageToFlask(formattedContext);
 
       // Response message from Llama
       final responseMessage = Message(

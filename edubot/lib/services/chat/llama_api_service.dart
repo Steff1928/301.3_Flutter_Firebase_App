@@ -12,7 +12,7 @@ class LlamaApiService {
   late List<String> previousUserMessages = [];
   late List<String> previousAssistantMessages = [];
   
-  Future<String> sendMessageToFlask(String context) async {
+  Future<String> sendMessageToFlask(List<Map<String, String>> context) async {
 
     final url = Uri.parse(
       'http://10.0.2.2:5000/safe_chat' // Flask Url (Android IP: 10.0.2.2 - Web IP: localhost or 127.0.0.0)
@@ -23,16 +23,12 @@ class LlamaApiService {
 
     // JSON Payload
     final body = jsonEncode({
-      "message": context,
-      "context": [
-        {"role": "user", "content": context},
-        {"role": "assistant", "content": context},
-        {"role": "system", "content": "You are a helpful assistant."},
-      ],
+      "context": context,
     });
 
     // Try send post request to Flask server
     try {
+      print("Sending to Flask:\n$body");
       final response = await http.post(url, headers: headers, body: body);
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
