@@ -24,8 +24,35 @@ class _ChatPageState extends State<ChatPage> {
   final TextEditingController _userInput = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   late List<Message> _previousMessages;
+  bool _isInitialLoad = true;
 
   bool _conversationHasLoaded = false; // Prevent multiple loads
+
+  // Scroll to the bottom of the conversation upon inital chat page load (a bit janky but works well enough)
+  void scrollToBottomAfterBuild() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Future.delayed(Duration(milliseconds: 50), () {
+        if (_scrollController.hasClients) {
+          final maxExtent = _scrollController.position.maxScrollExtent;
+          // Wait for another frame if the extent is still growing
+          if (_lastScrollExtent != maxExtent) {
+            _lastScrollExtent = maxExtent;
+            scrollToBottomAfterBuild(); // wait one more frame (recursive - waiting for page context to load)
+          } else {
+            // Scroll to bottom of page
+            _scrollController.animateTo(
+              _scrollController.position.maxScrollExtent,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeOut,
+            );
+            _isInitialLoad = false;
+          }
+        }
+      });
+    });
+  }
+
+  double _lastScrollExtent = 0.0;
 
   // Load message
   Future<void> loadMessages(BuildContext providerContext) async {
@@ -151,6 +178,10 @@ class _ChatPageState extends State<ChatPage> {
             Expanded(
               child: Consumer<ChatProvider>(
                 builder: (context, chatProvider, child) {
+                  if (_isInitialLoad && chatProvider.messages.isNotEmpty) {
+                    scrollToBottomAfterBuild();
+                  }
+
                   // Scroll to most recent message sent if the message count has changed
                   // chatProvider.loadMessagesFromFirestore();
                   if (_previousMessages.length !=

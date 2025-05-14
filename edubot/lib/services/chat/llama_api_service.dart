@@ -49,7 +49,7 @@ class LlamaApiService {
     String message,
   ) async* {
     final AuthManager authManager = AuthManager();
-    final url = Uri.parse('http://10.0.2.2:5001/stream_chat'); // Flask Url (Android IP: 10.0.2.2 - Web IP: localhost or 127.0.0.0)
+    final url = Uri.parse('http://localhost:5001/stream_chat'); // Flask Url (Android IP: 10.0.2.2 - Web IP: localhost or 127.0.0.0)
     final body = {
       'context': context,
       'message': message,
