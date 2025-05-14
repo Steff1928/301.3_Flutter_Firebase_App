@@ -89,9 +89,15 @@ class ChatProvider extends ChangeNotifier {
 
     // Try send message & recieve response
     try {
-      // Create a list of maps as a formattedContext to store message content and user/assistant roles
+      // Get the last user message sent by the user
+      final lastUserMessage = _messages.lastWhere((m) => m.isUser);
+
+      // Establish the context without the last user message
+      final contextMessages = _messages.sublist(0, _messages.lastIndexOf(lastUserMessage));
+
+      // Create a list of maps as a formattedContext to store message content and user/assistant roles from the previous context
       List<Map<String, String>> formattedContext =
-          _messages.map((m) {
+          contextMessages.map((m) {
             return {
               "role": m.isUser ? "user" : "assistant",
               "content": m.content,
@@ -99,7 +105,7 @@ class ChatProvider extends ChangeNotifier {
           }).toList();
 
       // Send through a response to Flask server with formattedContext
-      final response = await _apiService.sendMessageToFlask(formattedContext);
+      final response = await _apiService.sendMessageToFlask(formattedContext, lastUserMessage.content);
 
       // Response message from Llama
       final responseMessage = Message(
