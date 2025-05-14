@@ -49,8 +49,7 @@ class LlamaApiService {
     String message,
   ) async* {
     final AuthManager authManager = AuthManager();
-
-    final url = Uri.parse('http://10.0.2.2:5001/stream_chat');
+    final url = Uri.parse('http://10.0.2.2:5001/stream_chat'); // Flask Url (Android IP: 10.0.2.2 - Web IP: localhost or 127.0.0.0)
     final body = {
       'context': context,
       'message': message,
@@ -65,31 +64,44 @@ class LlamaApiService {
     final response = await request.send();
     final stream = response.stream.transform(utf8.decoder);
 
+    String buffer = '';
+
     await for (var chunk in stream) {
-      // Remove "data: " prefix if present
-      final cleaned = chunk.replaceFirst(RegExp(r'^data:\s*'), '').trim();
+      buffer += chunk;
 
-      if (cleaned.toLowerCase().contains('[done]')) continue;
+      // Split on newlines to process full lines
+      final lines = buffer.split('\n');
 
-      // Skip empty chunks
-      if (cleaned.isEmpty) continue;
+      // Keep the last line in buffer if it may be incomplete
+      buffer = lines.removeLast();
 
-      try {
-        // Check if it starts with { and ends with } (likely JSON)
-        if (cleaned.startsWith('{') && cleaned.endsWith('}')) {
+      for (final line in lines) {
+        final cleaned = line.replaceFirst(RegExp(r'^data:\s*'), '').trim();
+
+        if (cleaned.toLowerCase().contains('[done]') || cleaned.isEmpty) {
+          continue;
+        }
+
+        try {
           final jsonData = json.decode(cleaned);
           final content = jsonData['message']?['content'];
-          if (content != null && content is String) {
-            yield content;
-          }
-        } else {
-          // Not JSON — maybe plain text, still yield it if needed
-          yield cleaned;
+          if (content is String) yield content;
+        } catch (e) {
+          // Don't yield anything broken
+          print('JSON parse error: $e\nLine: $cleaned');
         }
+      }
+    }
+
+    // Try to process any leftover line
+    if (buffer.isNotEmpty) {
+      final cleaned = buffer.replaceFirst(RegExp(r'^data:\s*'), '').trim();
+      try {
+        final jsonData = json.decode(cleaned);
+        final content = jsonData['message']?['content'];
+        if (content is String) yield content;
       } catch (e) {
-        print('JSON parse error: $e\nChunk: $cleaned');
-        // Optionally, yield raw cleaned text to avoid missing output
-        // yield cleaned;
+        print('Final JSON parse error: $e\nBuffer: $cleaned');
       }
     }
   }

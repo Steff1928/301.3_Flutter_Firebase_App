@@ -124,13 +124,17 @@ class ChatProvider extends ChangeNotifier {
       // Wait for the chunk to recieved in stream and display the results
       await for (final chunk in stream) {
         _isLoading = false;
-        // Only add the empty AI message ONCE
+
+        // Add the empty AI message only once
         if (!_isEmptyAiMessageAdded) {
           _messages.add(aiMessage);
           _isEmptyAiMessageAdded = true;
         }
-        // Add each chunk to aiMessage and update UI
+
+        // Append the chunk directly
         aiMessage.content += chunk;
+
+        // Update UI
         notifyListeners();
       }
     } catch (e) {
@@ -143,6 +147,9 @@ class ChatProvider extends ChangeNotifier {
 
       // Add error message to chat
       _messages.add(errorMessage);
+
+      // Stop loading
+       _isLoading = false;
     }
 
     // Reset _isEmptyAIMessageAdded state
