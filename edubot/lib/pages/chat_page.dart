@@ -53,7 +53,7 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 
-  // Only run this state when a dependency has changed   
+  // Only run this state when a dependency has changed
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -81,7 +81,7 @@ class _ChatPageState extends State<ChatPage> {
   // Send a response to ChatProvider
   void sendMessage() {
     final chatProvider = context.read<ChatProvider>();
-    chatProvider.sendMessage(_userInput.text);
+    chatProvider.sendStream(_userInput.text);
     _userInput.clear();
   }
 

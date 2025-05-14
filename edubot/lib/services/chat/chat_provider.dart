@@ -63,6 +63,92 @@ class ChatProvider extends ChangeNotifier {
     }
   }
 
+  // Send message stream
+  Future<void> sendStream(String content) async {
+    // Prevent empty sends
+    if (content.trim().isEmpty) return;
+
+    // Set user message
+    final userMessage = Message(
+      content: content,
+      isUser: true,
+      timeStamp: DateTime.now(),
+    );
+
+    // Add user message to chat
+    _messages.add(userMessage);
+
+    // Update UI
+    notifyListeners();
+
+    // Start loading
+    _isLoading = true;
+
+    // Update UI
+    notifyListeners();
+
+    // Try send message & recieve response
+    try {
+      // Create empty AI message
+      final aiMessage = Message(
+        content: "",
+        isUser: false,
+        timeStamp: DateTime.now(),
+      );
+
+      _messages.add(aiMessage);
+      notifyListeners();
+
+      // Get the last user message sent by the user
+      final lastUserMessage = _messages.lastWhere((m) => m.isUser);
+
+      // Establish the context without the last user message
+      final contextMessages = _messages.sublist(
+        0,
+        _messages.lastIndexOf(lastUserMessage),
+      );
+
+      // Create a list of maps as a formattedContext to store message content and user/assistant roles from the previous context
+      List<Map<String, String>> formattedContext =
+          contextMessages.map((m) {
+            return {
+              "role": m.isUser ? "user" : "assistant",
+              "content": m.content,
+            };
+          }).toList();
+
+      // Send through a response to Flask server with formattedContext
+      final stream = _apiService.streamMessageFromFlask(
+        formattedContext,
+        lastUserMessage.content,
+      );
+
+      await for (final chunk in stream) {
+        aiMessage.content += chunk;
+        notifyListeners();
+      }
+    } catch (e) {
+      // Set error message
+      final errorMessage = Message(
+        content: 'Sorry I encountered an issue $e',
+        isUser: false,
+        timeStamp: DateTime.now(),
+      );
+
+      // Add error message to chat
+      _messages.add(errorMessage);
+    }
+
+    // Finished loading
+    _isLoading = false;
+
+    // Update UI
+    notifyListeners();
+
+    // Save messages to Firestore
+    await saveMessagesToFirestore();
+  }
+
   // Send message
   Future<void> sendMessage(String content) async {
     // Prevent empty sends
@@ -93,7 +179,10 @@ class ChatProvider extends ChangeNotifier {
       final lastUserMessage = _messages.lastWhere((m) => m.isUser);
 
       // Establish the context without the last user message
-      final contextMessages = _messages.sublist(0, _messages.lastIndexOf(lastUserMessage));
+      final contextMessages = _messages.sublist(
+        0,
+        _messages.lastIndexOf(lastUserMessage),
+      );
 
       // Create a list of maps as a formattedContext to store message content and user/assistant roles from the previous context
       List<Map<String, String>> formattedContext =
@@ -105,7 +194,10 @@ class ChatProvider extends ChangeNotifier {
           }).toList();
 
       // Send through a response to Flask server with formattedContext
-      final response = await _apiService.sendMessageToFlask(formattedContext, lastUserMessage.content);
+      final response = await _apiService.sendMessageToFlask(
+        formattedContext,
+        lastUserMessage.content,
+      );
 
       // Response message from Llama
       final responseMessage = Message(

@@ -41,42 +41,49 @@ class LlamaApiService {
     }
   }
 
-  // TODO: Fix streamMessageFromFlask
-  Stream<String> streamMessageFromFlask(List<Map<String, String>> context, String message) async* {
-  final url = Uri.parse('http://10.0.2.2:5001/stream_chat'); // Adjust as needed
-  final body = {
-    'context': context,
-    'message': message,
-  };
+  Stream<String> streamMessageFromFlask(
+    List<Map<String, String>> context,
+    String message,
+  ) async* {
+    final url = Uri.parse('http://10.0.2.2:5001/stream_chat');
+    final body = {'context': context, 'message': message};
 
-  final request = 
-    http.Request('POST', url)
-      ..headers['Content-Type'] = 'application/json'
-      ..body = jsonEncode(body);
+    final request =
+        http.Request('POST', url)
+          ..headers['Content-Type'] = 'application/json'
+          ..body = jsonEncode(body);
 
-  final response = await request.send();
+    final response = await request.send();
+    final stream = response.stream.transform(utf8.decoder);
 
-  final stream = response.stream.transform(utf8.decoder);
+    await for (var chunk in stream) {
+      print('Raw chunk: $chunk');
 
-  await for (var chunk in stream) {
-    // Print raw chunk for debugging
-    print('Raw chunk: $chunk');
+      // Remove "data: " prefix if present
+      final cleaned = chunk.replaceFirst(RegExp(r'^data:\s*'), '').trim();
 
-    // Handle if chunk is like "data: { ... }"
-    final cleaned = chunk.replaceFirst(RegExp(r'^data:\s*'), '').trim();
+      if (cleaned.toLowerCase().contains('[done]')) continue;
 
-    // Skip if it's just 'data: [DONE]' or similar
-    if (cleaned.toLowerCase().contains('[done]')) continue;
+      // Skip empty chunks
+      if (cleaned.isEmpty) continue;
 
-    try {
-      final jsonData = json.decode(cleaned);
-      final content = jsonData['message']?['content'];
-      if (content != null && content is String) {
-        yield content;
+      try {
+        // Check if it starts with { and ends with } (likely JSON)
+        if (cleaned.startsWith('{') && cleaned.endsWith('}')) {
+          final jsonData = json.decode(cleaned);
+          final content = jsonData['message']?['content'];
+          if (content != null && content is String) {
+            yield content;
+          }
+        } else {
+          // Not JSON — maybe plain text, still yield it if needed
+          yield cleaned;
+        }
+      } catch (e) {
+        print('JSON parse error: $e\nChunk: $cleaned');
+        // Optionally, yield raw cleaned text to avoid missing output
+        // yield cleaned;
       }
-    } catch (e) {
-      print('JSON parse error: $e\nChunk: $cleaned');
     }
   }
-}
 }
