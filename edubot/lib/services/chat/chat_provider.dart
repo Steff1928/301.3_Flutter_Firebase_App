@@ -8,9 +8,10 @@ class ChatProvider extends ChangeNotifier {
   // Get instance of Llama API Service
   final _apiService = LlamaApiService();
 
-  // Get a list of messages & initialise loading state
+  // Get a list of messages & initialise loading state/empty AI message
   List<Message> _messages = [];
   bool _isLoading = false;
+  bool _isEmptyAiMessageAdded = false;
 
   // Getters
   List<Message> get messages => _messages;
@@ -87,18 +88,15 @@ class ChatProvider extends ChangeNotifier {
     // Update UI
     notifyListeners();
 
+    // Create empty AI message
+    final aiMessage = Message(
+      content: "",
+      isUser: false,
+      timeStamp: DateTime.now(),
+    );
+
     // Try send message & recieve response
     try {
-      // Create empty AI message
-      final aiMessage = Message(
-        content: "",
-        isUser: false,
-        timeStamp: DateTime.now(),
-      );
-
-      _messages.add(aiMessage);
-      notifyListeners();
-
       // Get the last user message sent by the user
       final lastUserMessage = _messages.lastWhere((m) => m.isUser);
 
@@ -123,7 +121,15 @@ class ChatProvider extends ChangeNotifier {
         lastUserMessage.content,
       );
 
+      // Wait for the chunk to recieved in stream and display the results
       await for (final chunk in stream) {
+        _isLoading = false;
+        // Only add the empty AI message ONCE
+        if (!_isEmptyAiMessageAdded) {
+          _messages.add(aiMessage);
+          _isEmptyAiMessageAdded = true;
+        }
+        // Add each chunk to aiMessage and update UI
         aiMessage.content += chunk;
         notifyListeners();
       }
@@ -139,8 +145,8 @@ class ChatProvider extends ChangeNotifier {
       _messages.add(errorMessage);
     }
 
-    // Finished loading
-    _isLoading = false;
+    // Reset _isEmptyAIMessageAdded state
+    _isEmptyAiMessageAdded = false;
 
     // Update UI
     notifyListeners();
