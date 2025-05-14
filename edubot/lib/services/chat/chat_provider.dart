@@ -64,7 +64,7 @@ class ChatProvider extends ChangeNotifier {
     }
   }
 
-  // Send message stream
+  // Send message stream method (recieving and displaying incremental chunks)
   Future<void> sendStream(String content) async {
     // Prevent empty sends
     if (content.trim().isEmpty) return;
@@ -155,7 +155,7 @@ class ChatProvider extends ChangeNotifier {
     await saveMessagesToFirestore();
   }
 
-  // Send message
+  // Send message method (recieving the full response)
   Future<void> sendMessage(String content) async {
     // Prevent empty sends
     if (content.trim().isEmpty) return;

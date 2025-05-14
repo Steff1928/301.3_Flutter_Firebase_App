@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:edubot/services/authentication/auth_manager.dart';
 import 'package:http/http.dart' as http;
 
 /*
@@ -12,6 +13,7 @@ class LlamaApiService {
   late List<String> previousUserMessages = [];
   late List<String> previousAssistantMessages = [];
 
+  // Send a message and recieve the full JSON response
   Future<String> sendMessageToFlask(
     List<Map<String, String>> context,
     String userMessage,
@@ -41,12 +43,19 @@ class LlamaApiService {
     }
   }
 
+  // Send a message and recieve each chunk displayed as a list
   Stream<String> streamMessageFromFlask(
     List<Map<String, String>> context,
     String message,
   ) async* {
+    final AuthManager authManager = AuthManager();
+
     final url = Uri.parse('http://10.0.2.2:5001/stream_chat');
-    final body = {'context': context, 'message': message};
+    final body = {
+      'context': context,
+      'message': message,
+      'displayName': authManager.getCurrentUser()?.displayName,
+    };
 
     final request =
         http.Request('POST', url)
@@ -57,8 +66,6 @@ class LlamaApiService {
     final stream = response.stream.transform(utf8.decoder);
 
     await for (var chunk in stream) {
-      print('Raw chunk: $chunk');
-
       // Remove "data: " prefix if present
       final cleaned = chunk.replaceFirst(RegExp(r'^data:\s*'), '').trim();
 
