@@ -24,35 +24,36 @@ class _ChatPageState extends State<ChatPage> {
   final TextEditingController _userInput = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   late List<Message> _previousMessages;
-  bool _isInitialLoad = true;
 
   bool _conversationHasLoaded = false; // Prevent multiple loads
 
   // Scroll to the bottom of the conversation upon inital chat page load (a bit janky but works well enough)
-  void scrollToBottomAfterBuild() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Future.delayed(Duration(milliseconds: 50), () {
-        if (_scrollController.hasClients) {
-          final maxExtent = _scrollController.position.maxScrollExtent;
-          // Wait for another frame if the extent is still growing
-          if (_lastScrollExtent != maxExtent) {
-            _lastScrollExtent = maxExtent;
-            scrollToBottomAfterBuild(); // wait one more frame (recursive - waiting for page context to load)
-          } else {
-            // Scroll to bottom of page
-            _scrollController.animateTo(
-              _scrollController.position.maxScrollExtent,
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeOut,
-            );
-            _isInitialLoad = false;
-          }
-        }
-      });
-    });
-  }
+  void waitForMessagesThenScroll(ChatProvider chatProvider) async {
+    // Wait for messages to load
+    while (chatProvider.messages.isEmpty) {
+      await Future.delayed(Duration(milliseconds: 50));
+    }
 
-  double _lastScrollExtent = 0.0;
+    // Wait for build/layout
+    await Future.delayed(Duration(milliseconds: 100));
+
+    // Then wait until scroll metrics stabilize
+    double previousExtent = -1;
+    int retries = 10;
+
+    while (_scrollController.hasClients &&
+        _scrollController.position.maxScrollExtent != previousExtent &&
+        retries > 0) {
+      previousExtent = _scrollController.position.maxScrollExtent;
+      await Future.delayed(Duration(milliseconds: 50));
+      retries--;
+    }
+
+    // Final scroll to bottom
+    if (_scrollController.hasClients) {
+      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+    }
+  }
 
   // Load message
   Future<void> loadMessages(BuildContext providerContext) async {
@@ -78,6 +79,16 @@ class _ChatPageState extends State<ChatPage> {
         navigatorKey.currentState?.pop();
       }
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    Future.microtask(() {
+      final chatProvider = Provider.of<ChatProvider>(context, listen: false);
+      waitForMessagesThenScroll(chatProvider);
+    });
   }
 
   // Only run this state when a dependency has changed
@@ -178,9 +189,9 @@ class _ChatPageState extends State<ChatPage> {
             Expanded(
               child: Consumer<ChatProvider>(
                 builder: (context, chatProvider, child) {
-                  if (_isInitialLoad && chatProvider.messages.isNotEmpty) {
-                    scrollToBottomAfterBuild();
-                  }
+                  // if (_isInitialLoad && chatProvider.hasLoadedInitialMessages) {
+                  //   scrollToBottomAfterBuild(chatProvider.messages);
+                  // }
 
                   // Scroll to most recent message sent if the message count has changed
                   // chatProvider.loadMessagesFromFirestore();

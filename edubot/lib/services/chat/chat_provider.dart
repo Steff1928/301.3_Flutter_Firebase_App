@@ -149,7 +149,7 @@ class ChatProvider extends ChangeNotifier {
       _messages.add(errorMessage);
 
       // Stop loading
-       _isLoading = false;
+      _isLoading = false;
     }
 
     // Reset _isEmptyAIMessageAdded state
