@@ -72,15 +72,18 @@ class ChatProvider extends ChangeNotifier {
 
       conversationId = doc.id; // Assign the generated ID to conversationId
     }
-    
+
+    String title = await generateTitle(); // Generate title
+
     // Store the history is a subcollection called 'History'
     firestore
         .collection("Users")
         .doc(authManager.getCurrentUser()?.uid)
-        .collection('History').doc(conversationId)
+        .collection('History')
+        .doc(conversationId)
         .set(({
           'conversationId': conversationId,
-          'title': 'New Chat', // TEMP
+          'title': title, // TEMP
           'description': 'New Description', // TEMP
         }));
 
@@ -319,5 +322,36 @@ class ChatProvider extends ChangeNotifier {
 
     // Save messages to Firestore
     await saveMessagesToFirestore();
+  }
+
+  Future<String> generateTitle() async {
+    // Get instance of auth & firestore
+    final firestore = FirebaseFirestore.instance;
+    final AuthManager authManager = AuthManager();
+
+    // Get conversationId from Firestore if it exists
+    String? conversationId = await getSavedConversationId();
+
+    try {
+      // Create a list of maps as a formattedContext to store message content and user/assistant roles from the current context
+      List<Map<String, String>> formattedContext =
+          messages.map((m) {
+            return {
+              "role": m.isUser ? "user" : "assistant",
+              "content": m.content,
+            };
+          }).toList();
+
+      // Send through a response to Flask server with formattedContext
+      final response = await _apiService.generateTitleFromFlask(
+        formattedContext,
+      );
+
+      // Save the title to Firestore
+      return response;
+    } catch (e) {
+      // Handle errors
+      throw Exception("Error generating title: $e");
+    }
   }
 }

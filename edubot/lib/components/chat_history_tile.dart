@@ -13,7 +13,7 @@ class ChatHistoryTile extends StatelessWidget {
       // Set the width of the tile to be full and add padding
       width: double.infinity,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15),
+        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 7.5),
         // Create an OutlinedButtom with rounded corners and shadow
         child: OutlinedButton(
           style: OutlinedButton.styleFrom(

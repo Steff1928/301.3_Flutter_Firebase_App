@@ -49,7 +49,9 @@ class LlamaApiService {
     String message,
   ) async* {
     final AuthManager authManager = AuthManager();
-    final url = Uri.parse('http://localhost:5001/stream_chat'); // Flask Url (Android IP: 10.0.2.2 - Web IP: localhost or 127.0.0.0)
+    final url = Uri.parse(
+      'http://localhost:5001/stream_chat',
+    ); // Flask Url (Android IP: 10.0.2.2 - Web IP: localhost or 127.0.0.0)
     final body = {
       'context': context,
       'message': message,
@@ -103,6 +105,33 @@ class LlamaApiService {
       } catch (e) {
         print('Final JSON parse error: $e\nBuffer: $cleaned');
       }
+    }
+  }
+
+  // Send a message and recieve a concise summary of the conversation
+  Future<String> generateTitleFromFlask(List<Map<String, String>> context) async {
+    final url = Uri.parse(
+      'http://localhost:5001/make_title', // Flask Url (Android IP: 10.0.2.2 - Web IP: localhost or 127.0.0.0)
+    );
+
+    // Headers
+    final headers = {'Content-Type': 'application/json'};
+
+    // JSON Payload
+    final body = jsonEncode({"context": context});
+
+    // Try send post request to Flask server
+    try {
+      final response = await http.post(url, headers: headers, body: body);
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return data['title'];
+      } else {
+        throw Exception("Server error: ${response.statusCode}");
+      }
+    } catch (e) {
+      // Handle errors
+      throw Exception("Request failed: $e");
     }
   }
 }
