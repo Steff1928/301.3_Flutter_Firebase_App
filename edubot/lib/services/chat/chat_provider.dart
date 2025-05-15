@@ -72,6 +72,17 @@ class ChatProvider extends ChangeNotifier {
 
       conversationId = doc.id; // Assign the generated ID to conversationId
     }
+    
+    // Store the history is a subcollection called 'History'
+    firestore
+        .collection("Users")
+        .doc(authManager.getCurrentUser()?.uid)
+        .collection('History').doc(conversationId)
+        .set(({
+          'conversationId': conversationId,
+          'title': 'New Chat', // TEMP
+          'description': 'New Description', // TEMP
+        }));
 
     // Save activeConversationId
     firestore.collection("Users").doc(authManager.getCurrentUser()?.uid).update(
@@ -93,8 +104,9 @@ class ChatProvider extends ChangeNotifier {
     if (uid == null) return; // Return nothing if a uid could not be found
 
     try {
-      final conversationId = await getSavedConversationId(); // Get the saved conversationId if it exists
-      
+      final conversationId =
+          await getSavedConversationId(); // Get the saved conversationId if it exists
+
       // Get all conversations for the user where conversationId matches the activeConversationId
       final docSnapshot =
           await firestore
@@ -109,14 +121,20 @@ class ChatProvider extends ChangeNotifier {
         return;
       }
 
-      final data = docSnapshot.data(); // Assign the conversation data to a seperate variable
+      final data =
+          docSnapshot
+              .data(); // Assign the conversation data to a seperate variable
 
       // If conversation data exists, append the data to the _messages list
       if (data != null && data['messages'] != null) {
-        final messagesRaw = List<Map<String, dynamic>>.from(data['messages']); // Get the raw JSON data
+        final messagesRaw = List<Map<String, dynamic>>.from(
+          data['messages'],
+        ); // Get the raw JSON data
 
         _messages.clear(); // Clear previous messages
-        _messages.addAll(messagesRaw.map((msg) => Message.fromJson(msg))); // Format JSON data as a Message and add it to _messages
+        _messages.addAll(
+          messagesRaw.map((msg) => Message.fromJson(msg)),
+        ); // Format JSON data as a Message and add it to _messages
       }
     } catch (e) {
       throw Exception("Error fetching conversations: $e");

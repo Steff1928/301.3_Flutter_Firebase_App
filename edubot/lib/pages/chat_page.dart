@@ -264,10 +264,6 @@ class _ChatPageState extends State<ChatPage> {
             Expanded(
               child: Consumer<ChatProvider>(
                 builder: (context, chatProvider, child) {
-                  // if (_isInitialLoad && chatProvider.hasLoadedInitialMessages) {
-                  //   scrollToBottomAfterBuild(chatProvider.messages);
-                  // }
-
                   // Scroll to most recent message sent if the message count has changed
                   // chatProvider.loadMessagesFromFirestore();
                   if (_previousMessages.length !=

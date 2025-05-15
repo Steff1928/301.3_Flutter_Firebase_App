@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
 class ChatHistoryTile extends StatelessWidget {
-  const ChatHistoryTile({super.key});
+  const ChatHistoryTile({super.key, required this.title, required this.description, required this.onButtonPressed});
+  
+  final String title;
+  final String description;
+  final void Function()? onButtonPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +25,7 @@ class ChatHistoryTile extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
             ),
           ),
-          onPressed: () {}, // TODO: Load conversation item from chat memory
+          onPressed: onButtonPressed, // TODO: Load conversation item from chat memory
           // Set the button content to be a Row
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -30,7 +34,7 @@ class ChatHistoryTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Title", // TODO: Generate and display title from chat memory (if possible)
+                    title, // TODO: Generate and display title from chat memory (if possible)
                     style: TextStyle(
                       fontFamily: "Nunito",
                       fontSize: 18,
@@ -39,9 +43,8 @@ class ChatHistoryTile extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    "Description",
+                    description, // TODO: Generate and display description from chat memory (if possible)
                     style: TextStyle(
-                      // TODO: Generate and display description from chat memory (if possible)
                       fontFamily: "Nunito",
                       fontSize: 16,
                       color: Color(0xFF364B55),

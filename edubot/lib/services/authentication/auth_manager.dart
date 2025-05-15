@@ -27,7 +27,11 @@ class AuthManager {
   }
 
   // Sign up method
-  Future<void> createAccount(String email, String password, String fullName) async {
+  Future<void> createAccount(
+    String email,
+    String password,
+    String fullName,
+  ) async {
     try {
       // Register new user
       final UserCredential userCredential = await _auth
@@ -46,7 +50,7 @@ class AuthManager {
         user = getCurrentUser();
 
         // Save user info to Firestore
-        _firestore.collection("Users").doc(userCredential.user?.uid).set({
+        _firestore.collection('Users').doc(userCredential.user?.uid).set({
           'uid': user!.uid,
           'email': user.email,
           'name': user.displayName,
@@ -60,12 +64,10 @@ class AuthManager {
         throw Exception('An account already exists for this email.');
       } else if (e.code == 'invalid-email') {
         throw Exception('Invalid email.');
-      }
-      else {
+      } else {
         throw Exception("Authentication Error: ${e.code}");
       }
-
-    } 
+    }
   }
 
   // Sign in method
@@ -76,14 +78,12 @@ class AuthManager {
           .signInWithEmailAndPassword(email: email, password: password);
 
       // Save user info if it doesn't already exist
-      _firestore.collection("Users").doc(userCredential.user?.uid).update(
-        {
+      _firestore.collection("Users").doc(userCredential.user?.uid).update({
         'uid': userCredential.user!.uid,
         'email': email,
         'name': userCredential.user!.displayName,
-        },
-      );
-      
+      });
+
       return userCredential;
     } on FirebaseAuthException catch (e) {
       // Handle errors
@@ -91,11 +91,9 @@ class AuthManager {
         throw Exception('Invalid email or password.');
       } else if (e.code == 'invalid-email') {
         throw Exception('Invalid Email.');
-      }
-      else {
+      } else {
         throw Exception('Authentication Error: ${e.code} ');
       }
-      
     }
   }
 
