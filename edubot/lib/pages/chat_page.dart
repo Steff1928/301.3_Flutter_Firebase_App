@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:edubot/components/chat_bubble.dart';
 import 'package:edubot/components/loading_dialog.dart';
 import 'package:edubot/components/secondary_text_field.dart';
@@ -37,7 +38,7 @@ class _ChatPageState extends State<ChatPage> {
     // Wait for build/layout
     await Future.delayed(Duration(milliseconds: 100));
 
-    // Then wait until scroll metrics stabilize
+    // Wait until scroll metrics stabilize
     double previousExtent = -1;
     int retries = 10;
 
@@ -81,12 +82,87 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 
+  // Start new conversation
+  Future<void> startNewConversation(BuildContext context) async {
+    // Get instance of auth & firestore
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    AuthManager authManager = AuthManager();
+
+    // Get ChatProvider to access the current list of messages
+    final chatProvider = Provider.of<ChatProvider>(context, listen: false);
+
+    // Establish a context for navigating and snack bar management
+    final navigator = Navigator.of(context);
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+
+    // Remove any snackbars if present
+    scaffoldMessenger.removeCurrentSnackBar();
+
+    // Show loading circle
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (context) {
+        return Center(child: CircularProgressIndicator(color: Colors.blue));
+      },
+    );
+
+    // Get conversationId from Firestore if it exists
+    String? conversationId = await chatProvider.getSavedConversationId();
+
+    // Allocate an empty document in 'Conversations' to store chats
+    if (conversationId != null && chatProvider.messages.isNotEmpty) {
+      final doc = await firestore
+          .collection("Users")
+          .doc(authManager.getCurrentUser()?.uid)
+          .collection('Conversations')
+          .add(({}));
+
+      conversationId = doc.id; // Assign conversationId to the new conversation ID
+
+      // Save as activeConversationId
+      firestore
+          .collection("Users")
+          .doc(authManager.getCurrentUser()?.uid)
+          .update({'activeConversationId': conversationId});
+    } else {
+      // If new conversation already started, notify the user
+      final snackBar = SnackBar(
+        content: Row(
+          children: [
+            Icon(Icons.warning, color: Colors.amberAccent),
+            SizedBox(width: 16),
+            Flexible(
+              child: Text(
+                "New conversation already started",
+                style: TextStyle(fontFamily: "Nunito", fontSize: 16),
+              ),
+            ),
+          ],
+        ),
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: Color(0xFF1A1A1A),
+        showCloseIcon: true,
+      );
+
+      scaffoldMessenger.showSnackBar(snackBar); // Show snackbar
+    }
+
+    // Clear messages
+    setState(() {
+      chatProvider.messages.clear();
+    });
+
+    navigator.pop(); // Dismiss loading circle
+  }
+
   @override
   void initState() {
     super.initState();
+    final chatProvider = Provider.of<ChatProvider>(context, listen: false); // Get ChatProvider
 
     Future.microtask(() {
-      final chatProvider = Provider.of<ChatProvider>(context, listen: false);
+      // Start asyncronous task where the system wait for messages to load then scrolls to bottom
       waitForMessagesThenScroll(chatProvider);
     });
   }
@@ -145,10 +221,9 @@ class _ChatPageState extends State<ChatPage> {
 
         // Navigation actions
         actions: [
-          // TODO: Start new chat
           IconButton(
             icon: Icon(Icons.loupe_rounded, size: 24, color: Color(0xFF074F67)),
-            onPressed: () {},
+            onPressed: () => startNewConversation(context),
           ),
           // History
           IconButton(
