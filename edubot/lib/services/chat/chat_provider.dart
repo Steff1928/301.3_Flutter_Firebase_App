@@ -9,7 +9,7 @@ class ChatProvider extends ChangeNotifier {
   final _apiService = LlamaApiService();
 
   // Get a list of messages & initialise loading state/empty AI message
-  List<Message> _messages = [];
+  final List<Message> _messages = [];
   bool _isLoading = false;
   bool _isEmptyAiMessageAdded = false;
 
@@ -17,20 +17,66 @@ class ChatProvider extends ChangeNotifier {
   List<Message> get messages => _messages;
   bool get isLoading => _isLoading;
 
+  // Get conversationId from Firestore method
+  Future<String?> getSavedConversationId() async {
+    // Get instance of auth & firestore
+    final AuthManager authManager = AuthManager();
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+    // Get the currently signed in user
+    final doc =
+        await firestore
+            .collection('Users')
+            .doc(authManager.getCurrentUser()?.uid)
+            .get();
+
+    final data = doc.data(); // Assign the data to a variable
+
+    // If the user exists and the conversationId is not null, return it
+    if (data != null && data['activeConversationId'] != null) {
+      return data['activeConversationId'] as String;
+    }
+    return null; // Otherwise, return null
+  }
+
   // Save messages to Firestore method
   Future<void> saveMessagesToFirestore() async {
     // Get instance of auth & firestore
     final firestore = FirebaseFirestore.instance;
     final AuthManager authManager = AuthManager();
 
-    // Save the list of messages to Firebase in JSON format
-    await firestore
-        .collection("Messages")
-        .doc(authManager.getCurrentUser()?.uid)
-        .set({
-          'messages': _messages.map((m) => m.toJson()).toList(),
-          'lastMessageTimeStamp': DateTime.now().millisecondsSinceEpoch,
-        });
+    // Get conversationId from Firestore if it exists
+    String? conversationId = await getSavedConversationId();
+
+    // If conversationId is not null, open a document reference to designated conversation path
+    if (conversationId != null) {
+      await firestore
+          .collection("Users")
+          .doc(authManager.getCurrentUser()?.uid)
+          .collection('Conversations')
+          .doc(conversationId)
+          .set(({
+            'messages': _messages.map((m) => m.toJson()).toList(),
+            'lastMessageTimeStamp': DateTime.now().millisecondsSinceEpoch,
+          }));
+    } else {
+      // If conversationId is null, add a new document to 'Conversations'
+      final doc = await firestore
+          .collection("Users")
+          .doc(authManager.getCurrentUser()?.uid)
+          .collection('Conversations')
+          .add(({
+            'messages': _messages.map((m) => m.toJson()).toList(),
+            'lastMessageTimeStamp': DateTime.now().millisecondsSinceEpoch,
+          }));
+
+      conversationId = doc.id; // Assign the generated ID to conversationId
+    }
+
+    // Save activeConversationId
+    firestore.collection("Users").doc(authManager.getCurrentUser()?.uid).update(
+      {'activeConversationId': conversationId},
+    );
   }
 
   // Remove message method
@@ -38,30 +84,44 @@ class ChatProvider extends ChangeNotifier {
     _messages.removeRange(0, messages.length);
   }
 
-  // Get messages from Firestore database method
   Future<void> loadMessagesFromFirestore() async {
-    // Get instance of auth & firestore and set uid equal to the current user id
+    //  Get instance of auth & firestore and set uid equal to the current user id
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
     final AuthManager authManager = AuthManager();
     final uid = authManager.getCurrentUser()?.uid;
 
     if (uid == null) return; // Return nothing if a uid could not be found
 
-    // Get and store the collection of messages in a variable with the uid in mind
-    final doc = await firestore.collection("Messages").doc(uid).get();
+    try {
+      final conversationId = await getSavedConversationId(); // Get the saved conversationId if it exists
+      
+      // Get all conversations for the user where conversationId matches the activeConversationId
+      final docSnapshot =
+          await firestore
+              .collection('Users')
+              .doc(uid)
+              .collection('Conversations')
+              .doc(conversationId)
+              .get();
 
-    // If doc is not emptpy/exists and the uid matches the doc id, get the list of messages for that user account
-    if (doc.exists && doc.data()?['messages'] != null && uid == doc.id) {
-      final List<dynamic> messagesJson = doc.data()!['messages'];
-      final loadedMessages =
-          messagesJson
-              .map((json) => Message.fromJson(json as Map<String, dynamic>))
-              .toList();
+      // Return nothing if no conversations exists
+      if (!docSnapshot.exists) {
+        return;
+      }
 
-      _messages = loadedMessages;
+      final data = docSnapshot.data(); // Assign the conversation data to a seperate variable
 
-      notifyListeners(); // Update UI
+      // If conversation data exists, append the data to the _messages list
+      if (data != null && data['messages'] != null) {
+        final messagesRaw = List<Map<String, dynamic>>.from(data['messages']); // Get the raw JSON data
+
+        _messages.clear(); // Clear previous messages
+        _messages.addAll(messagesRaw.map((msg) => Message.fromJson(msg))); // Format JSON data as a Message and add it to _messages
+      }
+    } catch (e) {
+      throw Exception("Error fetching conversations: $e");
     }
+    notifyListeners(); // Update UI
   }
 
   // Send message stream method (recieving and displaying incremental chunks)

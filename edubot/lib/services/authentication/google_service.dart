@@ -33,8 +33,8 @@ class GoogleService {
           credential,
         );
 
-        // Save details to Firestore database
-        _firestore.collection("Users").doc(userCredential.user?.uid).set({
+        // Update details within Firestore database
+        _firestore.collection("Users").doc(userCredential.user?.uid).update({
           'uid': userCredential.user!.uid,
           'email': userCredential.user!.email,
           'name': userCredential.user!.displayName,

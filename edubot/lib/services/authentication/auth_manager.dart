@@ -76,7 +76,7 @@ class AuthManager {
           .signInWithEmailAndPassword(email: email, password: password);
 
       // Save user info if it doesn't already exist
-      _firestore.collection("Users").doc(userCredential.user?.uid).set(
+      _firestore.collection("Users").doc(userCredential.user?.uid).update(
         {
         'uid': userCredential.user!.uid,
         'email': email,
