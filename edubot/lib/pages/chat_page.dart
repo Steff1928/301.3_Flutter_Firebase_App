@@ -5,7 +5,7 @@ import 'package:edubot/components/chat_bubble.dart';
 import 'package:edubot/components/loading_dialog.dart';
 import 'package:edubot/components/secondary_text_field.dart';
 import 'package:edubot/main.dart';
-import 'package:edubot/pages/chat_history.dart';
+import 'package:edubot/pages/chat_history_page.dart';
 import 'package:edubot/pages/settings_page.dart';
 import 'package:edubot/services/authentication/auth_manager.dart';
 import 'package:edubot/services/chat/chat_provider.dart';
@@ -236,7 +236,7 @@ class _ChatPageState extends State<ChatPage> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ChatHistory()),
+                MaterialPageRoute(builder: (context) => ChatHistoryPage()),
               );
             },
           ),

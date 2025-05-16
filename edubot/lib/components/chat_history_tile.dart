@@ -30,27 +30,31 @@ class ChatHistoryTile extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title, // TODO: Generate and display title from chat memory (if possible)
-                    style: TextStyle(
-                      fontFamily: "Nunito",
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF074F67),
+              Flexible(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title, // TODO: Generate and display title from chat memory (if possible)
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontFamily: "Nunito",
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF074F67),
+                      ),
                     ),
-                  ),
-                  Text(
-                    description, // TODO: Generate and display description from chat memory (if possible)
-                    style: TextStyle(
-                      fontFamily: "Nunito",
-                      fontSize: 16,
-                      color: Color(0xFF364B55),
+                    Text(
+                      overflow: TextOverflow.ellipsis,
+                      description, // TODO: Generate and display description from chat memory (if possible)
+                      style: TextStyle(
+                        fontFamily: "Nunito",
+                        fontSize: 16,
+                        color: Color(0xFF364B55),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               // TODO: Button to delete conversation item from chat memory
               IconButton(

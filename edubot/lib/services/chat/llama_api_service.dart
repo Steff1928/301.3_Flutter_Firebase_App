@@ -50,7 +50,7 @@ class LlamaApiService {
   ) async* {
     final AuthManager authManager = AuthManager();
     final url = Uri.parse(
-      'http://localhost:5001/stream_chat',
+      'http://10.0.2.2:5001/stream_chat',
     ); // Flask Url (Android IP: 10.0.2.2 - Web IP: localhost or 127.0.0.0)
     final body = {
       'context': context,
@@ -111,7 +111,7 @@ class LlamaApiService {
   // Send a message and recieve a concise summary of the conversation
   Future<String> generateTitleFromFlask(List<Map<String, String>> context) async {
     final url = Uri.parse(
-      'http://localhost:5001/make_title', // Flask Url (Android IP: 10.0.2.2 - Web IP: localhost or 127.0.0.0)
+      'http://10.0.2.2:5001/make_title', // Flask Url (Android IP: 10.0.2.2 - Web IP: localhost or 127.0.0.0)
     );
 
     // Headers

@@ -49,7 +49,7 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
     );
 
     // Attempt google sign in
-    await googleService.signInWithGoogle();
+    await googleService.signInWithGoogle(context);
 
     // Check if user is signed in (all messages displayed in the snackbar)
     if (authManager.getCurrentUser() != null) {

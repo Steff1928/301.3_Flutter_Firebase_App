@@ -1,13 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:edubot/services/chat/chat_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:provider/provider.dart';
 
 class GoogleService {
   // Get Firestore instance
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // Google sign in
-  Future<void> signInWithGoogle() async {
+  Future<void> signInWithGoogle(BuildContext context) async {
+    final chatProvider = Provider.of<ChatProvider>(context, listen: false);
+
     // Sign in with credential
     final GoogleSignIn googleSignIn = GoogleSignIn();
 
@@ -33,11 +38,14 @@ class GoogleService {
           credential,
         );
 
-        // Update details within Firestore database
-        _firestore.collection("Users").doc(userCredential.user?.uid).update({
+        // Set details within Firestore database (prevent 'activeConversationId' getting overridden if it doesn't exist)
+        String? conversationId = await chatProvider.getSavedConversationId();
+
+        _firestore.collection("Users").doc(userCredential.user?.uid).set({
           'uid': userCredential.user!.uid,
           'email': userCredential.user!.email,
           'name': userCredential.user!.displayName,
+          'activeConversationId': conversationId,
         });
       }
     } catch (e) {
