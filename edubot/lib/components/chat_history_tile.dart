@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
 
 class ChatHistoryTile extends StatelessWidget {
-  const ChatHistoryTile({super.key, required this.title, required this.description, required this.onButtonPressed});
-  
+  const ChatHistoryTile({
+    super.key,
+    required this.title,
+    required this.description,
+    required this.onButtonPressed,
+    required this.onIconPressed,
+  });
+
   final String title;
   final String description;
   final void Function()? onButtonPressed;
+  final void Function()? onIconPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +32,8 @@ class ChatHistoryTile extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
             ),
           ),
-          onPressed: onButtonPressed, // TODO: Load conversation item from chat memory
+          onPressed:
+              onButtonPressed, // TODO: Load conversation item from chat memory
           // Set the button content to be a Row
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -45,6 +53,7 @@ class ChatHistoryTile extends StatelessWidget {
                       ),
                     ),
                     Text(
+                      maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       description, // TODO: Generate and display description from chat memory (if possible)
                       style: TextStyle(
@@ -58,10 +67,10 @@ class ChatHistoryTile extends StatelessWidget {
               ),
               // TODO: Button to delete conversation item from chat memory
               IconButton(
-                onPressed: () {}, 
+                onPressed: onIconPressed,
                 icon: Icon(Icons.delete_rounded, color: Color(0xFFCC0000)),
                 highlightColor: Colors.grey.shade400,
-                ),
+              ),
             ],
           ),
         ),

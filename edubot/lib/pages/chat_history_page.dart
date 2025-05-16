@@ -63,6 +63,10 @@ class _ChatHistoryPageState extends State<ChatHistoryPage> {
     );
   }
 
+  Future<void> deleteConversation() async {
+    
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,7 +94,6 @@ class _ChatHistoryPageState extends State<ChatHistoryPage> {
         ),
       ),
 
-      // TODO: Add conversation history items
       body: Padding(
         padding: const EdgeInsets.only(top: 8.0),
         child: SafeArea(
@@ -121,12 +124,13 @@ class _ChatHistoryPageState extends State<ChatHistoryPage> {
                       conversationItems[index].data() as Map<String, dynamic>;
                   return ChatHistoryTile(
                     title: data['title'] ?? 'Untitled',
-                    description: "New Description",
+                    description: data['description'] ?? 'Untitled',
                     onButtonPressed:
                         () => changeConversation(
                           conversationItems[index].id,
                           context,
                         ),
+                    onIconPressed: deleteConversation,
                   );
                 },
               );

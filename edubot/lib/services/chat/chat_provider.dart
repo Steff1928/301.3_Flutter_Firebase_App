@@ -60,7 +60,7 @@ class ChatProvider extends ChangeNotifier {
             'lastMessageTimeStamp': DateTime.now().millisecondsSinceEpoch,
           }));
     } else {
-      // If conversationId is null, add a new document to 'Conversations'
+      // If conversationId is null, add a new document to 'Conversations' with a randomly generated ID
       final doc = await firestore
           .collection("Users")
           .doc(authManager.getCurrentUser()?.uid)
@@ -82,7 +82,7 @@ class ChatProvider extends ChangeNotifier {
         .set(({
           'conversationId': conversationId,
           'title': 'Loading...', // TEMP
-          'description': 'New Description', // TEMP
+          'description': messages.last.content.replaceAll('\n', ' '),
         }));
 
     generateTitle(); // Generate title

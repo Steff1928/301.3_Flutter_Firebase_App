@@ -9,10 +9,6 @@ Service class to handle Llama API
 */
 
 class LlamaApiService {
-  // Get the previous user and assistant responses
-  late List<String> previousUserMessages = [];
-  late List<String> previousAssistantMessages = [];
-
   // Send a message and recieve the full JSON response
   Future<String> sendMessageToFlask(
     List<Map<String, String>> context,
