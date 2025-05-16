@@ -73,8 +73,6 @@ class ChatProvider extends ChangeNotifier {
       conversationId = doc.id; // Assign the generated ID to conversationId
     }
 
-    String title = await generateTitle(); // Generate title
-
     // Store the history is a subcollection called 'History'
     firestore
         .collection("Users")
@@ -83,9 +81,11 @@ class ChatProvider extends ChangeNotifier {
         .doc(conversationId)
         .set(({
           'conversationId': conversationId,
-          'title': title, // TEMP
+          'title': 'Loading...', // TEMP
           'description': 'New Description', // TEMP
         }));
+
+    generateTitle(); // Generate title
 
     // Save activeConversationId
     firestore.collection("Users").doc(authManager.getCurrentUser()?.uid).update(
@@ -324,7 +324,11 @@ class ChatProvider extends ChangeNotifier {
     await saveMessagesToFirestore();
   }
 
-  Future<String> generateTitle() async {
+  Future<void> generateTitle() async {
+    AuthManager authManager = AuthManager();
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    String? conversationId = await getSavedConversationId();
+
     try {
       // Create a list of maps as a formattedContext to store message content and user/assistant roles from the current context
       List<Map<String, String>> formattedContext =
@@ -340,8 +344,12 @@ class ChatProvider extends ChangeNotifier {
         formattedContext,
       );
 
-      // Save the title to Firestore
-      return response;
+      await firestore
+          .collection("Users")
+          .doc(authManager.getCurrentUser()?.uid)
+          .collection('History')
+          .doc(conversationId)
+          .update(({'title': response}));
     } catch (e) {
       // Handle errors
       throw Exception("Error generating title: $e");
