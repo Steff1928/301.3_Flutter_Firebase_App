@@ -325,13 +325,6 @@ class ChatProvider extends ChangeNotifier {
   }
 
   Future<String> generateTitle() async {
-    // Get instance of auth & firestore
-    final firestore = FirebaseFirestore.instance;
-    final AuthManager authManager = AuthManager();
-
-    // Get conversationId from Firestore if it exists
-    String? conversationId = await getSavedConversationId();
-
     try {
       // Create a list of maps as a formattedContext to store message content and user/assistant roles from the current context
       List<Map<String, String>> formattedContext =

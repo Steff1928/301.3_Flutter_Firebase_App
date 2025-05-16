@@ -76,7 +76,8 @@ class _ChatHistoryState extends State<ChatHistory> {
             .collection('History')
             .get();
 
-    final historyData = docSnapshotHistory.docs.map((doc) => doc.data()).toList();
+    final historyData =
+        docSnapshotHistory.docs.map((doc) => doc.data()).toList();
     conversationId = historyData[index]['conversationId'];
 
     // Save activeConversationId
@@ -135,7 +136,6 @@ class _ChatHistoryState extends State<ChatHistory> {
         padding: const EdgeInsets.only(top: 8.0),
         child: SafeArea(
           child: Consumer<ChatProvider>(
-            
             builder: (context, chatProvider, child) {
               if (conversationItems.isEmpty) {
                 return Center(child: Text("Empty")); // TODO: Style this
@@ -144,7 +144,7 @@ class _ChatHistoryState extends State<ChatHistory> {
                 itemCount: conversationItems.length,
                 itemBuilder: (context, index) {
                   return ChatHistoryTile(
-                    title: "New Title",
+                    title: '${conversationItems[index]['title']}',
                     description: "New Description",
                     onButtonPressed: () => changeConversation(index, context),
                   );
