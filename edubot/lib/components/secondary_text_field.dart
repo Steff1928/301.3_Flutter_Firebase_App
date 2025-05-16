@@ -15,8 +15,10 @@ class SecondaryTextField extends StatelessWidget {
         ),
         child: TextField(
           controller: controller,
+
+          // Text field styling
           cursorColor: Color(0xFF1A1A1A),
-          style: TextStyle(color: Color(0xFF1A1A1A)),
+          style: TextStyle(color: Color(0xFF1A1A1A), fontFamily: 'Nunito'),
         
           // Enable multiline text wrapping
           keyboardType: TextInputType.multiline,

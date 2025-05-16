@@ -25,7 +25,7 @@ class PrimaryTextField extends StatelessWidget {
         obscureText: obscureText,
         
         // Text field styling
-        style: TextStyle(color: Color(0xFF1A1A1A)),
+        style: TextStyle(color: Color(0xFF1A1A1A), fontFamily: 'Nunito'),
         cursorColor: Color(0xFF074F67),
         
 
@@ -46,7 +46,7 @@ class PrimaryTextField extends StatelessWidget {
           labelStyle: TextStyle(
             fontFamily: "Nunito",
             fontSize: 16,
-            color: errorMessage == null ? Color(0xFF1A1A1A) : Color(0xFFCC0000),
+            color: errorMessage == null ? Color(0xFF364B55) : Color(0xFFCC0000),
           ),
 
           // Background colour

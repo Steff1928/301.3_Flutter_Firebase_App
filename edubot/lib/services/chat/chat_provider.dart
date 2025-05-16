@@ -17,6 +17,12 @@ class ChatProvider extends ChangeNotifier {
   List<Message> get messages => _messages;
   bool get isLoading => _isLoading;
 
+  // Clear messages if they are not needed any more
+  void clearMessages() {
+    _messages.clear();
+    notifyListeners();
+  }
+
   // Get conversationId from Firestore method
   Future<String?> getSavedConversationId() async {
     // Get instance of auth & firestore
@@ -344,12 +350,24 @@ class ChatProvider extends ChangeNotifier {
         formattedContext,
       );
 
-      await firestore
-          .collection("Users")
-          .doc(authManager.getCurrentUser()?.uid)
-          .collection('History')
-          .doc(conversationId)
-          .update(({'title': response}));
+
+      // Get the document to see if it exists (hasn't been deleted before loading title) and then update the title
+      final doc =
+          await firestore
+              .collection('Users')
+              .doc(authManager.getCurrentUser()?.uid)
+              .collection('History')
+              .doc(conversationId)
+              .get();
+
+      if (doc.exists) {
+        await firestore
+            .collection("Users")
+            .doc(authManager.getCurrentUser()?.uid)
+            .collection('History')
+            .doc(conversationId)
+            .update(({'title': response}));
+      }
     } catch (e) {
       // Handle errors
       throw Exception("Error generating title: $e");

@@ -118,13 +118,36 @@ class _ChatPageState extends State<ChatPage> {
           .collection('Conversations')
           .add(({}));
 
-      conversationId = doc.id; // Assign conversationId to the new conversation ID
+      // Assign conversationId to the new conversation ID
+      conversationId = doc.id;
 
       // Save as activeConversationId
       firestore
           .collection("Users")
           .doc(authManager.getCurrentUser()?.uid)
           .update({'activeConversationId': conversationId});
+
+      // Notify the user where the previous conversation
+      final snackBar = SnackBar(
+        content: Row(
+          children: [
+            Icon(Icons.info, color: Colors.blue),
+            SizedBox(width: 16),
+            Flexible(
+              child: Text(
+                "See Chat History for previous conversation.",
+                style: TextStyle(fontFamily: "Nunito", fontSize: 16),
+              ),
+            ),
+          ],
+        ),
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: Color(0xFF1A1A1A),
+        showCloseIcon: true,
+      );
+
+      scaffoldMessenger.showSnackBar(snackBar); // Show snackbar
+
     } else {
       // If new conversation already started, notify the user
       final snackBar = SnackBar(
@@ -159,7 +182,10 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     super.initState();
-    final chatProvider = Provider.of<ChatProvider>(context, listen: false); // Get ChatProvider
+    final chatProvider = Provider.of<ChatProvider>(
+      context,
+      listen: false,
+    ); // Get ChatProvider
 
     Future.microtask(() {
       // Start asyncronous task where the system wait for messages to load then scrolls to bottom
@@ -195,7 +221,7 @@ class _ChatPageState extends State<ChatPage> {
   // Send a response to ChatProvider
   void sendMessage() {
     final chatProvider = context.read<ChatProvider>();
-    chatProvider.sendStream(_userInput.text);
+    chatProvider.sendStream(_userInput.text.trim());
     _userInput.clear();
   }
 

@@ -9,13 +9,17 @@ Service class to handle Llama API
 */
 
 class LlamaApiService {
+  // Flask Url (Android IP: 10.0.2.2 - Web IP: localhost or 127.0.0.0)
+  final String uri = 'http://10.0.2.2:5001'; 
+
+
   // Send a message and recieve the full JSON response
   Future<String> sendMessageToFlask(
     List<Map<String, String>> context,
     String userMessage,
   ) async {
     final url = Uri.parse(
-      'http://10.0.2.2:5001/safe_chat', // Flask Url (Android IP: 10.0.2.2 - Web IP: localhost or 127.0.0.0)
+      '$uri/safe_chat', 
     );
 
     // Headers
@@ -46,7 +50,7 @@ class LlamaApiService {
   ) async* {
     final AuthManager authManager = AuthManager();
     final url = Uri.parse(
-      'http://10.0.2.2:5001/stream_chat',
+      '$uri/stream_chat',
     ); // Flask Url (Android IP: 10.0.2.2 - Web IP: localhost or 127.0.0.0)
     final body = {
       'context': context,
@@ -107,7 +111,7 @@ class LlamaApiService {
   // Send a message and recieve a concise summary of the conversation
   Future<String> generateTitleFromFlask(List<Map<String, String>> context) async {
     final url = Uri.parse(
-      'http://10.0.2.2:5001/make_title', // Flask Url (Android IP: 10.0.2.2 - Web IP: localhost or 127.0.0.0)
+      '$uri/make_title', // Flask Url (Android IP: 10.0.2.2 - Web IP: localhost or 127.0.0.0)
     );
 
     // Headers
