@@ -9,6 +9,7 @@ class ChatHistoryTile extends StatelessWidget {
     required this.onIconPressed,
   });
 
+  // Define variables
   final String title;
   final String description;
   final void Function()? onButtonPressed;
@@ -21,6 +22,7 @@ class ChatHistoryTile extends StatelessWidget {
       width: double.infinity,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 7.5),
+
         // Create an OutlinedButtom with rounded corners and shadow
         child: OutlinedButton(
           style: OutlinedButton.styleFrom(
@@ -32,8 +34,7 @@ class ChatHistoryTile extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
             ),
           ),
-          onPressed:
-              onButtonPressed, // TODO: Load conversation item from chat memory
+          onPressed: onButtonPressed,
           // Set the button content to be a Row
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -43,7 +44,7 @@ class ChatHistoryTile extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      title, // TODO: Generate and display title from chat memory (if possible)
+                      title,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontFamily: "Nunito",
@@ -55,7 +56,7 @@ class ChatHistoryTile extends StatelessWidget {
                     Text(
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      description, // TODO: Generate and display description from chat memory (if possible)
+                      description,
                       style: TextStyle(
                         fontFamily: "Nunito",
                         fontSize: 16,
@@ -65,7 +66,7 @@ class ChatHistoryTile extends StatelessWidget {
                   ],
                 ),
               ),
-              // TODO: Button to delete conversation item from chat memory
+              // IconButton to delete converation item
               IconButton(
                 onPressed: onIconPressed,
                 icon: Icon(Icons.delete_rounded, color: Color(0xFFCC0000)),

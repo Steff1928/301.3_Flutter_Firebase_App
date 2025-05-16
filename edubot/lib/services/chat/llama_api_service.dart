@@ -90,7 +90,7 @@ class LlamaApiService {
           if (content is String) yield content;
         } catch (e) {
           // Don't yield anything broken
-          print('JSON parse error: $e\nLine: $cleaned');
+          throw Exception('JSON parse error: $e\nLine: $cleaned');
         }
       }
     }
@@ -103,7 +103,7 @@ class LlamaApiService {
         final content = jsonData['message']?['content'];
         if (content is String) yield content;
       } catch (e) {
-        print('Final JSON parse error: $e\nBuffer: $cleaned');
+        throw Exception('Final JSON parse error: $e\nBuffer: $cleaned');
       }
     }
   }

@@ -35,6 +35,7 @@ class _ChatHistoryPageState extends State<ChatHistoryPage> {
       );
     });
 
+    // Get the current conversation ID
     String? currentConversationId = await chatProvider.getSavedConversationId();
 
     // Remove a conversation if has no data in it (eg. the user created a new conversation but didn't start it)
@@ -53,6 +54,7 @@ class _ChatHistoryPageState extends State<ChatHistoryPage> {
         .doc(authManager.getCurrentUser()?.uid)
         .update({'activeConversationId': conversationId});
 
+    // Reload messages from firestore to get the appropriate conversation data
     chatProvider.loadMessagesFromFirestore();
 
     // Remove all pages in the navigation stack
@@ -62,15 +64,19 @@ class _ChatHistoryPageState extends State<ChatHistoryPage> {
     );
   }
 
+  // Delete conversation item method
   Future<void> deleteConversation(
     String conversationId,
     BuildContext context,
   ) async {
+    // Get auth & firestore
     final firestore = FirebaseFirestore.instance;
     final AuthManager authManager = AuthManager();
 
     // Get ChatProvider to access the current list of messages
     final chatProvider = Provider.of<ChatProvider>(context, listen: false);
+
+    // Delete the converation and history item corresponding to conversationID
     await firestore
         .collection('Users')
         .doc(authManager.getCurrentUser()?.uid)
@@ -85,8 +91,11 @@ class _ChatHistoryPageState extends State<ChatHistoryPage> {
         .doc(conversationId)
         .delete();
 
+    // Get the active conversation ID
     String? currentConversationId = await chatProvider.getSavedConversationId();
 
+    // If the the converation the user wanted to delete is the same one that is currently in their chat view,
+    // clear messages
     setState(() {
       if (conversationId == currentConversationId) {
         chatProvider.clearMessages();
@@ -121,6 +130,7 @@ class _ChatHistoryPageState extends State<ChatHistoryPage> {
         ),
       ),
 
+      // Create a StreamBuilder which listens to the snapshots in the "History" subcollection
       body: Padding(
         padding: const EdgeInsets.only(top: 8.0),
         child: SafeArea(
@@ -132,12 +142,14 @@ class _ChatHistoryPageState extends State<ChatHistoryPage> {
                     .collection('History')
                     .snapshots(),
             builder: (context, snapshot) {
+              // Show loading indicator
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(
                   child: CircularProgressIndicator(color: Colors.blue),
                 );
               }
 
+              // If Chat History is empty, display a default message
               if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                 return Center(
                   child: Padding(
@@ -145,8 +157,12 @@ class _ChatHistoryPageState extends State<ChatHistoryPage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Image.asset('lib/assets/images/no-chats.png', width: 207, height: 207,),
-                        SizedBox(height: 30,),
+                        Image.asset(
+                          'lib/assets/images/no-chats.png',
+                          width: 207,
+                          height: 207,
+                        ),
+                        SizedBox(height: 30),
                         Text(
                           "No Conversations to Show",
                           style: TextStyle(
@@ -171,8 +187,10 @@ class _ChatHistoryPageState extends State<ChatHistoryPage> {
                 );
               }
 
+              // Get the list of converation items from the snapshot data
               final conversationItems = snapshot.data!.docs;
 
+              // Add all the converation items to a ListView
               return ListView.builder(
                 itemCount: conversationItems.length,
                 itemBuilder: (context, index) {

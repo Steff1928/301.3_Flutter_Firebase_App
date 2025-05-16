@@ -79,7 +79,7 @@ class ChatProvider extends ChangeNotifier {
       conversationId = doc.id; // Assign the generated ID to conversationId
     }
 
-    // Store the history is a subcollection called 'History'
+    // Store the history in a subcollection called 'History'
     firestore
         .collection("Users")
         .doc(authManager.getCurrentUser()?.uid)
@@ -331,8 +331,11 @@ class ChatProvider extends ChangeNotifier {
   }
 
   Future<void> generateTitle() async {
+    // Get auth & firestore
     AuthManager authManager = AuthManager();
     FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+    // Get active conversation ID
     String? conversationId = await getSavedConversationId();
 
     try {
