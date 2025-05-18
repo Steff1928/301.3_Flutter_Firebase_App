@@ -199,31 +199,29 @@ class SettingsPage extends StatelessWidget {
                         ),
                           
                         // SafeArea for logout list tile
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 8.0),
-                          child: SafeArea(
-                            child: ListTile(
-                              contentPadding: EdgeInsets.symmetric(
-                                horizontal: 27,
-                              ),
-                              leading: Icon(
-                                Icons.logout,
-                                color: Color(0xFFCC0000),
-                              ),
-                              title: Text(
-                                "Logout",
-                                style: TextStyle(
-                                  fontFamily: "Nunito",
-                                  fontSize: 16,
-                                  color: Color(0xFFCC0000),
-                                ),
-                              ),
-                              trailing: Icon(
-                                Icons.arrow_forward_ios,
-                                color: Color(0xFFCC0000),
-                              ),
-                              onTap: () => logout(context),
+                        SafeArea(
+                          child: ListTile(
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 27,
+                              vertical: 8,
                             ),
+                            leading: Icon(
+                              Icons.logout,
+                              color: Color(0xFFCC0000),
+                            ),
+                            title: Text(
+                              "Logout",
+                              style: TextStyle(
+                                fontFamily: "Nunito",
+                                fontSize: 16,
+                                color: Color(0xFFCC0000),
+                              ),
+                            ),
+                            trailing: Icon(
+                              Icons.arrow_forward_ios,
+                              color: Color(0xFFCC0000),
+                            ),
+                            onTap: () => logout(context),
                           ),
                         ),
                       ],

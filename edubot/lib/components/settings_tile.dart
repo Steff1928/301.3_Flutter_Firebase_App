@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 
 class SettingsTile extends StatelessWidget {
-  const SettingsTile({super.key, required this.title, required this.icon, this.onTap});
+  const SettingsTile({
+    super.key,
+    required this.title,
+    required this.icon,
+    this.onTap,
+  });
 
   // Initialize the required variables
   final String title;
@@ -12,7 +17,7 @@ class SettingsTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       // Set the tile style
-      contentPadding: EdgeInsets.symmetric(horizontal: 27),
+      contentPadding: EdgeInsets.symmetric(horizontal: 27, vertical: 8),
       leading: Icon(icon, color: Color(0xFF1A1A1A)),
       title: Text(
         title,

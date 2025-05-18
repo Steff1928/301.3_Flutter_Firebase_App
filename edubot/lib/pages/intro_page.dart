@@ -29,7 +29,7 @@ class IntroPage extends StatelessWidget {
             child: ConstrainedBox(
               constraints: BoxConstraints(
                 minHeight: MediaQuery.of(context).size.height,
-                maxWidth: 600,
+                maxWidth: MediaQuery.of(context).size.width,
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -40,6 +40,8 @@ class IntroPage extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 25),
                     child: Column(
                       children: [
+                        SizedBox(height: 25), // Spacing
+
                         Text(
                           "EduBot",
                           style: TextStyle(
@@ -133,6 +135,8 @@ class IntroPage extends StatelessWidget {
                             );
                           },
                         ),
+
+                        SizedBox(height: 58,)
                       ],
                     ),
                   ),                      

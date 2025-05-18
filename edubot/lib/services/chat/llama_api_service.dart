@@ -10,7 +10,7 @@ Service class to handle Llama API
 
 class LlamaApiService {
   // Flask Url (Android IP: 10.0.2.2 - Web IP: localhost or 127.0.0.0)
-  final String uri = 'http://192.168.1.122:5001'; 
+  final String uri = 'http://localhost:5001'; 
 
 
   // Send a message and recieve the full JSON response
