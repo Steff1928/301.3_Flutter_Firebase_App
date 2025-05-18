@@ -285,7 +285,7 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
                   ],
                 ),
 
-                SizedBox(height: 50),
+                SizedBox(height: 44),
 
                 Center(
                   child: Text(
@@ -298,7 +298,7 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
                   ),
                 ),
 
-                SizedBox(height: 50),
+                SizedBox(height: 44),
 
                 // Sign in with Google
                 Padding(

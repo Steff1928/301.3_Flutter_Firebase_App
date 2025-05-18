@@ -152,37 +152,34 @@ class _ChatHistoryPageState extends State<ChatHistoryPage> {
               // If Chat History is empty, display a default message
               if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                 return Center(
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 60.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image.asset(
-                          'lib/assets/images/no-chats.png',
-                          width: 207,
-                          height: 207,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        'lib/assets/images/no-chats.png',
+                        width: 207,
+                        height: 207,
+                      ),
+                      SizedBox(height: 30),
+                      Text(
+                        "No Conversations to Show",
+                        style: TextStyle(
+                          fontFamily: "Nunito",
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF1A1A1A),
                         ),
-                        SizedBox(height: 30),
-                        Text(
-                          "No Conversations to Show",
-                          style: TextStyle(
-                            fontFamily: "Nunito",
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF1A1A1A),
-                          ),
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        "Chat with Edubot to create one",
+                        style: TextStyle(
+                          fontFamily: "Nunito",
+                          fontSize: 16,
+                          color: Color(0xFF364B55),
                         ),
-                        SizedBox(height: 10),
-                        Text(
-                          "Chat with Edubot to create one",
-                          style: TextStyle(
-                            fontFamily: "Nunito",
-                            fontSize: 16,
-                            color: Color(0xFF364B55),
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 );
               }

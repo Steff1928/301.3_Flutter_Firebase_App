@@ -26,82 +26,84 @@ class IntroPage extends StatelessWidget {
 
           // Main content
           child: SingleChildScrollView(
-            child: Center(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: MediaQuery.of(context).size.height,
-                  maxWidth: 600,
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-
-                    // Title
-                    Padding(
-                      padding: const EdgeInsets.only(top: 25),
-                      child: Column(
-                        children: [
-                          Text(
-                            "EduBot",
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: MediaQuery.of(context).size.height,
+                maxWidth: 600,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+              
+                  // Title
+                  Padding(
+                    padding: const EdgeInsets.only(top: 25),
+                    child: Column(
+                      children: [
+                        Text(
+                          "EduBot",
+                          style: TextStyle(
+                            fontSize: 64,
+                            color: Color(0xFF074F67),
+                            fontFamily: "Cabin",
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.28,
+                          ),
+                        ),
+                      
+                        SizedBox(height: 7), // Spacing
+              
+                        // Subtitle #1
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 25),
+                          child: Text(
+                            "Welcome to Edubot - The Educational Chatbot for Classrooms.",
+                            textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: 64,
-                              color: Color(0xFF074F67),
-                              fontFamily: "Cabin",
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 1.28,
+                              fontSize: 16,
+                              color: Color(0xFF364B55),
+                              fontFamily: "Nunito",
+                              letterSpacing: 0.32,
                             ),
                           ),
-                        
-                          SizedBox(height: 7), // Spacing
-
-                          // Subtitle #1
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 25),
-                            child: Text(
-                              "Welcome to Edubot - The Educational Chatbot for Classrooms.",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Color(0xFF364B55),
-                                fontFamily: "Nunito",
-                                letterSpacing: 0.32,
-                              ),
+                        ),
+                      
+                        SizedBox(height: 7), // Spacing
+              
+                        // Subtitle #2
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 25),
+                          child: Text(
+                            "Sign in or create an account to get started.",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Color(0xFF364B55),
+                              fontFamily: "Nunito",
+                              letterSpacing: 0.32,
                             ),
                           ),
-                        
-                          SizedBox(height: 7), // Spacing
-
-                          // Subtitle #2
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 25),
-                            child: Text(
-                              "Sign in or create an account to get started.",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Color(0xFF364B55),
-                                fontFamily: "Nunito",
-                                letterSpacing: 0.32,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                        
-                    // Image
-                    Padding(
-                      padding: const EdgeInsets.only(top: 17),
-                      child: Image.asset(
-                        'lib/assets/images/intro-image.png',
-                        height: 207,
-                      ),
+                  ),              
+                      
+                  // Image
+                  Padding(
+                    padding: const EdgeInsets.only(top: 17),
+                    child: Image.asset(
+                      'lib/assets/images/intro-image.png',
+                      height: 207,
                     ),
-                        
-                    SizedBox(height: 58), // Spacing
+                  ),
 
-                    // Login button
-                    Column(
+                  SizedBox(height: 58,),
+                      
+              
+                  // Login button
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 58.0),
+                    child: Column(
                       children: [
                         PrimaryButton(
                           text: "Sign In",
@@ -115,9 +117,9 @@ class IntroPage extends StatelessWidget {
                             );
                           },
                         ),
-
+                                    
                         SizedBox(height: 10),
-
+                                    
                         // Register button
                         SecondaryButton(
                           text: "Create Account",
@@ -133,10 +135,8 @@ class IntroPage extends StatelessWidget {
                         ),
                       ],
                     ),
-                        
-                    SizedBox(height: 58), // Spacing
-                  ],
-                ),
+                  ),                      
+                ],
               ),
             ),
           ),

@@ -270,7 +270,7 @@ class _UserLoginPageState extends State<UserLoginPage> {
                   ],
                 ),
 
-                SizedBox(height: 50),
+                SizedBox(height: 44),
 
                 Center(
                   child: Text(
@@ -283,7 +283,7 @@ class _UserLoginPageState extends State<UserLoginPage> {
                   ),
                 ),
 
-                SizedBox(height: 50),
+                SizedBox(height: 44),
 
                 // Google sign in button
                 Padding(
