@@ -95,6 +95,7 @@ class _ChatPageState extends State<ChatPage> {
   // Select file method
   Future<void> pickFile() async {
     final LlamaApiService apiService = LlamaApiService();
+    final chatProvider = context.read<ChatProvider>();
 
     // Get the file from the platform and store in result - only allowed files with 'pdf' extension
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -133,9 +134,6 @@ class _ChatPageState extends State<ChatPage> {
             fileBytes,
             _selectedFileType.toString(),
           );
-
-          // final summary = await apiService.processFileFromS3(_selectedFileName.toString());
-          // print(summary);
         } else {
           // Mobile/Desktop
           // Get signedUrl from Flask
@@ -151,13 +149,12 @@ class _ChatPageState extends State<ChatPage> {
             file,
             _selectedFileType.toString(),
           );
-
-          // After upload is complete, call the process-docx endpoint
-          // final summary = await apiService.processFileFromS3(
-          //   _selectedFileName.toString(),
-          // );
-          // print(summary);
         }
+
+        chatProvider.sendFile(
+          _selectedFileName.toString(),
+          _selectedFileType.toString(),
+        );
       } catch (e) {
         throw Exception("Error: $e");
       }
@@ -302,19 +299,7 @@ class _ChatPageState extends State<ChatPage> {
   // Send a response to ChatProvider
   void sendMessage() {
     final chatProvider = context.read<ChatProvider>();
-
-    if (_selectedFileName == null) {
-      chatProvider.sendStream(_userInputController.text.trim());
-    } else {
-      chatProvider.sendFile(
-        _selectedFileName.toString(),
-        _selectedFileType.toString(),
-      );
-      setState(() {
-        _selectedFileName = null; // Clear the selected file name
-      });
-    }
-
+    chatProvider.sendStream(_userInputController.text.trim());
     _userInputController.clear();
   }
 
@@ -469,48 +454,47 @@ class _ChatPageState extends State<ChatPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Only display file container if _selectedFileName is not null
-                  if (_selectedFileName != null)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
-                        ),
-                        margin: EdgeInsets.only(bottom: 8),
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade200,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
+                  // if (_selectedFileName != null)
+                  //   Padding(
+                  //     padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                  //     child: Container(
+                  //       padding: EdgeInsets.symmetric(
+                  //         horizontal: 12,
+                  //         vertical: 8,
+                  //       ),
+                  //       margin: EdgeInsets.only(bottom: 8),
+                  //       decoration: BoxDecoration(
+                  //         color: Colors.grey.shade200,
+                  //         borderRadius: BorderRadius.circular(10),
+                  //       ),
 
-                        // File box
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.insert_drive_file,
-                              color: Colors.blueGrey,
-                            ),
-                            SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                _selectedFileName!,
-                                style: TextStyle(fontFamily: "Nunito"),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            IconButton(
-                              icon: Icon(Icons.close_rounded, size: 18),
-                              onPressed: () {
-                                setState(() {
-                                  _selectedFileName = null;
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-
+                  //       // File box
+                  //       child: Row(
+                  //         children: [
+                  //           Icon(
+                  //             Icons.insert_drive_file,
+                  //             color: Colors.blueGrey,
+                  //           ),
+                  //           SizedBox(width: 8),
+                  //           Expanded(
+                  //             child: Text(
+                  //               _selectedFileName!,
+                  //               style: TextStyle(fontFamily: "Nunito"),
+                  //               overflow: TextOverflow.ellipsis,
+                  //             ),
+                  //           ),
+                  //           IconButton(
+                  //             icon: Icon(Icons.close_rounded, size: 18),
+                  //             onPressed: () {
+                  //               setState(() {
+                  //                 _selectedFileName = null;
+                  //               });
+                  //             },
+                  //           ),
+                  //         ],
+                  //       ),
+                  //     ),
+                  //   ),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
@@ -518,8 +502,7 @@ class _ChatPageState extends State<ChatPage> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 5.0),
                         child: IconButton(
-                          onPressed:
-                              pickFile, // TODO: Upload file functionality
+                          onPressed: pickFile,
                           icon: Icon(
                             Icons.upload_file,
                             size: 24,

@@ -383,6 +383,7 @@ class ChatProvider extends ChangeNotifier {
       content: fileName,
       isUser: true,
       timeStamp: DateTime.now(),
+      messageType: MessageType.file
     );
 
     // Add user message to chat
