@@ -13,7 +13,9 @@ import 'package:edubot/services/chat/chat_provider.dart';
 import 'package:edubot/services/chat/llama_api_service.dart';
 import 'package:edubot/services/chat/message.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:mime/mime.dart';
 import 'package:provider/provider.dart';
 
 class ChatPage extends StatefulWidget {
@@ -103,33 +105,61 @@ class _ChatPageState extends State<ChatPage> {
     // Check that file picked is not null
     if (result != null && result.files.single.path != null) {
       // Assign the result to a fileName and extension to fileType
-      String fileName = result.files.single.name; 
+      String fileName = result.files.single.name;
       String filePath = result.files.single.path!;
-      String fileType = result.files.single.extension!;
+
+      // Get MIME type using 'mime' package
+      String? mimeType = lookupMimeType(filePath) ?? 'application/octet-stream';
+
       setState(() {
         _selectedFileName = fileName; // Store name in _selectedFileName
-        _selectedFileType = fileType; // Store type in _selectedFileType
+        _selectedFileType = mimeType; // Store type in _selectedFileType
         _selectedFilePath = filePath;
       });
 
       // Upload file
       try {
-        // Get signedUrl from Flask
-        final signedUrl = await apiService.getSignedUrlFromFlask(
-          _selectedFileName.toString(),
-          _selectedFileType.toString(),
-        );
+        if (kIsWeb) {
+          // Web: use bytes directly
+          Uint8List fileBytes = result.files.single.bytes!;
 
-        // Upload file to S3 using the signedUrl
-        final file = File(_selectedFilePath.toString());
-        await apiService.uploadFileToS3(signedUrl, file, _selectedFileType.toString());
+          final signedUrl = await apiService.getSignedUrlFromFlask(
+            _selectedFileName.toString(),
+            _selectedFileType.toString(),
+          );
 
+          await apiService.uploadFileToS3Web(
+            signedUrl,
+            fileBytes,
+            _selectedFileType.toString(),
+          );
+          
+          final summary = await apiService.processFileFromS3(fileName);
+          print(summary);
+        } else {
+          // Mobile/Desktop
+          // Get signedUrl from Flask
+          final signedUrl = await apiService.getSignedUrlFromFlask(
+            _selectedFileName.toString(),
+            _selectedFileType.toString(),
+          );
 
-        // After upload is complete, call your process-docx endpoint
-        final summary = await apiService.processFileFromS3(_selectedFileName.toString());
-        print(summary);
+          // Upload file to S3 using the signedUrl
+          final file = File(_selectedFilePath.toString());
+          await apiService.uploadFileToS3(
+            signedUrl,
+            file,
+            _selectedFileType.toString(),
+          );
+
+          // After upload is complete, call your process-docx endpoint
+          final summary = await apiService.processFileFromS3(
+            _selectedFileName.toString(),
+          );
+          print(summary);
+        }
       } catch (e) {
-        throw Exception("Error retrieving URL: $e");
+        throw Exception("Error: $e");
       }
     }
   }

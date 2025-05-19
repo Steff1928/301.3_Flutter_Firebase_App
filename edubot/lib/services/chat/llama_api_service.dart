@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:edubot/services/authentication/auth_manager.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 /*
@@ -11,7 +12,7 @@ Service class to handle Llama API
 
 class LlamaApiService {
   // Flask Url (Android IP: 10.0.2.2 - Web IP: localhost or 127.0.0.0)
-  final String uri = 'http://localhost:5001';
+  final String uri = kIsWeb ? 'http://localhost:5001' : 'http://10.0.2.2:5001';
 
   // Send a message and recieve the full JSON response
   Future<String> sendMessageToFlask(
@@ -165,28 +166,51 @@ class LlamaApiService {
     }
   }
 
-  // Upload file to an S3 bucket titled 'edubot-document-upload-bucket'
-  Future<void> uploadFileToS3(String uploadUrl, File file, String contentType) async {
+  // Upload file to an S3 bucket titled 'edubot-document-upload-bucket-<account_id>'
+  Future<void> uploadFileToS3(
+    String uploadUrl,
+    File file,
+    String contentType,
+  ) async {
     final fileBytes = await file.readAsBytes();
+    print(contentType);
 
     final response = await http.put(
       Uri.parse(uploadUrl),
-      headers: {
-        'Content-Type': contentType
-      },
+      headers: {'Content-Type': contentType},
       body: fileBytes,
     );
 
     if (response.statusCode == 200) {
       print('File uploaded successfully!');
     } else {
-      throw('Upload failed: ${response.statusCode} ${response.body}');
+      throw ('Upload failed: ${response.statusCode} ${response.body}');
+    }
+  }
+
+  // Same method as above but with web support for testing (this is temporary and may be removed later)
+  Future<void> uploadFileToS3Web(
+    String uploadUrl,
+    Uint8List fileBytes,
+    String contentType,
+  ) async {
+    final response = await http.put(
+      Uri.parse(uploadUrl),
+      headers: {'Content-Type': contentType},
+      body: fileBytes,
+    );
+
+    if (response.statusCode == 200) {
+      print("File uploaded successfully (web)!");
+    } else {
+      throw Exception("Upload failed: ${response.statusCode} ${response.body}");
     }
   }
 
   // Get the file from S3 and process the contents
   Future<String> processFileFromS3(String fileName) async {
     final url = Uri.parse('$uri/process-docx');
+    print(fileName);
 
     // Headers
     final headers = {'Content-Type': 'application/json'};
