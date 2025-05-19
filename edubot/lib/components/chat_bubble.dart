@@ -6,7 +6,11 @@ class ChatBubble extends StatelessWidget {
   // Get the message and loading state
   final Message message;
   final bool isLoading;
-  const ChatBubble({super.key, required this.message, this.isLoading = false});
+  const ChatBubble({
+    super.key,
+    required this.message,
+    this.isLoading = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +45,37 @@ class ChatBubble extends StatelessWidget {
             ),
           ),
           // If AI message is loading, show loading animation, else display the message
-          child:
+          child: Column(
+            children: [
+              // Only display file container if _selectedFileName is not null
+              // if (fileName != null)
+              //   Padding(
+              //     padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              //     child: Container(
+              //       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              //       margin: EdgeInsets.only(bottom: 8),
+              //       decoration: BoxDecoration(
+              //         color: Colors.grey.shade200,
+              //         borderRadius: BorderRadius.circular(10),
+              //       ),
+
+              //       // File box
+              //       child: Row(
+              //         children: [
+              //           Icon(Icons.insert_drive_file, color: Colors.blueGrey),
+              //           SizedBox(width: 8),
+              //           Expanded(
+              //             child: Text(
+              //               fileName!,
+              //               style: TextStyle(fontFamily: "Nunito"),
+              //               overflow: TextOverflow.ellipsis,
+              //             ),
+              //           ),
+              //         ],
+              //       ),
+              //     ),
+              //   ),
+
               isLoading
                   ? Row(
                     mainAxisSize: MainAxisSize.min,
@@ -67,6 +101,8 @@ class ChatBubble extends StatelessWidget {
                       color: Color(0xFF1A1A1A),
                     ),
                   ),
+            ],
+          ),
         ),
       ),
     );
