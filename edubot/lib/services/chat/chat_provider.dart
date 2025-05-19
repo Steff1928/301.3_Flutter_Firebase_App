@@ -104,6 +104,7 @@ class ChatProvider extends ChangeNotifier {
     _messages.removeRange(0, messages.length);
   }
 
+  // Load messages from Firestore method
   Future<void> loadMessagesFromFirestore() async {
     //  Get instance of auth & firestore and set uid equal to the current user id
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -353,7 +354,6 @@ class ChatProvider extends ChangeNotifier {
         formattedContext,
       );
 
-
       // Get the document to see if it exists (hasn't been deleted before loading title) and then update the title
       final doc =
           await firestore
@@ -375,5 +375,61 @@ class ChatProvider extends ChangeNotifier {
       // Handle errors
       throw Exception("Error generating title: $e");
     }
+  }
+
+  Future<void> sendFile(String fileName, String fileType) async {
+    // Set user message
+    final userMessage = Message(
+      content: fileName,
+      isUser: true,
+      timeStamp: DateTime.now(),
+    );
+
+    // Add user message to chat
+    _messages.add(userMessage);
+
+    // Update UI
+    notifyListeners();
+
+    // Start loading
+    _isLoading = true;
+
+    // Update UI
+    notifyListeners();
+
+    // Try send message & recieve response
+    try {
+      // Send through a response to Flask server with formattedContext
+      final response = await _apiService.processFileFromS3(fileName);
+
+      // Response message from Llama
+      final responseMessage = Message(
+        content: response,
+        isUser: false,
+        timeStamp: DateTime.now(),
+      );
+
+      // Add response message to chat
+      _messages.add(responseMessage);
+    } catch (e) {
+      // Set error message
+      final errorMessage = Message(
+        content: 'Sorry I encountered an issue $e',
+        isUser: false,
+        timeStamp: DateTime.now(),
+      );
+
+      // Add error message to chat
+      _messages.add(errorMessage);
+    }
+
+    // Finished loading
+    _isLoading = false;
+
+    // Update UI
+    notifyListeners();
+
+    // Save messages to Firestore
+    await saveMessagesToFirestore();
   }
 }

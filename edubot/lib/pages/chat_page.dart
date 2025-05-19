@@ -133,9 +133,9 @@ class _ChatPageState extends State<ChatPage> {
             fileBytes,
             _selectedFileType.toString(),
           );
-          
-          final summary = await apiService.processFileFromS3(fileName);
-          print(summary);
+
+          // final summary = await apiService.processFileFromS3(_selectedFileName.toString());
+          // print(summary);
         } else {
           // Mobile/Desktop
           // Get signedUrl from Flask
@@ -152,11 +152,11 @@ class _ChatPageState extends State<ChatPage> {
             _selectedFileType.toString(),
           );
 
-          // After upload is complete, call your process-docx endpoint
-          final summary = await apiService.processFileFromS3(
-            _selectedFileName.toString(),
-          );
-          print(summary);
+          // After upload is complete, call the process-docx endpoint
+          // final summary = await apiService.processFileFromS3(
+          //   _selectedFileName.toString(),
+          // );
+          // print(summary);
         }
       } catch (e) {
         throw Exception("Error: $e");
@@ -302,7 +302,19 @@ class _ChatPageState extends State<ChatPage> {
   // Send a response to ChatProvider
   void sendMessage() {
     final chatProvider = context.read<ChatProvider>();
-    chatProvider.sendStream(_userInputController.text.trim());
+
+    if (_selectedFileName == null) {
+      chatProvider.sendStream(_userInputController.text.trim());
+    } else {
+      chatProvider.sendFile(
+        _selectedFileName.toString(),
+        _selectedFileType.toString(),
+      );
+      setState(() {
+        _selectedFileName = null; // Clear the selected file name
+      });
+    }
+
     _userInputController.clear();
   }
 
