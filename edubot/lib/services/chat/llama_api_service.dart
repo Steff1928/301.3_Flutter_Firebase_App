@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:edubot/services/authentication/auth_manager.dart';
 import 'package:http/http.dart' as http;
 
@@ -10,17 +11,14 @@ Service class to handle Llama API
 
 class LlamaApiService {
   // Flask Url (Android IP: 10.0.2.2 - Web IP: localhost or 127.0.0.0)
-  final String uri = 'http://localhost:5001'; 
-
+  final String uri = 'http://localhost:5001';
 
   // Send a message and recieve the full JSON response
   Future<String> sendMessageToFlask(
     List<Map<String, String>> context,
     String userMessage,
   ) async {
-    final url = Uri.parse(
-      '$uri/safe_chat', 
-    );
+    final url = Uri.parse('$uri/safe_chat');
 
     // Headers
     final headers = {'Content-Type': 'application/json'};
@@ -109,10 +107,10 @@ class LlamaApiService {
   }
 
   // Send a message and recieve a concise summary of the conversation
-  Future<String> generateTitleFromFlask(List<Map<String, String>> context) async {
-    final url = Uri.parse(
-      '$uri/make_title', // Flask Url (Android IP: 10.0.2.2 - Web IP: localhost or 127.0.0.0)
-    );
+  Future<String> generateTitleFromFlask(
+    List<Map<String, String>> context,
+  ) async {
+    final url = Uri.parse('$uri/make_title');
 
     // Headers
     final headers = {'Content-Type': 'application/json'};
@@ -132,6 +130,80 @@ class LlamaApiService {
     } catch (e) {
       // Handle errors
       throw Exception("Request failed: $e");
+    }
+  }
+
+  /* 
+    
+  FILE METHODS 
+  
+  */
+
+  // Get a pre-signed URL from Flask to recieve S3 URL
+  Future<String> getSignedUrlFromFlask(String fileName, String fileType) async {
+    final url = Uri.parse('$uri/generate-upload-url');
+
+    // Headers
+    final headers = {'Content-Type': 'application/json'};
+
+    // JSON Payload
+    final body = jsonEncode({
+      "filename": fileName,
+      "content_type": fileType,
+    }); // CORRECT
+
+    try {
+      final response = await http.post(url, headers: headers, body: body);
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return data['upload_url'];
+      } else {
+        throw Exception("Server error: ${response.statusCode}");
+      }
+    } catch (e) {
+      throw Exception("Request failed: $e");
+    }
+  }
+
+  // Upload file to an S3 bucket titled 'edubot-document-upload-bucket'
+  Future<void> uploadFileToS3(String uploadUrl, File file, String contentType) async {
+    final fileBytes = await file.readAsBytes();
+
+    final response = await http.put(
+      Uri.parse(uploadUrl),
+      headers: {
+        'Content-Type': contentType
+      },
+      body: fileBytes,
+    );
+
+    if (response.statusCode == 200) {
+      print('File uploaded successfully!');
+    } else {
+      throw('Upload failed: ${response.statusCode} ${response.body}');
+    }
+  }
+
+  // Get the file from S3 and process the contents
+  Future<String> processFileFromS3(String fileName) async {
+    final url = Uri.parse('$uri/process-docx');
+
+    // Headers
+    final headers = {'Content-Type': 'application/json'};
+
+    // JSON Payload
+    final body = jsonEncode({"file_key": fileName});
+
+    try {
+      final response = await http.post(url, headers: headers, body: body);
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return data['summary'];
+      } else {
+        throw Exception("Server error: ${response.statusCode}");
+      }
+    } catch (e) {
+      throw Exception("Failed to process file: $e");
     }
   }
 }

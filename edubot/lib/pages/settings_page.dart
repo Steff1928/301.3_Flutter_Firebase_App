@@ -214,6 +214,7 @@ class SettingsPage extends StatelessWidget {
                               style: TextStyle(
                                 fontFamily: "Nunito",
                                 fontSize: 16,
+                                fontWeight: FontWeight.bold,
                                 color: Color(0xFFCC0000),
                               ),
                             ),

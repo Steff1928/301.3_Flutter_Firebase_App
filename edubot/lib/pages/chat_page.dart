@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:edubot/components/chat_bubble.dart';
@@ -9,7 +10,9 @@ import 'package:edubot/pages/chat_history_page.dart';
 import 'package:edubot/pages/settings_page.dart';
 import 'package:edubot/services/authentication/auth_manager.dart';
 import 'package:edubot/services/chat/chat_provider.dart';
+import 'package:edubot/services/chat/llama_api_service.dart';
 import 'package:edubot/services/chat/message.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -22,11 +25,16 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   // Get the required controllers
-  final TextEditingController _userInput = TextEditingController();
+  final TextEditingController _userInputController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+
   late List<Message> _previousMessages;
 
   bool _conversationHasLoaded = false; // Prevent multiple loads
+
+  String? _selectedFileName;
+  String? _selectedFilePath;
+  String? _selectedFileType;
 
   // Scroll to the bottom of the conversation upon inital chat page load (a bit janky but works well enough)
   void waitForMessagesThenScroll(ChatProvider chatProvider) async {
@@ -78,6 +86,50 @@ class _ChatPageState extends State<ChatPage> {
       // Safely close dialog
       if (navigatorKey.currentState?.canPop() ?? false) {
         navigatorKey.currentState?.pop();
+      }
+    }
+  }
+
+  // Select file method
+  Future<void> pickFile() async {
+    final LlamaApiService apiService = LlamaApiService();
+
+    // Get the file from the platform and store in result - only allowed files with 'pdf' extension
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf', 'doc', 'docx', 'txt'],
+    );
+
+    // Check that file picked is not null
+    if (result != null && result.files.single.path != null) {
+      // Assign the result to a fileName and extension to fileType
+      String fileName = result.files.single.name; 
+      String filePath = result.files.single.path!;
+      String fileType = result.files.single.extension!;
+      setState(() {
+        _selectedFileName = fileName; // Store name in _selectedFileName
+        _selectedFileType = fileType; // Store type in _selectedFileType
+        _selectedFilePath = filePath;
+      });
+
+      // Upload file
+      try {
+        // Get signedUrl from Flask
+        final signedUrl = await apiService.getSignedUrlFromFlask(
+          _selectedFileName.toString(),
+          _selectedFileType.toString(),
+        );
+
+        // Upload file to S3 using the signedUrl
+        final file = File(_selectedFilePath.toString());
+        await apiService.uploadFileToS3(signedUrl, file, _selectedFileType.toString());
+
+
+        // After upload is complete, call your process-docx endpoint
+        final summary = await apiService.processFileFromS3(_selectedFileName.toString());
+        print(summary);
+      } catch (e) {
+        throw Exception("Error retrieving URL: $e");
       }
     }
   }
@@ -147,7 +199,6 @@ class _ChatPageState extends State<ChatPage> {
       );
 
       scaffoldMessenger.showSnackBar(snackBar); // Show snackbar
-
     } else {
       // If new conversation already started, notify the user
       final snackBar = SnackBar(
@@ -221,8 +272,8 @@ class _ChatPageState extends State<ChatPage> {
   // Send a response to ChatProvider
   void sendMessage() {
     final chatProvider = context.read<ChatProvider>();
-    chatProvider.sendStream(_userInput.text.trim());
-    _userInput.clear();
+    chatProvider.sendStream(_userInputController.text.trim());
+    _userInputController.clear();
   }
 
   @override
@@ -368,43 +419,97 @@ class _ChatPageState extends State<ChatPage> {
               ),
             ),
 
-            // User input box
+            // User input box + file preview
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 10.0),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
+              // Column with both file container and input row
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Attach file button
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                    child: IconButton(
-                      onPressed: () {}, // TODO: Upload file functionality
-                      icon: Icon(
-                        Icons.folder_open_rounded,
-                        size: 24,
-                        color: Color(0xFF074F67),
+                  // Only display file container if _selectedFileName is not null
+                  if (_selectedFileName != null)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                        margin: EdgeInsets.only(bottom: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade200,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+
+                        // File box
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.insert_drive_file,
+                              color: Colors.blueGrey,
+                            ),
+                            SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                _selectedFileName!,
+                                style: TextStyle(fontFamily: "Nunito"),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.close_rounded, size: 18),
+                              onPressed: () {
+                                setState(() {
+                                  _selectedFileName = null;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
 
-                  // User input box
-                  Expanded(child: SecondaryTextField(controller: _userInput)),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      // Attach file button
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                        child: IconButton(
+                          onPressed:
+                              pickFile, // TODO: Upload file functionality
+                          icon: Icon(
+                            Icons.upload_file,
+                            size: 24,
+                            color: Color(0xFF074F67),
+                          ),
+                        ),
+                      ),
 
-                  // Send message button
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Color(0xFF2B656B),
-                        borderRadius: BorderRadius.circular(25),
+                      // User input field
+                      Expanded(
+                        child: SecondaryTextField(
+                          controller: _userInputController,
+                        ),
                       ),
-                      child: IconButton(
-                        onPressed: sendMessage,
-                        icon: Icon(Icons.send_rounded),
-                        disabledColor: Colors.grey,
-                        color: Color(0xFFFAFAFA),
+
+                      // Send message button
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Color(0xFF2B656B),
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                          child: IconButton(
+                            onPressed: sendMessage,
+                            icon: Icon(Icons.send_rounded),
+                            disabledColor: Colors.grey,
+                            color: Color(0xFFFAFAFA),
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ],
               ),

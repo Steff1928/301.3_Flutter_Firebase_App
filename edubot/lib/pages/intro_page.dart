@@ -136,7 +136,7 @@ class IntroPage extends StatelessWidget {
                           },
                         ),
 
-                        SizedBox(height: 58,)
+                        SizedBox(height: 25,)
                       ],
                     ),
                   ),                      

@@ -27,7 +27,7 @@ class ChatHistoryTile extends StatelessWidget {
         child: OutlinedButton(
           style: OutlinedButton.styleFrom(
             foregroundColor: Color(0xFF05455B),
-            padding: EdgeInsets.only(left: 20, top: 25, bottom: 25, right: 10),
+            padding: EdgeInsets.only(left: 20, top: 20, bottom: 20, right: 10),
             side: BorderSide.none,
             backgroundColor: Color(0xFFF1F5F8),
             shape: RoundedRectangleBorder(

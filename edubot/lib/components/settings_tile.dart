@@ -17,7 +17,7 @@ class SettingsTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       // Set the tile style
-      contentPadding: EdgeInsets.symmetric(horizontal: 27, vertical: 8),
+      contentPadding: EdgeInsets.symmetric(horizontal: 27),
       leading: Icon(icon, color: Color(0xFF1A1A1A)),
       title: Text(
         title,
