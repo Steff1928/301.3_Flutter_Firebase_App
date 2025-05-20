@@ -209,7 +209,7 @@ class LlamaApiService {
 
   // Get the file from S3 and process the contents
   Future<String> processFileFromS3(String fileName) async {
-    final url = Uri.parse('$uri/process-docx');
+    final url = Uri.parse('$uri/process-file');
     print(fileName);
 
     // Headers
