@@ -95,7 +95,7 @@ class _ChatPageState extends State<ChatPage> {
 
   // Select file method
   Future<void> pickFile() async {
-    // Get the file from the platform and store in result - only allowed files with 'pdf' extension
+    // Get the file from the platform and store in result - only allow document-related extensions (eg. 'pdf')
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['pdf', 'doc', 'docx', 'txt'],
@@ -416,7 +416,7 @@ class _ChatPageState extends State<ChatPage> {
                           index == chatProvider.messages.length) {
                         return ChatBubble(
                           message: Message(
-                            content: "Loading...",
+                            content: chatProvider.messages.last.messageType == MessageType.text ? "Loading..." : "Processing File...",
                             isUser: false,
                             timeStamp: DateTime.now(),
                           ),
