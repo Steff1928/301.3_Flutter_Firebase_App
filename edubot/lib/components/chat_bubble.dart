@@ -6,11 +6,7 @@ class ChatBubble extends StatelessWidget {
   // Get the message and loading state
   final Message message;
   final bool isLoading;
-  const ChatBubble({
-    super.key,
-    required this.message,
-    this.isLoading = false,
-  });
+  const ChatBubble({super.key, required this.message, this.isLoading = false});
 
   @override
   Widget build(BuildContext context) {
@@ -46,61 +42,56 @@ class ChatBubble extends StatelessWidget {
           ),
           // If AI message is loading, show loading animation, else display the message
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Only display file container if _selectedFileName is not null
-              // if (fileName != null)
-              //   Padding(
-              //     padding: const EdgeInsets.symmetric(horizontal: 10.0),
-              //     child: Container(
-              //       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              //       margin: EdgeInsets.only(bottom: 8),
-              //       decoration: BoxDecoration(
-              //         color: Colors.grey.shade200,
-              //         borderRadius: BorderRadius.circular(10),
-              //       ),
-
-              //       // File box
-              //       child: Row(
-              //         children: [
-              //           Icon(Icons.insert_drive_file, color: Colors.blueGrey),
-              //           SizedBox(width: 8),
-              //           Expanded(
-              //             child: Text(
-              //               fileName!,
-              //               style: TextStyle(fontFamily: "Nunito"),
-              //               overflow: TextOverflow.ellipsis,
-              //             ),
-              //           ),
-              //         ],
-              //       ),
-              //     ),
-              //   ),
-
-              isLoading
-                  ? Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const LoadingAnim(),
-                      SizedBox(width: 16),
-                      Text(
+              if (message.messageType == MessageType.file)
+                Row(
+                  children: [
+                    Icon(Icons.file_present_outlined, color: Color(0xFF1A1A1A)),
+                    SizedBox(width: 12),
+                    Flexible(
+                      child: Text(
                         message.content,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           fontFamily: "Nunito",
                           fontSize: 16,
-                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.w600,
                           color: Color(0xFF1A1A1A),
                         ),
                       ),
-                    ],
-                  )
-                  : Text(
-                    message.content,
-                    style: TextStyle(
-                      fontFamily: "Nunito",
-                      fontSize: 16,
-                      color: Color(0xFF1A1A1A),
                     ),
-                  ),
+                  ],
+                ),
+
+              if (message.messageType == MessageType.text)
+                isLoading
+                    ? Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const LoadingAnim(),
+                        SizedBox(width: 16),
+                        Text(
+                          message.content,
+                          style: TextStyle(
+                            fontFamily: "Nunito",
+                            fontSize: 16,
+                            fontStyle: FontStyle.italic,
+                            color: Color(0xFF1A1A1A),
+                          ),
+                        ),
+                      ],
+                    )
+                    : Text(
+                      message.content,
+                      style: TextStyle(
+                        fontFamily: "Nunito",
+                        fontSize: 16,
+                        color: Color(0xFF1A1A1A),
+                      ),
+                    ),
             ],
           ),
         ),

@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:edubot/services/authentication/auth_manager.dart';
 import 'package:edubot/services/chat/llama_api_service.dart';
 import 'package:edubot/services/chat/message.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class ChatProvider extends ChangeNotifier {
@@ -377,13 +380,18 @@ class ChatProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> sendFile(String fileName, String fileType) async {
+  Future<void> sendFile(
+    String fileName,
+    String fileType,
+    String filePath,
+    Uint8List fileBytes,
+  ) async {
     // Set user message
     final userMessage = Message(
       content: fileName,
       isUser: true,
       timeStamp: DateTime.now(),
-      messageType: MessageType.file
+      messageType: MessageType.file,
     );
 
     // Add user message to chat
@@ -398,8 +406,30 @@ class ChatProvider extends ChangeNotifier {
     // Update UI
     notifyListeners();
 
-    // Try send message & recieve response
+    // Try send file & recieve summary
     try {
+      // Web
+      if (kIsWeb) {
+        // Get signedUrl from Flask (web)
+        final signedUrl = await _apiService.getSignedUrlFromFlask(
+          fileName,
+          fileType,
+        );
+
+        await _apiService.uploadFileToS3Web(signedUrl, fileBytes, fileType);
+        // Mobile/Desktop
+      } else {
+        // Get signedUrl from Flask
+        final signedUrl = await _apiService.getSignedUrlFromFlask(
+          fileName,
+          fileType,
+        );
+
+        // Upload file to S3 using the signedUrl
+        final file = File(filePath);
+        await _apiService.uploadFileToS3(signedUrl, file, fileType);
+      }
+
       // Send through a response to Flask server with formattedContext
       final response = await _apiService.processFileFromS3(fileName);
 

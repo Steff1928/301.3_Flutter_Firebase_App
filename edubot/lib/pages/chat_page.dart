@@ -10,7 +10,6 @@ import 'package:edubot/pages/chat_history_page.dart';
 import 'package:edubot/pages/settings_page.dart';
 import 'package:edubot/services/authentication/auth_manager.dart';
 import 'package:edubot/services/chat/chat_provider.dart';
-import 'package:edubot/services/chat/llama_api_service.dart';
 import 'package:edubot/services/chat/message.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
@@ -34,9 +33,11 @@ class _ChatPageState extends State<ChatPage> {
 
   bool _conversationHasLoaded = false; // Prevent multiple loads
 
+  // File manangement variables
   String? _selectedFileName;
   String? _selectedFilePath;
   String? _selectedFileType;
+  Uint8List? _selectedFileBytes; // TEMP: Web only (testing)
 
   // Scroll to the bottom of the conversation upon inital chat page load (a bit janky but works well enough)
   void waitForMessagesThenScroll(ChatProvider chatProvider) async {
@@ -94,9 +95,6 @@ class _ChatPageState extends State<ChatPage> {
 
   // Select file method
   Future<void> pickFile() async {
-    final LlamaApiService apiService = LlamaApiService();
-    final chatProvider = context.read<ChatProvider>();
-
     // Get the file from the platform and store in result - only allowed files with 'pdf' extension
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
@@ -118,46 +116,21 @@ class _ChatPageState extends State<ChatPage> {
         _selectedFilePath = filePath;
       });
 
-      // Upload file
-      try {
-        if (kIsWeb) {
-          // Web: use bytes directly
-          Uint8List fileBytes = result.files.single.bytes!;
+      // Read bytes on all platforms
+      Uint8List? fileBytes;
 
-          final signedUrl = await apiService.getSignedUrlFromFlask(
-            _selectedFileName.toString(),
-            _selectedFileType.toString(),
-          );
-
-          await apiService.uploadFileToS3Web(
-            signedUrl,
-            fileBytes,
-            _selectedFileType.toString(),
-          );
-        } else {
-          // Mobile/Desktop
-          // Get signedUrl from Flask
-          final signedUrl = await apiService.getSignedUrlFromFlask(
-            _selectedFileName.toString(),
-            _selectedFileType.toString(),
-          );
-
-          // Upload file to S3 using the signedUrl
-          final file = File(_selectedFilePath.toString());
-          await apiService.uploadFileToS3(
-            signedUrl,
-            file,
-            _selectedFileType.toString(),
-          );
-        }
-
-        chatProvider.sendFile(
-          _selectedFileName.toString(),
-          _selectedFileType.toString(),
-        );
-      } catch (e) {
-        throw Exception("Error: $e");
+      // If the platform is web, assign the file bytes, else also assign and read them using dart.io
+      if (kIsWeb) {
+        fileBytes = result.files.single.bytes!;
+      } else {
+        // Read the file into bytes manually
+        File file = File(filePath);
+        fileBytes = await file.readAsBytes();
       }
+
+      setState(() {
+        _selectedFileBytes = fileBytes; // Update _selectedFileBytes
+      });
     }
   }
 
@@ -297,9 +270,25 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   // Send a response to ChatProvider
-  void sendMessage() {
+  void sendMessage() async {
     final chatProvider = context.read<ChatProvider>();
-    chatProvider.sendStream(_userInputController.text.trim());
+
+    // If there is no
+    if (_selectedFileName == null) {
+      chatProvider.sendStream(_userInputController.text.trim());
+    } else if (_selectedFileName != null && _selectedFileBytes != null) {
+      chatProvider.sendFile(
+        _selectedFileName!,
+        _selectedFileType ?? 'application/octet-stream',
+        _selectedFilePath ?? '',
+        _selectedFileBytes!,
+      );
+
+      setState(() {
+        _selectedFileName = null;
+      });
+    }
+
     _userInputController.clear();
   }
 
@@ -454,57 +443,60 @@ class _ChatPageState extends State<ChatPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Only display file container if _selectedFileName is not null
-                  // if (_selectedFileName != null)
-                  //   Padding(
-                  //     padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                  //     child: Container(
-                  //       padding: EdgeInsets.symmetric(
-                  //         horizontal: 12,
-                  //         vertical: 8,
-                  //       ),
-                  //       margin: EdgeInsets.only(bottom: 8),
-                  //       decoration: BoxDecoration(
-                  //         color: Colors.grey.shade200,
-                  //         borderRadius: BorderRadius.circular(10),
-                  //       ),
+                  if (_selectedFileName != null)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                        margin: EdgeInsets.only(bottom: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade200,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
 
-                  //       // File box
-                  //       child: Row(
-                  //         children: [
-                  //           Icon(
-                  //             Icons.insert_drive_file,
-                  //             color: Colors.blueGrey,
-                  //           ),
-                  //           SizedBox(width: 8),
-                  //           Expanded(
-                  //             child: Text(
-                  //               _selectedFileName!,
-                  //               style: TextStyle(fontFamily: "Nunito"),
-                  //               overflow: TextOverflow.ellipsis,
-                  //             ),
-                  //           ),
-                  //           IconButton(
-                  //             icon: Icon(Icons.close_rounded, size: 18),
-                  //             onPressed: () {
-                  //               setState(() {
-                  //                 _selectedFileName = null;
-                  //               });
-                  //             },
-                  //           ),
-                  //         ],
-                  //       ),
-                  //     ),
-                  //   ),
+                        // File box
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.insert_drive_file,
+                              color: Colors.blueGrey,
+                            ),
+                            SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                _selectedFileName!,
+                                style: TextStyle(
+                                  fontFamily: "Nunito",
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.close_rounded, size: 18),
+                              onPressed: () {
+                                setState(() {
+                                  _selectedFileName = null;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       // Attach file button
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                        padding: const EdgeInsets.only(left: 2.0),
                         child: IconButton(
                           onPressed: pickFile,
                           icon: Icon(
-                            Icons.upload_file,
+                            Icons.file_upload_outlined,
                             size: 24,
                             color: Color(0xFF074F67),
                           ),

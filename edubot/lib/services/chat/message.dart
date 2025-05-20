@@ -28,7 +28,7 @@ class Message {
       content: json['content'],
       isUser: isUser,
       timeStamp: DateTime.parse(json['timeStamp']),
-      messageType: json['messageType'],
+      messageType: MessageType.values.byName(json['messageType']),
     );
   }
 
@@ -37,7 +37,7 @@ class Message {
       'content': content,
       'isUser': isUser,
       'timeStamp': timeStamp.toIso8601String(),
-      'messageType': messageType.toString(),
+      'messageType': messageType.name,
     };
   }
 }
