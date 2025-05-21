@@ -20,7 +20,7 @@ class SecondaryTextField extends StatelessWidget {
 
           // Text field styling
           cursorColor: Color(0xFF1A1A1A),
-          style: TextStyle(color: enabled ? Color(0xFF1A1A1A) : Color.fromARGB(175, 26, 26, 26) , fontFamily: 'Nunito'),
+          style: TextStyle(color: enabled ? Color(0xFF1A1A1A) : Color(0xFF1A1A1A).withValues(alpha: 0.75) , fontFamily: 'Nunito'),
         
           // Enable multiline text wrapping
           keyboardType: TextInputType.multiline,
@@ -40,7 +40,7 @@ class SecondaryTextField extends StatelessWidget {
             
             // Background colour
             filled: true,
-            fillColor: enabled ? Color(0xFFE6E6E6) : Color(0xFFF0F0F0),
+            fillColor: enabled ? Color(0xFFE6E6E6) : Color(0xFFE6E6E6).withValues(alpha: 0.5),
         
             // Border management
             border: OutlineInputBorder(

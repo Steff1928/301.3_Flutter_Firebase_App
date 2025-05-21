@@ -27,18 +27,10 @@ class ChatBubble extends StatelessWidget {
     switch (ext.toLowerCase()) {
       case '.pdf':
         return Colors.red;
+      case '.txt':
+        return Colors.black54;
       default:
         return Colors.blueGrey;
-    }
-  }
-
-  // Method to determine the icon type based on the file extension
-  IconData getIconForExtension(String ext) {
-    switch (ext.toLowerCase()) {
-      case '.txt':
-        return Icons.description_outlined;
-      default:
-        return Icons.description;
     }
   }
 
@@ -99,8 +91,8 @@ class ChatBubble extends StatelessWidget {
                   child: Row(
                     children: [
                       Icon(
-                        getIconForExtension(ext!),
-                        color: getColourForExtension(ext),
+                        Icons.description,
+                        color: getColourForExtension(ext!),
                       ),
                       SizedBox(width: 12),
                       Flexible(

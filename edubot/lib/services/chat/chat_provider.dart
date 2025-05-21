@@ -157,9 +157,6 @@ class ChatProvider extends ChangeNotifier {
 
   // Send message stream method (recieving and displaying incremental chunks)
   Future<void> sendStream(String content) async {
-    // Prevent empty sends
-    if (content.trim().isEmpty) return;
-
     // Set user message
     final userMessage = Message(
       content: content,

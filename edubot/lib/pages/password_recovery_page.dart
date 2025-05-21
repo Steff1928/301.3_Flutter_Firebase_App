@@ -78,6 +78,12 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
   }
 
   @override
+  void dispose() {
+    _emailController.dispose(); // Dispose of the controller
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       // Top bar

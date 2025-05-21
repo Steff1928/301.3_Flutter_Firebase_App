@@ -203,6 +203,15 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
   }
 
   @override
+  void dispose() {
+    _displayNameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPassController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       // Page style

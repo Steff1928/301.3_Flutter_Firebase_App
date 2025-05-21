@@ -32,7 +32,9 @@ class _ChatPageState extends State<ChatPage> {
   late List<Message> _previousMessages;
 
   bool _conversationHasLoaded = false; // Prevent multiple loads
-  bool _isEnabled = true;
+  bool _isLoading = false; // Loading state
+  bool _isSendEnabled = false; // Icon button enabled state
+  bool _isEnabled = true; // Text field enabled state
 
   // File manangement variables
   String? _selectedFileName;
@@ -66,6 +68,15 @@ class _ChatPageState extends State<ChatPage> {
     // Final scroll to bottom
     if (_scrollController.hasClients) {
       _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+    }
+  }
+
+  void handleInputChange() {
+    // Enable send button if there is text in the input field
+    if (!_isLoading && _isSendEnabled != _userInputController.text.isNotEmpty) {
+      setState(() {
+        _isSendEnabled = _userInputController.text.isNotEmpty;
+      });
     }
   }
 
@@ -109,7 +120,7 @@ class _ChatPageState extends State<ChatPage> {
       String fileName = result.files.single.name;
       String filePath = result.files.single.path!;
 
-      // Get MIME type using 'mime' package 
+      // Get MIME type using 'mime' package
       String? mimeType = lookupMimeType(filePath) ?? 'application/octet-stream';
 
       setState(() {
@@ -238,6 +249,10 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     super.initState();
+    _userInputController.addListener(
+      handleInputChange,
+    ); // Listen for changes in the input field
+
     final chatProvider = Provider.of<ChatProvider>(
       context,
       listen: false,
@@ -249,11 +264,17 @@ class _ChatPageState extends State<ChatPage> {
     });
   }
 
+  @override
+  void dispose() {
+    _userInputController.removeListener(handleInputChange);
+    _userInputController.dispose(); // Dispose of the controller
+    super.dispose();
+  }
+
   // Only run this state when a dependency has changed
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
     // Initialise previous messages
     _previousMessages = [];
 
@@ -278,24 +299,43 @@ class _ChatPageState extends State<ChatPage> {
   void sendMessage() async {
     final chatProvider = context.read<ChatProvider>();
 
-    // If there is no
-    if (_selectedFileName == null) {
-      chatProvider.sendStream(_userInputController.text.trim());
-    } else if (_selectedFileName != null && _selectedFileBytes != null) {
-      chatProvider.sendFile(
-        _selectedFileName!,
-        _selectedFileType ?? 'application/octet-stream',
-        _selectedFilePath ?? '',
-        _selectedFileBytes!,
-      );
+    setState(() {
+      _isSendEnabled = false; // Disable send button while sending
+      _isLoading = true; // Show loading state
+    });
 
-      setState(() {
-        _selectedFileName = null;
-        _isEnabled = true;
-      });
+    // Prevent empty sends
+    if (_userInputController.text.trim().isNotEmpty) {
+      final message = _userInputController.text.trim();
+      _userInputController.clear();
+
+      // If there is no
+      if (_selectedFileName == null) {
+        await chatProvider.sendStream(message);
+      } else if (_selectedFileName != null && _selectedFileBytes != null) {
+        final fileName = _selectedFileName;
+        setState(() {
+          _selectedFileName = null;
+          _isEnabled = true;
+        });
+        await chatProvider.sendFile(
+          fileName!,
+          _selectedFileType ?? 'application/octet-stream',
+          _selectedFilePath ?? '',
+          _selectedFileBytes!,
+        );
+      }
     }
 
-    _userInputController.clear();
+    setState(() {
+      _isLoading = false; // Hide loading state
+      // Determine if the send button should be enabled based on the input field state
+      if (_userInputController.text.isEmpty) {
+        _isSendEnabled = false;
+      } else {
+        _isSendEnabled = true;
+      }
+    });
   }
 
   @override
@@ -441,7 +481,10 @@ class _ChatPageState extends State<ChatPage> {
                       if (message.messageType == MessageType.text) {
                         return ChatBubble(message: message);
                       } else {
-                        return ChatBubble(message: message, fileExtension: _selectedFileExtension);
+                        return ChatBubble(
+                          message: message,
+                          fileExtension: _selectedFileExtension,
+                        );
                       }
                     },
                   );
@@ -532,13 +575,18 @@ class _ChatPageState extends State<ChatPage> {
                         padding: const EdgeInsets.symmetric(horizontal: 5.0),
                         child: Container(
                           decoration: BoxDecoration(
-                            color: Color(0xFF2B656B),
+                            color:
+                                _isSendEnabled
+                                    ? Color(0xFF2B656B)
+                                    : Color(0xFF2B656B).withValues(alpha: 0.75),
                             borderRadius: BorderRadius.circular(25),
                           ),
                           child: IconButton(
-                            onPressed: sendMessage,
+                            onPressed: _isSendEnabled ? sendMessage : null,
                             icon: Icon(Icons.send_rounded),
-                            disabledColor: Colors.grey,
+                            disabledColor: Color(
+                              0xFFFAFAFA,
+                            ).withValues(alpha: 0.75),
                             color: Color(0xFFFAFAFA),
                           ),
                         ),
