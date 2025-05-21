@@ -6,10 +6,50 @@ class ChatBubble extends StatelessWidget {
   // Get the message and loading state
   final Message message;
   final bool isLoading;
-  const ChatBubble({super.key, required this.message, this.isLoading = false});
+  final String? fileExtension;
+  const ChatBubble({
+    super.key,
+    required this.message,
+    this.isLoading = false,
+    this.fileExtension,
+  });
+
+  // Method to extract the file extension from it's name
+  String? getFileExtension(String fileName) {
+    if (fileName.contains('.')) {
+      return '.${fileName.split('.').last}';
+    }
+    return null;
+  }
+
+  // Method to determine the icon colour depending on the file extension
+  Color getColourForExtension(String ext) {
+    switch (ext.toLowerCase()) {
+      case '.pdf':
+        return Colors.red;
+      default:
+        return Colors.blueGrey;
+    }
+  }
+
+  // Method to determine the icon type based on the file extension
+  IconData getIconForExtension(String ext) {
+    switch (ext.toLowerCase()) {
+      case '.txt':
+        return Icons.description_outlined;
+      default:
+        return Icons.description;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    String? ext;
+    // If the message type was a file, get the file extension
+    if (message.messageType == MessageType.file) {
+      final extension = getFileExtension(message.content);
+      ext = extension;
+    }
     return Align(
       alignment:
           message.isUser
@@ -23,7 +63,10 @@ class ChatBubble extends StatelessWidget {
                 ? const EdgeInsets.only(left: 75)
                 : const EdgeInsets.only(left: 0),
         child: Container(
-          padding: EdgeInsets.all(15),
+          padding:
+              message.messageType == MessageType.text
+                  ? EdgeInsets.all(15)
+                  : EdgeInsets.all(10),
           margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
           decoration: BoxDecoration(
             color:
@@ -40,33 +83,50 @@ class ChatBubble extends StatelessWidget {
               bottomRight: message.isUser ? Radius.zero : Radius.circular(12),
             ),
           ),
-          // If AI message is loading, show loading animation, else display the message
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Only display file container if _selectedFileName is not null
+              // Only display file container if the message type is "MessageType.file"
               if (message.messageType == MessageType.file)
-                Row(
-                  children: [
-                    Icon(Icons.file_present_outlined, color: Color(0xFF1A1A1A)),
-                    SizedBox(width: 12),
-                    Flexible(
-                      child: Text(
-                        message.content,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontFamily: "Nunito",
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF1A1A1A),
+                Container(
+                  padding: EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade200,
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+
+                  // File box
+                  child: Row(
+                    children: [
+                      Icon(
+                        getIconForExtension(ext!),
+                        color: getColourForExtension(ext),
+                      ),
+                      SizedBox(width: 12),
+                      Flexible(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              message.content,
+                              style: TextStyle(
+                                fontFamily: "Nunito",
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            SizedBox(height: 2),
+                            Text(ext.toUpperCase().replaceRange(0, 1, ''), style: TextStyle(fontFamily: 'Nunito', fontSize: 14),),
+                          ],
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
 
               if (message.messageType == MessageType.text)
+                // If AI message is loading, show loading animation, else display the message
                 isLoading
                     ? Row(
                       mainAxisSize: MainAxisSize.min,

@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 class SecondaryTextField extends StatelessWidget {
   final TextEditingController controller;
+  final bool enabled;
 
-  const SecondaryTextField({super.key, required this.controller});
+  const SecondaryTextField({super.key, required this.controller, required this.enabled});
 
   @override
   Widget build(BuildContext context) {
@@ -15,10 +16,11 @@ class SecondaryTextField extends StatelessWidget {
         ),
         child: TextField(
           controller: controller,
+          enabled: enabled,
 
           // Text field styling
           cursorColor: Color(0xFF1A1A1A),
-          style: TextStyle(color: Color(0xFF1A1A1A), fontFamily: 'Nunito'),
+          style: TextStyle(color: enabled ? Color(0xFF1A1A1A) : Color.fromARGB(175, 26, 26, 26) , fontFamily: 'Nunito'),
         
           // Enable multiline text wrapping
           keyboardType: TextInputType.multiline,
@@ -38,7 +40,7 @@ class SecondaryTextField extends StatelessWidget {
             
             // Background colour
             filled: true,
-            fillColor: Color(0xFFE6E6E6),
+            fillColor: enabled ? Color(0xFFE6E6E6) : Color(0xFFF0F0F0),
         
             // Border management
             border: OutlineInputBorder(

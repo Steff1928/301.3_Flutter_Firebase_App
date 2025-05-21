@@ -50,7 +50,7 @@ class LlamaApiService {
     final AuthManager authManager = AuthManager();
     final url = Uri.parse(
       '$uri/stream_chat',
-    ); // Flask Url (Android IP: 10.0.2.2 - Web IP: localhost or 127.0.0.0)
+    );
     final body = {
       'context': context,
       'message': message,
@@ -148,10 +148,7 @@ class LlamaApiService {
     final headers = {'Content-Type': 'application/json'};
 
     // JSON Payload
-    final body = jsonEncode({
-      "filename": fileName,
-      "content_type": fileType,
-    }); // CORRECT
+    final body = jsonEncode({"filename": fileName, "content_type": fileType});
 
     try {
       final response = await http.post(url, headers: headers, body: body);
@@ -166,7 +163,8 @@ class LlamaApiService {
     }
   }
 
-  // Upload file to an S3 bucket titled 'edubot-document-upload-bucket-<account_id>'
+  // Upload file to an S3 bucket titled 'edubot-document-upload-bucket-<account_id>' 
+  // (<account_id> is temporary while waiting for access on Datu's one)
   Future<void> uploadFileToS3(
     String uploadUrl,
     File file,

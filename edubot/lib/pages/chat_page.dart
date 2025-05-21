@@ -32,11 +32,13 @@ class _ChatPageState extends State<ChatPage> {
   late List<Message> _previousMessages;
 
   bool _conversationHasLoaded = false; // Prevent multiple loads
+  bool _isEnabled = true;
 
   // File manangement variables
   String? _selectedFileName;
   String? _selectedFilePath;
   String? _selectedFileType;
+  String? _selectedFileExtension;
   Uint8List? _selectedFileBytes; // TEMP: Web only (testing)
 
   // Scroll to the bottom of the conversation upon inital chat page load (a bit janky but works well enough)
@@ -107,13 +109,16 @@ class _ChatPageState extends State<ChatPage> {
       String fileName = result.files.single.name;
       String filePath = result.files.single.path!;
 
-      // Get MIME type using 'mime' package
+      // Get MIME type using 'mime' package 
       String? mimeType = lookupMimeType(filePath) ?? 'application/octet-stream';
 
       setState(() {
-        _selectedFileName = fileName; // Store name in _selectedFileName
-        _selectedFileType = mimeType; // Store type in _selectedFileType
+        _selectedFileName = fileName;
+        _selectedFileType = mimeType;
         _selectedFilePath = filePath;
+
+        _userInputController.text = 'Summarise this text';
+        _isEnabled = false;
       });
 
       // Read bytes on all platforms
@@ -286,6 +291,7 @@ class _ChatPageState extends State<ChatPage> {
 
       setState(() {
         _selectedFileName = null;
+        _isEnabled = true;
       });
     }
 
@@ -416,7 +422,11 @@ class _ChatPageState extends State<ChatPage> {
                           index == chatProvider.messages.length) {
                         return ChatBubble(
                           message: Message(
-                            content: chatProvider.messages.last.messageType == MessageType.text ? "Loading..." : "Processing File...",
+                            content:
+                                chatProvider.messages.last.messageType ==
+                                        MessageType.text
+                                    ? "Loading..."
+                                    : "Processing File...",
                             isUser: false,
                             timeStamp: DateTime.now(),
                           ),
@@ -428,7 +438,11 @@ class _ChatPageState extends State<ChatPage> {
                       final message = chatProvider.messages[index];
 
                       // return message
-                      return ChatBubble(message: message);
+                      if (message.messageType == MessageType.text) {
+                        return ChatBubble(message: message);
+                      } else {
+                        return ChatBubble(message: message, fileExtension: _selectedFileExtension);
+                      }
                     },
                   );
                 },
@@ -480,6 +494,8 @@ class _ChatPageState extends State<ChatPage> {
                               onPressed: () {
                                 setState(() {
                                   _selectedFileName = null;
+                                  _userInputController.text = "";
+                                  _isEnabled = true;
                                 });
                               },
                             ),
@@ -507,6 +523,7 @@ class _ChatPageState extends State<ChatPage> {
                       Expanded(
                         child: SecondaryTextField(
                           controller: _userInputController,
+                          enabled: _isEnabled,
                         ),
                       ),
 

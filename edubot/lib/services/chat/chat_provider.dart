@@ -5,7 +5,7 @@ import 'package:edubot/services/authentication/auth_manager.dart';
 import 'package:edubot/services/chat/llama_api_service.dart';
 import 'package:edubot/services/chat/message.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+
 
 class ChatProvider extends ChangeNotifier {
   // Get instance of Llama API Service

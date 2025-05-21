@@ -46,7 +46,7 @@ class PrimaryTextField extends StatelessWidget {
           labelStyle: TextStyle(
             fontFamily: "Nunito",
             fontSize: 16,
-            color: errorMessage == null ? Color(0xFF364B55) : Color(0xFFCC0000),
+            color: errorMessage == null ? Color.fromARGB(200, 26, 26, 26) : Color(0xFFCC0000),
           ),
 
           // Background colour
