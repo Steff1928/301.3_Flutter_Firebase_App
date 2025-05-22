@@ -25,6 +25,57 @@ class ChatProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> determineConversationId() async {
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
+    final AuthManager authManager = AuthManager();
+
+    // Get the saved conversationId
+    String? conversationId = await getSavedConversationId();
+
+    // Store the history in a subcollection called 'History' with temporary values
+    if (conversationId != null) {
+      firestore
+          .collection("Users")
+          .doc(authManager.getCurrentUser()?.uid)
+          .collection('History')
+          .doc(conversationId)
+          .set(({
+            'conversationId': conversationId,
+            'title': 'Loading...', // TEMP
+            'description': 'Loading...', // TEMP
+          }));
+    } else {
+      // If conversationId is null, add a new document to 'Conversations' with a randomly generated ID
+      final doc = await firestore
+          .collection("Users")
+          .doc(authManager.getCurrentUser()?.uid)
+          .collection('Conversations')
+          .add(({
+            'messages': _messages.map((m) => m.toJson()).toList(),
+            'lastMessageTimeStamp': DateTime.now().millisecondsSinceEpoch,
+          }));
+
+      conversationId = doc.id; // Assign the generated ID to conversationId
+
+      // Save activeConversationId
+      firestore
+          .collection("Users")
+          .doc(authManager.getCurrentUser()?.uid)
+          .update({'activeConversationId': conversationId});
+
+      firestore
+          .collection("Users")
+          .doc(authManager.getCurrentUser()?.uid)
+          .collection('History')
+          .doc(conversationId)
+          .set(({
+            'conversationId': conversationId,
+            'title': 'Loading...', // TEMP
+            'description': 'Loading...', // TEMP
+          }));
+    }
+  }
+
   // Get conversationId from Firestore method
   Future<String?> getSavedConversationId() async {
     // Get instance of auth & firestore
@@ -57,34 +108,22 @@ class ChatProvider extends ChangeNotifier {
     String? conversationId = await getSavedConversationId();
 
     // If conversationId is not null, open a document reference to designated conversation path
-    if (conversationId != null) {
-      await firestore
-          .collection("Users")
-          .doc(authManager.getCurrentUser()?.uid)
-          .collection('Conversations')
-          .doc(conversationId)
-          .set(({
-            'messages': _messages.map((m) => m.toJson()).toList(),
-            'lastMessageTimeStamp': DateTime.now().millisecondsSinceEpoch,
-          }));
-    } else {
-      // If conversationId is null, add a new document to 'Conversations' with a randomly generated ID
-      final doc = await firestore
-          .collection("Users")
-          .doc(authManager.getCurrentUser()?.uid)
-          .collection('Conversations')
-          .add(({
-            'messages': _messages.map((m) => m.toJson()).toList(),
-            'lastMessageTimeStamp': DateTime.now().millisecondsSinceEpoch,
-          }));
-
-      conversationId = doc.id; // Assign the generated ID to conversationId
-    }
+    await firestore
+        .collection("Users")
+        .doc(authManager.getCurrentUser()?.uid)
+        .collection('Conversations')
+        .doc(conversationId)
+        .set(({
+          'messages': _messages.map((m) => m.toJson()).toList(),
+          'lastMessageTimeStamp': DateTime.now().millisecondsSinceEpoch,
+        }));
 
     // Save activeConversationId
     firestore.collection("Users").doc(authManager.getCurrentUser()?.uid).update(
       {'activeConversationId': conversationId},
     );
+
+    generateTitle();
   }
 
   // Remove message method
@@ -142,11 +181,6 @@ class ChatProvider extends ChangeNotifier {
 
   // Send message stream method (recieving and displaying incremental chunks)
   Future<void> sendStream(String content) async {
-    final FirebaseFirestore firestore = FirebaseFirestore.instance;
-    final AuthManager authManager = AuthManager();
-    final conversationId =
-        await getSavedConversationId(); // Get the saved conversationId
-
     // Set user message
     final userMessage = Message(
       content: content,
@@ -163,17 +197,8 @@ class ChatProvider extends ChangeNotifier {
     // Start loading
     _isLoading = true;
 
-    // Store the history in a subcollection called 'History' with temporary values
-    firestore
-        .collection("Users")
-        .doc(authManager.getCurrentUser()?.uid)
-        .collection('History')
-        .doc(conversationId)
-        .set(({
-          'conversationId': conversationId,
-          'title': 'Loading...', // TEMP
-          'description': 'Loading...', // TEMP
-        }));
+    // Use this method to determine the state of the user's active conversation Id
+    determineConversationId();
 
     // Update UI
     notifyListeners();
@@ -249,13 +274,9 @@ class ChatProvider extends ChangeNotifier {
     // Reset _isEmptyAIMessageAdded state
     _isEmptyAiMessageAdded = false;
 
-    await generateTitle(); // Generate title
-
-    // Update UI
-    notifyListeners();
-
-    // Save messages to Firestore
     await saveMessagesToFirestore();
+
+    notifyListeners(); // Finally update UI
   }
 
   // Send message method (recieving the full response)
@@ -332,6 +353,8 @@ class ChatProvider extends ChangeNotifier {
     // Finished loading
     _isLoading = false;
 
+    await generateTitle(); // Generate title
+
     // Update UI
     notifyListeners();
 
@@ -357,6 +380,8 @@ class ChatProvider extends ChangeNotifier {
             };
           }).toList();
 
+      print(formattedContext);
+
       // Send through a response to Flask server with formattedContext
       final response = await _apiService.generateTitleFromFlask(
         formattedContext,
@@ -377,10 +402,14 @@ class ChatProvider extends ChangeNotifier {
             .doc(authManager.getCurrentUser()?.uid)
             .collection('History')
             .doc(conversationId)
-            .update(({
+            .set(({
+              'conversationId': conversationId,
               'title': response,
               'description': messages.last.content.replaceAll('\n', ' '),
             }));
+
+        print(conversationId);
+        print('Firestore updated at: ${DateTime.now()}');
       }
     } catch (e) {
       // Handle errors
@@ -394,11 +423,6 @@ class ChatProvider extends ChangeNotifier {
     String filePath,
     Uint8List fileBytes,
   ) async {
-    final FirebaseFirestore firestore = FirebaseFirestore.instance;
-    final AuthManager authManager = AuthManager();
-    final conversationId =
-        await getSavedConversationId(); // Get the saved conversationId
-
     // Set user message
     final userMessage = Message(
       content: fileName,
@@ -416,17 +440,8 @@ class ChatProvider extends ChangeNotifier {
     // Start loading
     _isLoading = true;
 
-    // Store the history in a subcollection called 'History' with temporary values
-    firestore
-        .collection("Users")
-        .doc(authManager.getCurrentUser()?.uid)
-        .collection('History')
-        .doc(conversationId)
-        .set(({
-          'conversationId': conversationId,
-          'title': 'Loading...', // TEMP
-          'description': 'Loading...', // TEMP
-        }));
+    // Use this method to determine the state of the user's active conversation Id
+    determineConversationId();
 
     // Update UI
     notifyListeners();
@@ -482,10 +497,10 @@ class ChatProvider extends ChangeNotifier {
     // Finished loading
     _isLoading = false;
 
-    // Update UI
-    notifyListeners();
-
     // Save messages to Firestore
     await saveMessagesToFirestore();
+
+    // Update UI
+    notifyListeners();
   }
 }

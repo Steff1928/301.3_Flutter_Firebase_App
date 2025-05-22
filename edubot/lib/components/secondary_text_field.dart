@@ -35,7 +35,7 @@ class SecondaryTextField extends StatelessWidget {
             hintStyle: TextStyle(
               fontFamily: "Nunito",
               fontSize: 16,
-              color: Color.fromARGB(200, 26, 26, 26),
+              color: Color(0xFF1A1A1A).withValues(alpha: 0.75),
             ),
             
             // Background colour

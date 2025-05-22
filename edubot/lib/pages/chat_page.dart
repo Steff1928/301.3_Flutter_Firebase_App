@@ -311,6 +311,7 @@ class _ChatPageState extends State<ChatPage> {
 
       // If there is no
       if (_selectedFileName == null) {
+        // Trigger title generation in the background
         await chatProvider.sendStream(message);
       } else if (_selectedFileName != null && _selectedFileBytes != null) {
         final fileName = _selectedFileName;

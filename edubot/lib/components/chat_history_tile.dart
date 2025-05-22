@@ -69,7 +69,7 @@ class ChatHistoryTile extends StatelessWidget {
               // IconButton to delete converation item
               IconButton(
                 onPressed: onIconPressed,
-                icon: Icon(Icons.delete_rounded, color: Color(0xFFCC0000)),
+                icon: Icon(Icons.delete_outline, size: 24, color: Color(0xFFCC0000)),
                 highlightColor: Colors.grey.shade400,
               ),
             ],
