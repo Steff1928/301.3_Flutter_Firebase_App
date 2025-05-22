@@ -13,6 +13,7 @@ class ChatProvider extends ChangeNotifier {
   // Get a list of messages & initialise loading state/empty AI message
   final List<Message> _messages = [];
   bool _isLoading = false;
+  bool _loadingCanceled = false;
   bool _isEmptyAiMessageAdded = false;
 
   // Getters
@@ -25,6 +26,7 @@ class ChatProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  // Manage activeConversationId in Firebase if the user does not have one
   Future<void> determineConversationId() async {
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
     final AuthManager authManager = AuthManager();
@@ -34,7 +36,7 @@ class ChatProvider extends ChangeNotifier {
 
     // Store the history in a subcollection called 'History' with temporary values
     if (conversationId != null) {
-      firestore
+      await firestore
           .collection("Users")
           .doc(authManager.getCurrentUser()?.uid)
           .collection('History')
@@ -122,8 +124,6 @@ class ChatProvider extends ChangeNotifier {
     firestore.collection("Users").doc(authManager.getCurrentUser()?.uid).update(
       {'activeConversationId': conversationId},
     );
-
-    generateTitle();
   }
 
   // Remove message method
@@ -176,11 +176,16 @@ class ChatProvider extends ChangeNotifier {
     } catch (e) {
       throw Exception("Error fetching conversations: $e");
     }
+
     notifyListeners(); // Update UI
   }
 
   // Send message stream method (recieving and displaying incremental chunks)
   Future<void> sendStream(String content) async {
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+    _loadingCanceled = false;
+
     // Set user message
     final userMessage = Message(
       content: content,
@@ -199,6 +204,8 @@ class ChatProvider extends ChangeNotifier {
 
     // Use this method to determine the state of the user's active conversation Id
     determineConversationId();
+
+    final String? capturedConversationId = await getSavedConversationId();
 
     // Update UI
     notifyListeners();
@@ -240,6 +247,30 @@ class ChatProvider extends ChangeNotifier {
 
       // Wait for the chunk to recieved in stream and display the results
       await for (final chunk in stream) {
+        // Check if the user switched conversations during streaming
+        final String? currentConversationId = await getSavedConversationId();
+        if (currentConversationId != capturedConversationId) {
+          print('Conversation changed. Aborting stream');
+          _isLoading = false;
+          _loadingCanceled = true;
+          if (messages.isNotEmpty) {
+            await firestore
+                .collection('Users')
+                .doc(AuthManager().getCurrentUser()?.uid)
+                .collection('History')
+                .doc(capturedConversationId)
+                .delete();
+
+            await firestore
+                .collection('Users')
+                .doc(AuthManager().getCurrentUser()?.uid)
+                .collection('Conversations')
+                .doc(capturedConversationId)
+                .delete();
+          }
+          break;
+        }
+
         _isLoading = false;
 
         // Add the empty AI message only once
@@ -274,92 +305,12 @@ class ChatProvider extends ChangeNotifier {
     // Reset _isEmptyAIMessageAdded state
     _isEmptyAiMessageAdded = false;
 
-    await saveMessagesToFirestore();
+    if (!_loadingCanceled) {
+      await saveMessagesToFirestore();
+      Future.microtask(() => generateTitle()); // Then trigger title generation
 
-    notifyListeners(); // Finally update UI
-  }
-
-  // Send message method (recieving the full response)
-  Future<void> sendMessage(String content) async {
-    // Prevent empty sends
-    if (content.trim().isEmpty) return;
-
-    // Set user message
-    final userMessage = Message(
-      content: content,
-      isUser: true,
-      timeStamp: DateTime.now(),
-    );
-
-    // Add user message to chat
-    _messages.add(userMessage);
-
-    // Update UI
-    notifyListeners();
-
-    // Start loading
-    _isLoading = true;
-
-    // Update UI
-    notifyListeners();
-
-    // Try send message & recieve response
-    try {
-      // Get the last user message sent by the user
-      final lastUserMessage = _messages.lastWhere((m) => m.isUser);
-
-      // Establish the context without the last user message
-      final contextMessages = _messages.sublist(
-        0,
-        _messages.lastIndexOf(lastUserMessage),
-      );
-
-      // Create a list of maps as a formattedContext to store message content and user/assistant roles from the previous context
-      List<Map<String, String>> formattedContext =
-          contextMessages.map((m) {
-            return {
-              "role": m.isUser ? "user" : "assistant",
-              "content": m.content,
-            };
-          }).toList();
-
-      // Send through a response to Flask server with formattedContext
-      final response = await _apiService.sendMessageToFlask(
-        formattedContext,
-        lastUserMessage.content,
-      );
-
-      // Response message from Llama
-      final responseMessage = Message(
-        content: response,
-        isUser: false,
-        timeStamp: DateTime.now(),
-      );
-
-      // Add response message to chat
-      _messages.add(responseMessage);
-    } catch (e) {
-      // Set error message
-      final errorMessage = Message(
-        content: 'Sorry I encountered an issue $e',
-        isUser: false,
-        timeStamp: DateTime.now(),
-      );
-
-      // Add error message to chat
-      _messages.add(errorMessage);
+      notifyListeners(); // Finally update UI
     }
-
-    // Finished loading
-    _isLoading = false;
-
-    await generateTitle(); // Generate title
-
-    // Update UI
-    notifyListeners();
-
-    // Save messages to Firestore
-    await saveMessagesToFirestore();
   }
 
   Future<void> generateTitle() async {
@@ -387,30 +338,16 @@ class ChatProvider extends ChangeNotifier {
         formattedContext,
       );
 
-      // Get the document to see if it exists (hasn't been deleted before loading title) and then update the title
-      final doc =
-          await firestore
-              .collection('Users')
-              .doc(authManager.getCurrentUser()?.uid)
-              .collection('History')
-              .doc(conversationId)
-              .get();
-
-      if (doc.exists) {
-        await firestore
-            .collection("Users")
-            .doc(authManager.getCurrentUser()?.uid)
-            .collection('History')
-            .doc(conversationId)
-            .set(({
-              'conversationId': conversationId,
-              'title': response,
-              'description': messages.last.content.replaceAll('\n', ' '),
-            }));
-
-        print(conversationId);
-        print('Firestore updated at: ${DateTime.now()}');
-      }
+      await firestore
+          .collection("Users")
+          .doc(authManager.getCurrentUser()?.uid)
+          .collection('History')
+          .doc(conversationId)
+          .set(({
+            'conversationId': conversationId,
+            'title': response,
+            'description': messages.last.content.replaceAll('\n', ' '),
+          }));
     } catch (e) {
       // Handle errors
       throw Exception("Error generating title: $e");
@@ -497,10 +434,9 @@ class ChatProvider extends ChangeNotifier {
     // Finished loading
     _isLoading = false;
 
-    // Save messages to Firestore
-    await saveMessagesToFirestore();
+    await saveMessagesToFirestore(); // Make sure all messages are persisted first
+    await generateTitle();
 
-    // Update UI
-    notifyListeners();
+    notifyListeners(); // Finally update UI
   }
 }

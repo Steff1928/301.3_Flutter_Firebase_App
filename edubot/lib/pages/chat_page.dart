@@ -328,6 +328,8 @@ class _ChatPageState extends State<ChatPage> {
       }
     }
 
+    if (!mounted) return;
+
     setState(() {
       _isLoading = false; // Hide loading state
       // Determine if the send button should be enabled based on the input field state
@@ -362,7 +364,7 @@ class _ChatPageState extends State<ChatPage> {
         // Navigation actions
         actions: [
           IconButton(
-            icon: Icon(Icons.loupe_rounded, size: 24, color: Color(0xFF074F67)),
+            icon: Icon(Icons.loupe, size: 24, color: Color(0xFF074F67)),
             onPressed: () => startNewConversation(context),
           ),
           // History
@@ -583,7 +585,7 @@ class _ChatPageState extends State<ChatPage> {
                           ),
                           child: IconButton(
                             onPressed: _isSendEnabled ? sendMessage : null,
-                            icon: Icon(Icons.send_rounded),
+                            icon: Icon(Icons.send),
                             disabledColor: Color(
                               0xFFFAFAFA,
                             ).withValues(alpha: 0.75),

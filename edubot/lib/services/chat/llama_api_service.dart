@@ -14,34 +14,6 @@ class LlamaApiService {
   // Flask Url (Android IP: 10.0.2.2 - Web IP: localhost or 127.0.0.0)
   final String uri = kIsWeb ? 'http://localhost:5001' : 'http://10.0.2.2:5001';
 
-  // Send a message and recieve the full JSON response
-  Future<String> sendMessageToFlask(
-    List<Map<String, String>> context,
-    String userMessage,
-  ) async {
-    final url = Uri.parse('$uri/safe_chat');
-
-    // Headers
-    final headers = {'Content-Type': 'application/json'};
-
-    // JSON Payload
-    final body = jsonEncode({"message": userMessage, "context": context});
-
-    // Try send post request to Flask server
-    try {
-      final response = await http.post(url, headers: headers, body: body);
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        return data['response'];
-      } else {
-        throw Exception("Server error: ${response.statusCode}");
-      }
-    } catch (e) {
-      // Handle errors
-      throw Exception("Request failed: $e");
-    }
-  }
-
   // Send a message and recieve each chunk displayed as a list
   Stream<String> streamMessageFromFlask(
     List<Map<String, String>> context,
