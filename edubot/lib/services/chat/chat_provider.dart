@@ -12,8 +12,8 @@ class ChatProvider extends ChangeNotifier {
 
   // Get a list of messages & initialise loading state/empty AI message
   final List<Message> _messages = [];
+
   bool _isLoading = false;
-  bool _loadingCanceled = false;
   bool _isEmptyAiMessageAdded = false;
 
   // Getters
@@ -184,8 +184,6 @@ class ChatProvider extends ChangeNotifier {
   Future<void> sendStream(String content) async {
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-    _loadingCanceled = false;
-
     // Set user message
     final userMessage = Message(
       content: content,
@@ -249,11 +247,14 @@ class ChatProvider extends ChangeNotifier {
       await for (final chunk in stream) {
         // Check if the user switched conversations during streaming
         final String? currentConversationId = await getSavedConversationId();
-        if (currentConversationId != capturedConversationId) {
+        if (currentConversationId != capturedConversationId &&
+            capturedConversationId != null) {
           print('Conversation changed. Aborting stream');
           _isLoading = false;
-          _loadingCanceled = true;
-          if (messages.isNotEmpty) {
+          final hasContent = _messages.any(
+            (m) => !m.isUser && m.content.trim().isNotEmpty,
+          );
+          if (!hasContent) {
             await firestore
                 .collection('Users')
                 .doc(AuthManager().getCurrentUser()?.uid)
@@ -305,12 +306,13 @@ class ChatProvider extends ChangeNotifier {
     // Reset _isEmptyAIMessageAdded state
     _isEmptyAiMessageAdded = false;
 
-    if (!_loadingCanceled) {
-      await saveMessagesToFirestore();
-      Future.microtask(() => generateTitle()); // Then trigger title generation
+    await saveMessagesToFirestore();
 
-      notifyListeners(); // Finally update UI
+    if (_messages.any((m) => !m.isUser && m.content.isNotEmpty)) {
+      Future.microtask(() => generateTitle());
     }
+
+    notifyListeners(); // Finally update UI
   }
 
   Future<void> generateTitle() async {
