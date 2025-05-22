@@ -477,7 +477,6 @@ class _ChatPageState extends State<ChatPage> {
                       // Get each message
                       final message = chatProvider.messages[index];
 
-                      // return message
                       if (message.messageType == MessageType.text) {
                         return ChatBubble(message: message);
                       } else {

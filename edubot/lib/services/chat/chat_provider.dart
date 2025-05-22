@@ -6,7 +6,6 @@ import 'package:edubot/services/chat/llama_api_service.dart';
 import 'package:edubot/services/chat/message.dart';
 import 'package:flutter/foundation.dart';
 
-
 class ChatProvider extends ChangeNotifier {
   // Get instance of Llama API Service
   final _apiService = LlamaApiService();
@@ -82,20 +81,6 @@ class ChatProvider extends ChangeNotifier {
       conversationId = doc.id; // Assign the generated ID to conversationId
     }
 
-    // Store the history in a subcollection called 'History'
-    firestore
-        .collection("Users")
-        .doc(authManager.getCurrentUser()?.uid)
-        .collection('History')
-        .doc(conversationId)
-        .set(({
-          'conversationId': conversationId,
-          'title': 'Loading...', // TEMP
-          'description': messages.last.content.replaceAll('\n', ' '),
-        }));
-
-    generateTitle(); // Generate title
-
     // Save activeConversationId
     firestore.collection("Users").doc(authManager.getCurrentUser()?.uid).update(
       {'activeConversationId': conversationId},
@@ -157,6 +142,11 @@ class ChatProvider extends ChangeNotifier {
 
   // Send message stream method (recieving and displaying incremental chunks)
   Future<void> sendStream(String content) async {
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
+    final AuthManager authManager = AuthManager();
+    final conversationId =
+        await getSavedConversationId(); // Get the saved conversationId
+
     // Set user message
     final userMessage = Message(
       content: content,
@@ -172,6 +162,18 @@ class ChatProvider extends ChangeNotifier {
 
     // Start loading
     _isLoading = true;
+
+    // Store the history in a subcollection called 'History' with temporary values
+    firestore
+        .collection("Users")
+        .doc(authManager.getCurrentUser()?.uid)
+        .collection('History')
+        .doc(conversationId)
+        .set(({
+          'conversationId': conversationId,
+          'title': 'Loading...', // TEMP
+          'description': 'Loading...', // TEMP
+        }));
 
     // Update UI
     notifyListeners();
@@ -209,6 +211,8 @@ class ChatProvider extends ChangeNotifier {
         lastUserMessage.content,
       );
 
+      notifyListeners(); // Update UI
+
       // Wait for the chunk to recieved in stream and display the results
       await for (final chunk in stream) {
         _isLoading = false;
@@ -225,6 +229,8 @@ class ChatProvider extends ChangeNotifier {
         // Update UI
         notifyListeners();
       }
+
+      notifyListeners(); // Update UI
     } catch (e) {
       // Set error message
       final errorMessage = Message(
@@ -242,6 +248,8 @@ class ChatProvider extends ChangeNotifier {
 
     // Reset _isEmptyAIMessageAdded state
     _isEmptyAiMessageAdded = false;
+
+    await generateTitle(); // Generate title
 
     // Update UI
     notifyListeners();
@@ -369,7 +377,10 @@ class ChatProvider extends ChangeNotifier {
             .doc(authManager.getCurrentUser()?.uid)
             .collection('History')
             .doc(conversationId)
-            .update(({'title': response}));
+            .update(({
+              'title': response,
+              'description': messages.last.content.replaceAll('\n', ' '),
+            }));
       }
     } catch (e) {
       // Handle errors
@@ -383,6 +394,11 @@ class ChatProvider extends ChangeNotifier {
     String filePath,
     Uint8List fileBytes,
   ) async {
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
+    final AuthManager authManager = AuthManager();
+    final conversationId =
+        await getSavedConversationId(); // Get the saved conversationId
+
     // Set user message
     final userMessage = Message(
       content: fileName,
@@ -399,6 +415,18 @@ class ChatProvider extends ChangeNotifier {
 
     // Start loading
     _isLoading = true;
+
+    // Store the history in a subcollection called 'History' with temporary values
+    firestore
+        .collection("Users")
+        .doc(authManager.getCurrentUser()?.uid)
+        .collection('History')
+        .doc(conversationId)
+        .set(({
+          'conversationId': conversationId,
+          'title': 'Loading...', // TEMP
+          'description': 'Loading...', // TEMP
+        }));
 
     // Update UI
     notifyListeners();
