@@ -143,7 +143,6 @@ class LlamaApiService {
     String contentType,
   ) async {
     final fileBytes = await file.readAsBytes();
-    print(contentType);
 
     final response = await http.put(
       Uri.parse(uploadUrl),
@@ -180,8 +179,7 @@ class LlamaApiService {
   // Get the file from S3 and process the contents
   Future<String> processFileFromS3(String fileName) async {
     final url = Uri.parse('$uri/process-file');
-    print(fileName);
-
+    
     // Headers
     final headers = {'Content-Type': 'application/json'};
 

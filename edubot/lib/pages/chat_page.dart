@@ -179,7 +179,11 @@ class _ChatPageState extends State<ChatPage> {
     String? conversationId = await chatProvider.getSavedConversationId();
 
     // Allocate an empty document in 'Conversations' to store chats
-    if (conversationId != null && chatProvider.messages.isNotEmpty) {
+    final hasContent = chatProvider.messages.any(
+      (m) => !m.isUser && m.content.trim().isNotEmpty,
+    );
+
+    if (conversationId != null && hasContent) {
       final doc = await firestore
           .collection("Users")
           .doc(authManager.getCurrentUser()?.uid)
@@ -194,6 +198,11 @@ class _ChatPageState extends State<ChatPage> {
           .collection("Users")
           .doc(authManager.getCurrentUser()?.uid)
           .update({'activeConversationId': conversationId});
+
+      // Clear messages
+      setState(() {
+        chatProvider.messages.clear();
+      });
 
       // Notify the user where the previous conversation
       final snackBar = SnackBar(
@@ -237,11 +246,6 @@ class _ChatPageState extends State<ChatPage> {
 
       scaffoldMessenger.showSnackBar(snackBar); // Show snackbar
     }
-
-    // Clear messages
-    setState(() {
-      chatProvider.messages.clear();
-    });
 
     navigator.pop(); // Dismiss loading circle
   }

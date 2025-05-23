@@ -5,6 +5,7 @@ import 'package:edubot/services/authentication/auth_manager.dart';
 import 'package:edubot/services/chat/llama_api_service.dart';
 import 'package:edubot/services/chat/message.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 class ChatProvider extends ChangeNotifier {
   // Get instance of Llama API Service
@@ -27,30 +28,35 @@ class ChatProvider extends ChangeNotifier {
   }
 
   // Manage activeConversationId in Firebase if the user does not have one
-  Future<void> determineConversationId() async {
+  Future<String?> determineConversationId() async {
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
     final AuthManager authManager = AuthManager();
+    final String? uid = authManager.getCurrentUser()?.uid;
 
     // Get the saved conversationId
     String? conversationId = await getSavedConversationId();
 
     // Store the history in a subcollection called 'History' with temporary values
     if (conversationId != null) {
-      await firestore
+      final historyDocRef = firestore
           .collection("Users")
-          .doc(authManager.getCurrentUser()?.uid)
-          .collection('History')
-          .doc(conversationId)
-          .set(({
-            'conversationId': conversationId,
-            'title': 'Loading...', // TEMP
-            'description': 'Loading...', // TEMP
-          }));
+          .doc(uid)
+          .collection("History")
+          .doc(conversationId);
+
+      final historyDoc = await historyDocRef.get();
+      if (!historyDoc.exists) {
+        await historyDocRef.set({
+          'conversationId': conversationId,
+          'title': 'Loading...', // TEMP
+          'description': 'Loading...', // TEMP
+        });
+      }
     } else {
       // If conversationId is null, add a new document to 'Conversations' with a randomly generated ID
       final doc = await firestore
           .collection("Users")
-          .doc(authManager.getCurrentUser()?.uid)
+          .doc(uid)
           .collection('Conversations')
           .add(({
             'messages': _messages.map((m) => m.toJson()).toList(),
@@ -60,14 +66,13 @@ class ChatProvider extends ChangeNotifier {
       conversationId = doc.id; // Assign the generated ID to conversationId
 
       // Save activeConversationId
-      firestore
-          .collection("Users")
-          .doc(authManager.getCurrentUser()?.uid)
-          .update({'activeConversationId': conversationId});
+      firestore.collection("Users").doc(uid).update({
+        'activeConversationId': conversationId,
+      });
 
       firestore
           .collection("Users")
-          .doc(authManager.getCurrentUser()?.uid)
+          .doc(uid)
           .collection('History')
           .doc(conversationId)
           .set(({
@@ -76,6 +81,8 @@ class ChatProvider extends ChangeNotifier {
             'description': 'Loading...', // TEMP
           }));
     }
+
+    return conversationId;
   }
 
   // Get conversationId from Firestore method
@@ -101,13 +108,13 @@ class ChatProvider extends ChangeNotifier {
   }
 
   // Save messages to Firestore method
-  Future<void> saveMessagesToFirestore() async {
+  Future<void> saveMessagesToFirestore(
+    String? conversationId,
+    List<Message> contextMessages,
+  ) async {
     // Get instance of auth & firestore
     final firestore = FirebaseFirestore.instance;
     final AuthManager authManager = AuthManager();
-
-    // Get conversationId from Firestore if it exists
-    String? conversationId = await getSavedConversationId();
 
     // If conversationId is not null, open a document reference to designated conversation path
     await firestore
@@ -116,7 +123,7 @@ class ChatProvider extends ChangeNotifier {
         .collection('Conversations')
         .doc(conversationId)
         .set(({
-          'messages': _messages.map((m) => m.toJson()).toList(),
+          'messages': contextMessages.map((m) => m.toJson()).toList(),
           'lastMessageTimeStamp': DateTime.now().millisecondsSinceEpoch,
         }));
 
@@ -182,31 +189,22 @@ class ChatProvider extends ChangeNotifier {
 
   // Send message stream method (recieving and displaying incremental chunks)
   Future<void> sendStream(String content) async {
-    final FirebaseFirestore firestore = FirebaseFirestore.instance;
-
-    // Set user message
+    // Set user message and add to chat
     final userMessage = Message(
       content: content,
       isUser: true,
       timeStamp: DateTime.now(),
     );
 
-    // Add user message to chat
     _messages.add(userMessage);
-
-    // Update UI
     notifyListeners();
 
     // Start loading
     _isLoading = true;
 
     // Use this method to determine the state of the user's active conversation Id
-    determineConversationId();
-
-    final String? capturedConversationId = await getSavedConversationId();
-
-    // Update UI
-    notifyListeners();
+    String? boundConversationId = await determineConversationId();
+    List<Message> boundMessages = List.from(_messages);
 
     // Create empty AI message
     final aiMessage = Message(
@@ -214,6 +212,8 @@ class ChatProvider extends ChangeNotifier {
       isUser: false,
       timeStamp: DateTime.now(),
     );
+
+    bool receivedChunk = false;
 
     // Try send message & recieve response
     try {
@@ -243,51 +243,30 @@ class ChatProvider extends ChangeNotifier {
 
       notifyListeners(); // Update UI
 
-      // Wait for the chunk to recieved in stream and display the results
       await for (final chunk in stream) {
-        // Check if the user switched conversations during streaming
-        final String? currentConversationId = await getSavedConversationId();
-        if (currentConversationId != capturedConversationId &&
-            capturedConversationId != null) {
-          print('Conversation changed. Aborting stream');
-          _isLoading = false;
-          final hasContent = _messages.any(
-            (m) => !m.isUser && m.content.trim().isNotEmpty,
-          );
-          if (!hasContent) {
-            await firestore
-                .collection('Users')
-                .doc(AuthManager().getCurrentUser()?.uid)
-                .collection('History')
-                .doc(capturedConversationId)
-                .delete();
-
-            await firestore
-                .collection('Users')
-                .doc(AuthManager().getCurrentUser()?.uid)
-                .collection('Conversations')
-                .doc(capturedConversationId)
-                .delete();
-          }
-          break;
-        }
-
         _isLoading = false;
 
-        // Add the empty AI message only once
-        if (!_isEmptyAiMessageAdded) {
-          _messages.add(aiMessage);
-          _isEmptyAiMessageAdded = true;
+        final currentConversationId = await getSavedConversationId();
+
+        if (boundConversationId == currentConversationId) {
+          // Add the empty AI message only once
+          if (!_isEmptyAiMessageAdded && chunk.isNotEmpty) {
+            boundMessages.add(aiMessage);
+            _messages.add(aiMessage);
+            _isEmptyAiMessageAdded = true;
+            notifyListeners();
+          }
+
+          // Append the chunk directly
+          if (chunk.isNotEmpty) {
+            receivedChunk = true;
+            aiMessage.content += chunk;
+            notifyListeners();
+          }
+        } else {
+          break;
         }
-
-        // Append the chunk directly
-        aiMessage.content += chunk;
-
-        // Update UI
-        notifyListeners();
       }
-
-      notifyListeners(); // Update UI
     } catch (e) {
       // Set error message
       final errorMessage = Message(
@@ -306,34 +285,31 @@ class ChatProvider extends ChangeNotifier {
     // Reset _isEmptyAIMessageAdded state
     _isEmptyAiMessageAdded = false;
 
-    await saveMessagesToFirestore();
-
-    if (_messages.any((m) => !m.isUser && m.content.isNotEmpty)) {
-      Future.microtask(() => generateTitle());
+    if (receivedChunk) {
+      await saveMessagesToFirestore(boundConversationId, boundMessages);
+      Future.microtask(() => generateTitle(boundConversationId, boundMessages));
     }
-
-    notifyListeners(); // Finally update UI
   }
 
-  Future<void> generateTitle() async {
+  Future<void> generateTitle(
+    String? conversationId,
+    List<Message> contextMessages,
+  ) async {
+    print('Current Messages: ${contextMessages.map((m) => m.content)}');
+
     // Get auth & firestore
     AuthManager authManager = AuthManager();
     FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-    // Get active conversation ID
-    String? conversationId = await getSavedConversationId();
-
     try {
       // Create a list of maps as a formattedContext to store message content and user/assistant roles from the current context
       List<Map<String, String>> formattedContext =
-          messages.map((m) {
+          contextMessages.map((m) {
             return {
               "role": m.isUser ? "user" : "assistant",
               "content": m.content,
             };
           }).toList();
-
-      print(formattedContext);
 
       // Send through a response to Flask server with formattedContext
       final response = await _apiService.generateTitleFromFlask(
@@ -348,7 +324,7 @@ class ChatProvider extends ChangeNotifier {
           .set(({
             'conversationId': conversationId,
             'title': response,
-            'description': messages.last.content.replaceAll('\n', ' '),
+            'description': contextMessages.last.content.replaceAll('\n', ' '),
           }));
     } catch (e) {
       // Handle errors
@@ -380,7 +356,8 @@ class ChatProvider extends ChangeNotifier {
     _isLoading = true;
 
     // Use this method to determine the state of the user's active conversation Id
-    determineConversationId();
+    final String? boundConversationId = await determineConversationId();
+    List<Message> boundMessages = List.from(_messages);
 
     // Update UI
     notifyListeners();
@@ -420,7 +397,7 @@ class ChatProvider extends ChangeNotifier {
       );
 
       // Add response message to chat
-      _messages.add(responseMessage);
+      boundMessages.add(responseMessage);
     } catch (e) {
       // Set error message
       final errorMessage = Message(
@@ -430,14 +407,17 @@ class ChatProvider extends ChangeNotifier {
       );
 
       // Add error message to chat
-      _messages.add(errorMessage);
+      boundMessages.add(errorMessage);
     }
 
     // Finished loading
     _isLoading = false;
 
-    await saveMessagesToFirestore(); // Make sure all messages are persisted first
-    await generateTitle();
+    await saveMessagesToFirestore(
+      boundConversationId,
+      boundMessages,
+    ); // Make sure all messages are persisted first
+    await generateTitle(boundConversationId, boundMessages);
 
     notifyListeners(); // Finally update UI
   }
