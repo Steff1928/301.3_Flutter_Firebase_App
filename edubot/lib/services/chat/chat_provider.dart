@@ -5,7 +5,6 @@ import 'package:edubot/services/authentication/auth_manager.dart';
 import 'package:edubot/services/chat/llama_api_service.dart';
 import 'package:edubot/services/chat/message.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 
 class ChatProvider extends ChangeNotifier {
   // Get instance of Llama API Service
@@ -245,26 +244,19 @@ class ChatProvider extends ChangeNotifier {
 
       await for (final chunk in stream) {
         _isLoading = false;
+        // Add the empty AI message only once
+        if (!_isEmptyAiMessageAdded && chunk.isNotEmpty) {
+          boundMessages.add(aiMessage);
+          _messages.add(aiMessage);
+          _isEmptyAiMessageAdded = true;
+          notifyListeners();
+        }
 
-        final currentConversationId = await getSavedConversationId();
-
-        if (boundConversationId == currentConversationId) {
-          // Add the empty AI message only once
-          if (!_isEmptyAiMessageAdded && chunk.isNotEmpty) {
-            boundMessages.add(aiMessage);
-            _messages.add(aiMessage);
-            _isEmptyAiMessageAdded = true;
-            notifyListeners();
-          }
-
-          // Append the chunk directly
-          if (chunk.isNotEmpty) {
-            receivedChunk = true;
-            aiMessage.content += chunk;
-            notifyListeners();
-          }
-        } else {
-          break;
+        // Append the chunk directly
+        if (chunk.isNotEmpty) {
+          receivedChunk = true;
+          aiMessage.content += chunk;
+          notifyListeners();
         }
       }
     } catch (e) {
@@ -276,6 +268,7 @@ class ChatProvider extends ChangeNotifier {
       );
 
       // Add error message to chat
+      boundMessages.add(errorMessage);
       _messages.add(errorMessage);
 
       // Stop loading
@@ -398,6 +391,7 @@ class ChatProvider extends ChangeNotifier {
 
       // Add response message to chat
       boundMessages.add(responseMessage);
+      _messages.add(responseMessage);
     } catch (e) {
       // Set error message
       final errorMessage = Message(
@@ -408,6 +402,7 @@ class ChatProvider extends ChangeNotifier {
 
       // Add error message to chat
       boundMessages.add(errorMessage);
+      _messages.add(errorMessage);
     }
 
     // Finished loading
