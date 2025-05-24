@@ -26,6 +26,11 @@ class ChatProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  // Remove message method
+  void removeMessage() {
+    _messages.removeRange(0, messages.length);
+  }
+
   // Manage activeConversationId in Firebase if the user does not have one
   Future<String?> determineConversationId() async {
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -35,7 +40,7 @@ class ChatProvider extends ChangeNotifier {
     // Get the saved conversationId
     String? conversationId = await getSavedConversationId();
 
-    // Store the history in a subcollection called 'History' with temporary values
+    // Store the history in a subcollection called 'History' with temporary values ONLY if the a historyDoc does not already exist
     if (conversationId != null) {
       final historyDocRef = firestore
           .collection("Users")
@@ -106,6 +111,12 @@ class ChatProvider extends ChangeNotifier {
     return null; // Otherwise, return null
   }
 
+  /*
+
+  Firestore Methods (May be moved to another class later)
+
+  */
+
   // Save messages to Firestore method
   Future<void> saveMessagesToFirestore(
     String? conversationId,
@@ -130,11 +141,6 @@ class ChatProvider extends ChangeNotifier {
     firestore.collection("Users").doc(authManager.getCurrentUser()?.uid).update(
       {'activeConversationId': conversationId},
     );
-  }
-
-  // Remove message method
-  void removeMessage() {
-    _messages.removeRange(0, messages.length);
   }
 
   // Load messages from Firestore method
@@ -185,6 +191,12 @@ class ChatProvider extends ChangeNotifier {
 
     notifyListeners(); // Update UI
   }
+
+  /*
+
+  LLM Response Methods
+
+  */
 
   // Send message stream method (recieving and displaying incremental chunks)
   Future<void> sendStream(String content) async {
@@ -411,7 +423,9 @@ class ChatProvider extends ChangeNotifier {
     await saveMessagesToFirestore(
       boundConversationId,
       boundMessages,
-    ); // Make sure all messages are persisted first
+    ); 
+    
+    // Make sure all messages are persisted first
     await generateTitle(boundConversationId, boundMessages);
 
     notifyListeners(); // Finally update UI
