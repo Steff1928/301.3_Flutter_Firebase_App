@@ -290,7 +290,10 @@ class ChatProvider extends ChangeNotifier {
     // Reset _isEmptyAIMessageAdded state
     _isEmptyAiMessageAdded = false;
 
+    // If a chunk was received, save messages to Firestore and generate title
     if (receivedChunk) {
+      // Pass the boundConversationId and boundMessages to prevent interruption during
+      // LLM response generation
       await saveMessagesToFirestore(boundConversationId, boundMessages);
       Future.microtask(() => generateTitle(boundConversationId, boundMessages));
     }
@@ -321,6 +324,7 @@ class ChatProvider extends ChangeNotifier {
         formattedContext,
       );
 
+      // Set the title in the Firestore document
       await firestore
           .collection("Users")
           .doc(authManager.getCurrentUser()?.uid)

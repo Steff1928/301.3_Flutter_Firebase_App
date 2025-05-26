@@ -10,7 +10,7 @@ class SettingsPage extends StatelessWidget {
 
   final AuthManager authManager = AuthManager();
 
-  // logout
+  // Logout method
   void logout(BuildContext context) async {
     final AuthManager authManager = AuthManager();
     final navigator = Navigator.of(context);
@@ -92,7 +92,7 @@ class SettingsPage extends StatelessWidget {
           
               SizedBox(height: 33),
           
-              // Body Content
+              // Settings options container
           
               // Parent widget
               Flexible(
@@ -179,7 +179,7 @@ class SettingsPage extends StatelessWidget {
                           
                             SizedBox(height: 23),
                           
-                            // Theme
+                            // Personalisation options
                             SettingsTile(
                               title: "Response Length",
                               icon: Icons.square_foot_rounded,

@@ -204,6 +204,7 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
 
   @override
   void dispose() {
+    // Dispose of the text controllers to free up resources
     _displayNameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();

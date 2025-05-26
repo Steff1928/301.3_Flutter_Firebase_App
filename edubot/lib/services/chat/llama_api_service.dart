@@ -14,32 +14,38 @@ class LlamaApiService {
   // Flask Url (Android IP: 10.0.2.2 - Web IP: localhost or 127.0.0.0)
   final String uri = kIsWeb ? 'http://localhost:5001' : 'http://10.0.2.2:5001';
 
-  // Send a message and recieve each chunk displayed as a list
+  // Sends a message to the Flask server and returns a stream of responses.
   Stream<String> streamMessageFromFlask(
     List<Map<String, String>> context,
     String message,
   ) async* {
     final AuthManager authManager = AuthManager();
+    // Assign the URL
     final url = Uri.parse(
       '$uri/stream_chat',
     );
+    // Assign the body with context, message, and display name
     final body = {
       'context': context,
       'message': message,
       'displayName': authManager.getCurrentUser()?.displayName,
     };
 
+    // Create a POST request with the URL and headers
     final request =
         http.Request('POST', url)
           ..headers['Content-Type'] = 'application/json'
           ..body = jsonEncode(body);
 
+    // Await the response from the server and store the streamed response
     final response = await request.send();
     final stream = response.stream.transform(utf8.decoder);
 
+    // Initialize a buffer to accumulate chunks
     String buffer = '';
 
     await for (var chunk in stream) {
+      // Append the chunk to the buffer
       buffer += chunk;
 
       // Split on newlines to process full lines
@@ -48,6 +54,7 @@ class LlamaApiService {
       // Keep the last line in buffer if it may be incomplete
       buffer = lines.removeLast();
 
+      // Process each line and format accordigly
       for (final line in lines) {
         final cleaned = line.replaceFirst(RegExp(r'^data:\s*'), '').trim();
 
@@ -56,11 +63,12 @@ class LlamaApiService {
         }
 
         try {
+          // Attempt to parse the cleaned line as JSON and yield the content
           final jsonData = json.decode(cleaned);
           final content = jsonData['message']?['content'];
           if (content is String) yield content;
         } catch (e) {
-          // Don't yield anything broken
+          // Don't yield anything broken in terms of JSON parsing
           throw Exception('JSON parse error: $e\nLine: $cleaned');
         }
       }
@@ -68,12 +76,14 @@ class LlamaApiService {
 
     // Try to process any leftover line
     if (buffer.isNotEmpty) {
+      // Clean the buffer and attempt to parse it as JSON
       final cleaned = buffer.replaceFirst(RegExp(r'^data:\s*'), '').trim();
       try {
         final jsonData = json.decode(cleaned);
         final content = jsonData['message']?['content'];
         if (content is String) yield content;
       } catch (e) {
+        // If the final buffer cannot be parsed, throw an error
         throw Exception('Final JSON parse error: $e\nBuffer: $cleaned');
       }
     }
@@ -123,36 +133,43 @@ class LlamaApiService {
     final body = jsonEncode({"filename": fileName, "content_type": fileType});
 
     try {
+      // Send a POST request to the Flask server to get the signed URL
       final response = await http.post(url, headers: headers, body: body);
+      // Check if the response is successful and parse the JSON response
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         return data['upload_url'];
       } else {
+        // If the response is not successful, throw an error
         throw Exception("Server error: ${response.statusCode}");
       }
     } catch (e) {
+      // Handle any exceptions that occur during the request
       throw Exception("Request failed: $e");
     }
   }
 
-  // Upload file to an S3 bucket titled 'edubot-document-upload-bucket-<account_id>' 
-  // (<account_id> is temporary while waiting for access on Datu's one)
+  // Upload file to a designated S3 bucket using the pre-signed URL
   Future<void> uploadFileToS3(
     String uploadUrl,
     File file,
     String contentType,
   ) async {
+    // Read the file contents as bytes
     final fileBytes = await file.readAsBytes();
 
+    // Send a PUT request to the pre-signed URL with the file bytes
     final response = await http.put(
       Uri.parse(uploadUrl),
       headers: {'Content-Type': contentType},
       body: fileBytes,
     );
 
+    // If response is successful, print success message
     if (response.statusCode == 200) {
       print('File uploaded successfully!');
     } else {
+      // If response is not successful, throw an error with status code and body
       throw ('Upload failed: ${response.statusCode} ${response.body}');
     }
   }
@@ -163,15 +180,18 @@ class LlamaApiService {
     Uint8List fileBytes,
     String contentType,
   ) async {
+    // Send a PUT request to the pre-signed URL with the file bytes assigned directly
     final response = await http.put(
       Uri.parse(uploadUrl),
       headers: {'Content-Type': contentType},
       body: fileBytes,
     );
 
+    // If response is successful, print success message
     if (response.statusCode == 200) {
       print("File uploaded successfully (web)!");
     } else {
+      // If response is not successful, throw an error with status code and body
       throw Exception("Upload failed: ${response.statusCode} ${response.body}");
     }
   }
@@ -187,14 +207,18 @@ class LlamaApiService {
     final body = jsonEncode({"file_key": fileName});
 
     try {
+      // Send a POST request to the Flask server to process the file
       final response = await http.post(url, headers: headers, body: body);
+      // If successful, parse the JSON response and return the summary
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         return data['summary'];
       } else {
+        // If the response is not successful, throw an error with status code
         throw Exception("Server error: ${response.statusCode}");
       }
     } catch (e) {
+      // Handle any exceptions that occur during the request
       throw Exception("Failed to process file: $e");
     }
   }

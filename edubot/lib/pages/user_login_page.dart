@@ -183,6 +183,7 @@ class _UserLoginPageState extends State<UserLoginPage> {
 
   @override
   void dispose() {
+    // Dispose of the text controllers to free up resources
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();

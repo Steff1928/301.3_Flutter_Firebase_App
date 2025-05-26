@@ -41,9 +41,9 @@ class _ChatPageState extends State<ChatPage> {
   String? _selectedFilePath;
   String? _selectedFileType;
   String? _selectedFileExtension;
-  Uint8List? _selectedFileBytes; // TEMP: Web only (testing)
+  Uint8List? _selectedFileBytes; // Web only (testing)
 
-  // Scroll to the bottom of the conversation upon inital chat page load (a bit janky but works well enough)
+  // Scroll to the bottom of the conversation upon inital chat page load
   void waitForMessagesThenScroll(ChatProvider chatProvider) async {
     // Wait for messages to load
     while (chatProvider.messages.isEmpty) {
@@ -370,10 +370,12 @@ class _ChatPageState extends State<ChatPage> {
 
         // Navigation actions
         actions: [
+          // New conversation
           IconButton(
             icon: Icon(Icons.loupe, size: 24, color: Color(0xFF074F67)),
             onPressed: () => startNewConversation(context),
           ),
+
           // History
           IconButton(
             icon: Icon(
@@ -389,6 +391,7 @@ class _ChatPageState extends State<ChatPage> {
               );
             },
           ),
+
           // Settings
           IconButton(
             icon: Icon(
@@ -426,9 +429,10 @@ class _ChatPageState extends State<ChatPage> {
                         );
                       }
                     });
+                     // Add a copy of the messages to the previous messages
                     _previousMessages = List.from(
                       chatProvider.messages,
-                    ); // Add a copy of the messages to the previous messages
+                    );
                   }
 
                   // If empty, display welcome message
@@ -487,6 +491,7 @@ class _ChatPageState extends State<ChatPage> {
                       // Get each message
                       final message = chatProvider.messages[index];
 
+                      // If the message sent by the user is a file, set the file extension
                       if (message.messageType == MessageType.text) {
                         return ChatBubble(message: message);
                       } else {
@@ -555,6 +560,8 @@ class _ChatPageState extends State<ChatPage> {
                         ),
                       ),
                     ),
+
+                  // Input row
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
