@@ -23,7 +23,7 @@ class ChatHistoryTile extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 7.5),
 
-        // Create an OutlinedButtom with rounded corners and shadow
+        // Create an OutlinedButtom with rounded corners
         child: OutlinedButton(
           style: OutlinedButton.styleFrom(
             foregroundColor: Color(0xFF05455B),
@@ -45,6 +45,8 @@ class ChatHistoryTile extends StatelessWidget {
                   children: [
                     Text(
                       title,
+                      // Handle text overflowing the container
+                      maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontFamily: "Nunito",
@@ -54,6 +56,7 @@ class ChatHistoryTile extends StatelessWidget {
                       ),
                     ),
                     Text(
+                      // Handle text overflowing the container and ensure it can only be one line
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       description,

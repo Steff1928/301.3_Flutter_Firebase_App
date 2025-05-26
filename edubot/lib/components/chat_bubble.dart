@@ -3,7 +3,7 @@ import 'package:edubot/services/chat/message.dart';
 import 'package:flutter/material.dart';
 
 class ChatBubble extends StatelessWidget {
-  // Get the message and loading state
+  // Get the required variables
   final Message message;
   final bool isLoading;
   final String? fileExtension;

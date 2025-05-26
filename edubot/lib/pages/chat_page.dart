@@ -34,7 +34,7 @@ class _ChatPageState extends State<ChatPage> {
   bool _conversationHasLoaded = false; // Prevent multiple loads
   bool _isLoading = false; // Loading state
   bool _isSendEnabled = false; // Icon button enabled state
-  bool _isEnabled = true; // Text field enabled state
+  bool _isInputEnabled = true; // Text field enabled state
 
   // File manangement variables
   String? _selectedFileName;
@@ -124,12 +124,14 @@ class _ChatPageState extends State<ChatPage> {
       String? mimeType = lookupMimeType(filePath) ?? 'application/octet-stream';
 
       setState(() {
+        // Assign to the selected variables
         _selectedFileName = fileName;
         _selectedFileType = mimeType;
         _selectedFilePath = filePath;
 
+        // Assign the input text field to a default value and disable it (since the user prompt doesn't get passed anyway)
         _userInputController.text = 'Summarise this text';
-        _isEnabled = false;
+        _isInputEnabled = false;
       });
 
       // Read bytes on all platforms
@@ -313,7 +315,8 @@ class _ChatPageState extends State<ChatPage> {
       final message = _userInputController.text.trim();
       _userInputController.clear();
 
-      // If there is no
+      // If the user did not send a file name, send a regular message, 
+      // else process the file contents and return a summary
       if (_selectedFileName == null) {
         // Trigger title generation in the background
         await chatProvider.sendStream(message);
@@ -321,7 +324,7 @@ class _ChatPageState extends State<ChatPage> {
         final fileName = _selectedFileName;
         setState(() {
           _selectedFileName = null;
-          _isEnabled = true;
+          _isInputEnabled = true;
         });
         await chatProvider.sendFile(
           fileName!,
@@ -332,7 +335,7 @@ class _ChatPageState extends State<ChatPage> {
       }
     }
 
-    if (!mounted) return;
+    if (!mounted) return; // Ensure widget state is mounted
 
     setState(() {
       _isLoading = false; // Hide loading state
@@ -544,7 +547,7 @@ class _ChatPageState extends State<ChatPage> {
                                 setState(() {
                                   _selectedFileName = null;
                                   _userInputController.text = "";
-                                  _isEnabled = true;
+                                  _isInputEnabled = true;
                                 });
                               },
                             ),
@@ -572,7 +575,7 @@ class _ChatPageState extends State<ChatPage> {
                       Expanded(
                         child: SecondaryTextField(
                           controller: _userInputController,
-                          enabled: _isEnabled,
+                          enabled: _isInputEnabled,
                         ),
                       ),
 

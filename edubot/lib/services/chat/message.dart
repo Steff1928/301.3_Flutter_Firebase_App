@@ -1,13 +1,17 @@
 /*
-Message class to structure message content
- */
 
+Message class to structure message content
+ 
+*/
+
+// Determine whether the user message is a regular prompt or a file
 enum MessageType {
   text,
   file,
 }
 
 class Message {
+  // Assign variables to be stored in Firestore
   String content;
   final bool isUser;
   final DateTime timeStamp;
@@ -20,10 +24,13 @@ class Message {
     this.messageType = MessageType.text,
   });
 
+  // Decode the data from JSON after it's been retrieved from Firestore
   factory Message.fromJson(Map<String, dynamic> json) {
+    // Ensure isUser is a boolean variable
     final rawIsUser = json['isUser'];
     final isUser = rawIsUser is bool ? rawIsUser : rawIsUser.toString().toLowerCase() == 'true';
 
+    // Return the Message with appropriate values
     return Message(
       content: json['content'],
       isUser: isUser,
@@ -32,6 +39,7 @@ class Message {
     );
   }
 
+  // Encode the data to JSON as it's being stored in Firestore
   Map<String, dynamic> toJson() {
     return {
       'content': content,

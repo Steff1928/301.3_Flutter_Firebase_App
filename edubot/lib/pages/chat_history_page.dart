@@ -54,14 +54,18 @@ class _ChatHistoryPageState extends State<ChatHistoryPage> {
         .doc(authManager.getCurrentUser()?.uid)
         .update({'activeConversationId': conversationId});
 
-    // Reload messages from firestore to get the appropriate conversation data
-    chatProvider.loadMessagesFromFirestore();
-
-    // Remove all pages in the navigation stack
-    navigator.pushAndRemoveUntil(
-      MaterialPageRoute(builder: (_) => ChatPage()),
-      (route) => false,
-    );
+    // Only load if switching to a different conversation
+    if (currentConversationId != conversationId) {
+      await chatProvider.loadMessagesFromFirestore();
+      // Remove all pages in the navigation stack
+      navigator.pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => ChatPage()),
+        (route) => false,
+      );
+    } else {
+      navigator.pop(); // Close the loading dialog early
+      navigator.pop(); // Close the Chat History page
+    }
   }
 
   // Delete conversation item method

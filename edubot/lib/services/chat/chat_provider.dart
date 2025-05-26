@@ -138,9 +138,9 @@ class ChatProvider extends ChangeNotifier {
         }));
 
     // Save activeConversationId
-    firestore.collection("Users").doc(authManager.getCurrentUser()?.uid).update(
-      {'activeConversationId': conversationId},
-    );
+    // firestore.collection("Users").doc(authManager.getCurrentUser()?.uid).update(
+    //   {'activeConversationId': conversationId},
+    // );
   }
 
   // Load messages from Firestore method
@@ -153,8 +153,8 @@ class ChatProvider extends ChangeNotifier {
     if (uid == null) return; // Return nothing if a uid could not be found
 
     try {
-      final conversationId =
-          await getSavedConversationId(); // Get the saved conversationId if it exists
+       // Get the saved conversationId if it exists
+      final conversationId = await getSavedConversationId();
 
       // Get all conversations for the user where conversationId matches the activeConversationId
       final docSnapshot =
@@ -337,6 +337,7 @@ class ChatProvider extends ChangeNotifier {
     }
   }
 
+  // Send through a file name and process the contents to generate a summary
   Future<void> sendFile(
     String fileName,
     String fileType,
