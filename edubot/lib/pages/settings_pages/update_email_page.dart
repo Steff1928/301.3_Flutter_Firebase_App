@@ -1,6 +1,7 @@
 import 'package:edubot/components/primary_button.dart';
 import 'package:edubot/components/primary_text_field.dart';
 import 'package:edubot/services/authentication/auth_manager.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class UpdateEmailPage extends StatefulWidget {
@@ -12,6 +13,34 @@ class UpdateEmailPage extends StatefulWidget {
 
 class _UpdateEmailPageState extends State<UpdateEmailPage> {
   final TextEditingController _emailController = TextEditingController();
+  bool _isGoogleUser = false;
+  bool _isButtonEnabled = true;
+
+  // Method to check if the user is authenticated with Google
+  Future<bool> isUserAuthenticatedWithGoogle() async {
+    AuthManager authManager = AuthManager();
+    final currentUser = authManager.getCurrentUser();
+
+    if (currentUser != null) {
+      // Check if the user is authenticated with Google
+      for (final userInfo in currentUser.providerData) {
+        if (userInfo.providerId == GoogleAuthProvider.PROVIDER_ID) {
+          return true; // User is authenticated with Google
+        }
+      }
+    }
+    return false; // User is not authenticated with Google
+  }
+
+  void handleInputChange() {
+    AuthManager authManager = AuthManager();
+    // Enable the button only if the email is not empty and the user is not a Google user
+    setState(() {
+      _isButtonEnabled =
+          _emailController.text.isNotEmpty &&
+          authManager.getCurrentUser()?.email != _emailController.text.toLowerCase();
+    });
+  }
 
   @override
   void initState() {
@@ -19,6 +48,31 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
     // Initialize the email controller with the current user's email
     AuthManager authManager = AuthManager();
     _emailController.text = authManager.getCurrentUser()?.email ?? '';
+
+    // Add listener to handle input changes
+    _emailController.addListener(handleInputChange);
+
+    // Call the input change handler initially to set the button state
+    handleInputChange();
+
+    // Check if the user is authenticated with Google
+    isUserAuthenticatedWithGoogle().then((isGoogleUser) {
+      setState(() {
+        _isGoogleUser = isGoogleUser;
+      });
+    });
+
+    // Re-run the check after async call
+    handleInputChange();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    // Dispose of the controller to free up resources
+    _emailController.dispose();
+    // Remove the listener to prevent memory leaks
+    _emailController.removeListener(handleInputChange);
   }
 
   @override
@@ -80,14 +134,33 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
                   controller: _emailController,
                   label: "Display Name",
                   obscureText: false,
+                  isEnabled: _isGoogleUser ? false : true,
                 ),
+
+                SizedBox(height: 10),
+
+                if (_isGoogleUser)
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 48),
+                    child: Text(
+                      "You cannot change your email address because you are signed in with a Google account.",
+                      style: TextStyle(
+                        fontFamily: "Nunito",
+                        fontSize: 14,
+                        color: Colors.red,
+                      ),
+                    ),
+                  ),
 
                 SizedBox(height: 25),
 
                 PrimaryButton(
                   text: "Save Changes",
                   height: 45,
-                  onPressed: () {},
+                  onPressed:
+                      _isButtonEnabled
+                          ? () {}
+                          : null, // TODO: Implement email update logic
                 ),
               ],
             ),

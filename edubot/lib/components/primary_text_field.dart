@@ -6,6 +6,7 @@ class PrimaryTextField extends StatelessWidget {
   final String label;
   final bool obscureText;
   final String? errorMessage; // Optional
+  final bool isEnabled; // Default to true, can be set later
 
   const PrimaryTextField({
     super.key,
@@ -13,6 +14,7 @@ class PrimaryTextField extends StatelessWidget {
     required this.label,
     required this.obscureText,
     this.errorMessage,
+    this.isEnabled = true, // Allow enabling/disabling the text field
   });
 
   @override
@@ -23,9 +25,10 @@ class PrimaryTextField extends StatelessWidget {
       child: TextFormField(
         controller: controller,
         obscureText: obscureText,
+        enabled: isEnabled, // Use the isEnabled property to control the field's state
         
         // Text field styling
-        style: TextStyle(color: Color(0xFF1A1A1A), fontFamily: 'Nunito'),
+        style: TextStyle(color: isEnabled ? Color(0xFF1A1A1A) : Color(0xFF1A1A1A).withValues(alpha: 0.75), fontFamily: 'Nunito'),
         cursorColor: Color(0xFF074F67),
         
 
@@ -51,7 +54,7 @@ class PrimaryTextField extends StatelessWidget {
 
           // Background colour
           filled: true,
-          fillColor: Color(0xFFE6E6E6),
+          fillColor: isEnabled ? Color(0xFFE6E6E6) : Color(0xFFE6E6E6).withValues(alpha: 0.5),
 
           // Border management
           border: OutlineInputBorder(

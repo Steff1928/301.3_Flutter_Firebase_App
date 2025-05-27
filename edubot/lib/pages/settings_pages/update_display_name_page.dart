@@ -1,5 +1,6 @@
 import 'package:edubot/components/primary_button.dart';
 import 'package:edubot/components/primary_text_field.dart';
+import 'package:edubot/pages/chat_page.dart';
 import 'package:edubot/services/authentication/auth_manager.dart';
 import 'package:flutter/material.dart';
 
@@ -12,13 +13,101 @@ class UpdateDisplayNamePage extends StatefulWidget {
 
 class _UpdateDisplayNamePageState extends State<UpdateDisplayNamePage> {
   final TextEditingController _displayNameController = TextEditingController();
+  bool _isButtonEnabled = true;
+  String? _errorMessage;
+
+  Future<void> updateDisplayName(BuildContext context) async {
+    AuthManager authManager = AuthManager();
+    String newDisplayName = _displayNameController.text.trim();
+    final scaffoldMessanger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+
+    // Clear previous errors
+    setState(() {
+      _errorMessage = null;
+    });
+
+    // Show loading circle
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (context) {
+        return Center(child: CircularProgressIndicator(color: Colors.blue));
+      },
+    );
+
+    try {
+      // Update the display name in the AuthManager
+      await authManager.updateDisplayName(newDisplayName);
+    } catch (e) {
+      // Handle any errors that occur during the update
+      setState(() {
+        _errorMessage = e.toString();
+      });
+    } finally {
+      // Close the loading dialog
+      navigator.pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => ChatPage()),
+        (route) => false,
+      );
+    }
+
+    // Show snackbar if update is successful
+    final snackBar = SnackBar(
+      content: Row(
+        children: [
+          Icon(Icons.check_circle, color: Colors.green),
+          SizedBox(width: 16),
+          Flexible(
+            child: Text(
+              "Successfully updated display name to '$newDisplayName'",
+              style: TextStyle(fontFamily: "Nunito", fontSize: 16),
+            ),
+          ),
+        ],
+      ),
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: Color(0xFF1A1A1A),
+      showCloseIcon: true,
+    );
+
+    scaffoldMessanger.showSnackBar(snackBar);
+  }
+
+  // Method to handle input changes and enable/disable the button
+  void handleInputChange() {
+    AuthManager authManager = AuthManager();
+    setState(() {
+      _isButtonEnabled =
+          _displayNameController.text.isNotEmpty &&
+          authManager.getCurrentUser()?.displayName!.toLowerCase() !=
+              _displayNameController.text.toLowerCase();
+    });
+    print(AuthManager().getCurrentUser()?.displayName);
+  }
 
   @override
   void initState() {
     super.initState();
     // Initialize the display name controller with the current user's display name
     AuthManager authManager = AuthManager();
-    _displayNameController.text = authManager.getCurrentUser()?.displayName ?? '';
+    _displayNameController.text =
+        authManager.getCurrentUser()?.displayName ?? '';
+
+    // Add listener to handle input changes
+    _displayNameController.addListener(handleInputChange);
+
+    // Call the input change handler initially to set the button state
+    handleInputChange();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    // Dispose of the controller to free up resources
+    _displayNameController.dispose();
+    // Remove the listener to prevent memory leaks
+    _displayNameController.removeListener(handleInputChange);
   }
 
   @override
@@ -80,6 +169,7 @@ class _UpdateDisplayNamePageState extends State<UpdateDisplayNamePage> {
                   controller: _displayNameController,
                   label: "Display Name",
                   obscureText: false,
+                  errorMessage: _errorMessage,
                 ),
 
                 SizedBox(height: 25),
@@ -87,7 +177,10 @@ class _UpdateDisplayNamePageState extends State<UpdateDisplayNamePage> {
                 PrimaryButton(
                   text: "Save Changes",
                   height: 45,
-                  onPressed: () {},
+                  onPressed:
+                      _isButtonEnabled
+                          ? () => updateDisplayName(context)
+                          : null,
                 ),
               ],
             ),

@@ -11,6 +11,30 @@ class AuthManager {
     return _auth.currentUser;
   }
 
+  Future<void> updateDisplayName(String newDisplayName) async {
+    User? user = getCurrentUser();
+    if (user != null) {
+      try {
+        // Update display name
+        await user.updateDisplayName(newDisplayName);
+
+        // Reload user to get updated info and reference it
+        await user.reload();
+        user = getCurrentUser();
+
+        // Save user info to Firestore
+        _firestore.collection('Users').doc(user?.uid).update({
+          'name': user?.displayName,
+        });
+      } on FirebaseAuthException catch (e) {
+        // Handle errors
+        throw Exception("Error updating display name: ${e.code}");
+      }
+    } else {
+      throw Exception("No user is currently signed in.");
+    }
+  }
+
   // Reset password method
   Future<void> resetPassword(String email) async {
     try {
