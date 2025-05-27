@@ -203,7 +203,7 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 48),
                     child: Text(
-                      "Email address can't be changed while signed in with a Google account",
+                      "Email address can't be changed while signed in with a Google account.",
                       style: TextStyle(
                         fontFamily: "Nunito",
                         fontSize: 14,

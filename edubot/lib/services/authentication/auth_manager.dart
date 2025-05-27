@@ -31,10 +31,10 @@ class AuthManager {
         });
       } on FirebaseAuthException catch (e) {
         // Handle errors
-        if (e.code == 'invalid-email') {
-          throw Exception("Invalid Email");
-        } else if (e.code == 'email-already-in-use') {
-          throw Exception("Email already in use");
+        if (e.code == 'unknown') {
+          throw Exception("Unknown email");
+        } else if (e.code == 'requires-recent-login') {
+          throw Exception("Requires recent login");
         } else {
           throw Exception("Error updating email: ${e.code}");
         }

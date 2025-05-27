@@ -42,7 +42,7 @@ class PrimaryTextField extends StatelessWidget {
               children: [
                 Icon(Icons.error, color: Color(0xFFCC0000), size: 24,),
                 SizedBox(width: 10,),
-                Text("$errorMessage", style: TextStyle(color: Color(0xFFCC0000)),),
+                Flexible(child: Text("$errorMessage", style: TextStyle(color: Color(0xFFCC0000)),)),
               ],
             ),
           ) : null,
