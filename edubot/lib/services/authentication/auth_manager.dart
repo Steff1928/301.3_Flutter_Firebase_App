@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -11,6 +13,38 @@ class AuthManager {
     return _auth.currentUser;
   }
 
+  // Update email method
+  Future<void> updateEmail(String newEmail) async {
+    User? user = getCurrentUser();
+    if (user != null) {
+      try {
+        // Update email
+        await user.verifyBeforeUpdateEmail(newEmail);
+
+        // Reload user to get updated info and reference it
+        await user.reload();
+        user = getCurrentUser();
+
+        // Save user info to Firestore
+        _firestore.collection('Users').doc(user?.uid).update({
+          'email': user?.email,
+        });
+      } on FirebaseAuthException catch (e) {
+        // Handle errors
+        if (e.code == 'invalid-email') {
+          throw Exception("Invalid Email");
+        } else if (e.code == 'email-already-in-use') {
+          throw Exception("Email already in use");
+        } else {
+          throw Exception("Error updating email: ${e.code}");
+        }
+      }
+    } else {
+      throw Exception("No user is currently signed in.");
+    }
+  }
+
+  // Update display name method
   Future<void> updateDisplayName(String newDisplayName) async {
     User? user = getCurrentUser();
     if (user != null) {

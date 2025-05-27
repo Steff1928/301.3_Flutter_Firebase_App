@@ -19,7 +19,7 @@ class _UpdateDisplayNamePageState extends State<UpdateDisplayNamePage> {
   Future<void> updateDisplayName(BuildContext context) async {
     AuthManager authManager = AuthManager();
     String newDisplayName = _displayNameController.text.trim();
-    final scaffoldMessanger = ScaffoldMessenger.of(context);
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
     final navigator = Navigator.of(context);
 
     // Clear previous errors
@@ -60,7 +60,7 @@ class _UpdateDisplayNamePageState extends State<UpdateDisplayNamePage> {
           SizedBox(width: 16),
           Flexible(
             child: Text(
-              "Successfully updated display name to '$newDisplayName'",
+              "Display Name updated successfully",
               style: TextStyle(fontFamily: "Nunito", fontSize: 16),
             ),
           ),
@@ -71,7 +71,7 @@ class _UpdateDisplayNamePageState extends State<UpdateDisplayNamePage> {
       showCloseIcon: true,
     );
 
-    scaffoldMessanger.showSnackBar(snackBar);
+    scaffoldMessenger.showSnackBar(snackBar);
   }
 
   // Method to handle input changes and enable/disable the button

@@ -1,5 +1,6 @@
 import 'package:edubot/components/primary_button.dart';
 import 'package:edubot/components/primary_text_field.dart';
+import 'package:edubot/pages/chat_page.dart';
 import 'package:edubot/services/authentication/auth_manager.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,63 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
   final TextEditingController _emailController = TextEditingController();
   bool _isGoogleUser = false;
   bool _isButtonEnabled = true;
+  String? _errorMessage;
+
+  Future<void> updateEmail(BuildContext context) async {
+    AuthManager authManager = AuthManager();
+    String newEmail = _emailController.text.trim();
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+
+    // Clear previous errors
+    setState(() {
+      _isButtonEnabled = true;
+    });
+
+    // Show loading circle
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (context) {
+        return Center(child: CircularProgressIndicator(color: Colors.blue));
+      },
+    );
+
+    try {
+      // Update the email in the AuthManager
+      await authManager.updateEmail(newEmail);
+      final snackBar = SnackBar(
+          content: Row(
+            children: [
+              Icon(Icons.check_circle, color: Colors.green),
+              SizedBox(width: 16),
+              Flexible(
+                child: Text(
+                  "Email sent to: ${_emailController.text}",
+                  style: TextStyle(fontFamily: "Nunito", fontSize: 16),
+                ),
+              ),
+            ],
+          ),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Color(0xFF1A1A1A),
+        );
+        scaffoldMessenger.showSnackBar(snackBar);
+        navigator.pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => ChatPage()),
+          (route) => false,
+        );
+    } catch (e) {
+      // Handle any errors that occur during the update
+      navigator.pop();
+      setState(() {
+        _errorMessage =
+            e is Exception
+                ? e.toString().replaceFirst('Exception: ', '')
+                : e.toString();
+      });
+    } 
+  }
 
   // Method to check if the user is authenticated with Google
   Future<bool> isUserAuthenticatedWithGoogle() async {
@@ -38,7 +96,8 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
     setState(() {
       _isButtonEnabled =
           _emailController.text.isNotEmpty &&
-          authManager.getCurrentUser()?.email != _emailController.text.toLowerCase();
+          authManager.getCurrentUser()?.email !=
+              _emailController.text.toLowerCase();
     });
   }
 
@@ -117,7 +176,7 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
                   ),
                   child: Center(
                     child: Text(
-                      "The email address associated with your account. You can only change it if you are not signed in with a Google account.",
+                      "Your account's email address. A verification email will be sent to this address if you change it.",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontFamily: "Nunito",
@@ -135,6 +194,7 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
                   label: "Display Name",
                   obscureText: false,
                   isEnabled: _isGoogleUser ? false : true,
+                  errorMessage: _errorMessage,
                 ),
 
                 SizedBox(height: 10),
@@ -143,7 +203,7 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 48),
                     child: Text(
-                      "You cannot change your email address because you are signed in with a Google account.",
+                      "Email address can't be changed while signed in with a Google account",
                       style: TextStyle(
                         fontFamily: "Nunito",
                         fontSize: 14,
@@ -159,7 +219,7 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
                   height: 45,
                   onPressed:
                       _isButtonEnabled
-                          ? () {}
+                          ? () => updateEmail(context)
                           : null, // TODO: Implement email update logic
                 ),
               ],
