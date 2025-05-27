@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Set the app theme, itle and additional properties
+    // Set the app theme, title and additional properties
     return MaterialApp(
       title: "EduBot",
       debugShowCheckedModeBanner: false,

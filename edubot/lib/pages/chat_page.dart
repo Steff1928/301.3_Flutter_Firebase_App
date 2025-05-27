@@ -354,17 +354,13 @@ class _ChatPageState extends State<ChatPage> {
       // Top bar
       appBar: AppBar(
         forceMaterialTransparency: true,
-        actionsPadding: EdgeInsets.symmetric(vertical: 10),
-        title: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          child: Text(
-            "Edubot",
-            style: TextStyle(
-              fontFamily: "Nunito",
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF074F67),
-            ),
+        title: Text(
+          "Edubot",
+          style: TextStyle(
+            fontFamily: "Nunito",
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF074F67),
           ),
         ),
 
