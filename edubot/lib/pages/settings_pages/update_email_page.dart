@@ -215,12 +215,12 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
                 SizedBox(height: 25),
 
                 PrimaryButton(
-                  text: "Save Changes",
+                  text: "Save",
                   height: 45,
                   onPressed:
                       _isButtonEnabled
                           ? () => updateEmail(context)
-                          : null, // TODO: Implement email update logic
+                          : null,
                 ),
               ],
             ),

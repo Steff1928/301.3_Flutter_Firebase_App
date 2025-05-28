@@ -83,7 +83,6 @@ class _UpdateDisplayNamePageState extends State<UpdateDisplayNamePage> {
           authManager.getCurrentUser()?.displayName!.toLowerCase() !=
               _displayNameController.text.toLowerCase();
     });
-    print(AuthManager().getCurrentUser()?.displayName);
   }
 
   @override
@@ -175,7 +174,7 @@ class _UpdateDisplayNamePageState extends State<UpdateDisplayNamePage> {
                 SizedBox(height: 25),
 
                 PrimaryButton(
-                  text: "Save Changes",
+                  text: "Save",
                   height: 45,
                   onPressed:
                       _isButtonEnabled

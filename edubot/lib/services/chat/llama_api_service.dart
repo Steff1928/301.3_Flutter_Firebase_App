@@ -18,6 +18,9 @@ class LlamaApiService {
   Stream<String> streamMessageFromFlask(
     List<Map<String, String>> context,
     String message,
+    int? tone,
+    int? vocabLevel,
+    int? length,
   ) async* {
     final AuthManager authManager = AuthManager();
     // Assign the URL
@@ -29,6 +32,9 @@ class LlamaApiService {
       'context': context,
       'message': message,
       'displayName': authManager.getCurrentUser()?.displayName,
+      'tone': tone ?? 0,
+      'vocab_complexity': vocabLevel ?? 0,
+      'token_length': length ?? 0
     };
 
     // Create a POST request with the URL and headers

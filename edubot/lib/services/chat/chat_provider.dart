@@ -16,6 +16,10 @@ class ChatProvider extends ChangeNotifier {
   bool _isLoading = false;
   bool _isEmptyAiMessageAdded = false;
 
+  int? length;
+  int? tone;
+  int? vocabLevel;
+
   // Getters
   List<Message> get messages => _messages;
   bool get isLoading => _isLoading;
@@ -29,6 +33,59 @@ class ChatProvider extends ChangeNotifier {
   // Remove message method
   void removeMessage() {
     _messages.removeRange(0, messages.length);
+  }
+
+  Future<void> updatePreferences(
+    int? length,
+    int? tone,
+    int? vocabLevel,
+  ) async {
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
+    final AuthManager authManager = AuthManager();
+    final String? uid = authManager.getCurrentUser()?.uid;
+
+    final preferenceDocRef = firestore
+        .collection("Users")
+        .doc(uid)
+        .collection("Preferences")
+        .doc(uid);
+    final preferenceDoc = await preferenceDocRef.get();
+
+    if (!preferenceDoc.exists) {
+      await preferenceDocRef.set({
+        'length': length ?? 0,
+        'tone': tone ?? 0,
+        'vocabLevel': vocabLevel ?? 0,
+      });
+    } else {
+      if (length != null) {
+        await preferenceDocRef.update({'length': length});
+      } else if (tone != null) {
+        await preferenceDocRef.update({'tone': tone});
+      } else if (vocabLevel != null) {
+        await preferenceDocRef.update({'vocabLevel': vocabLevel});
+      }
+    }
+  }
+
+  Future<Map<String, dynamic>?> getPreferences() async {
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
+    final AuthManager authManager = AuthManager();
+    final String? uid = authManager.getCurrentUser()?.uid;
+
+    final preferenceDocRef = firestore
+        .collection("Users")
+        .doc(uid)
+        .collection("Preferences")
+        .doc(uid);
+    final preferenceDoc = await preferenceDocRef.get();
+
+    if (preferenceDoc.exists) {
+      final data = preferenceDoc.data();
+      return data;
+    } else {
+      return null;
+    }
   }
 
   // Manage activeConversationId in Firebase if the user does not have one
@@ -153,7 +210,7 @@ class ChatProvider extends ChangeNotifier {
     if (uid == null) return; // Return nothing if a uid could not be found
 
     try {
-       // Get the saved conversationId if it exists
+      // Get the saved conversationId if it exists
       final conversationId = await getSavedConversationId();
 
       // Get all conversations for the user where conversationId matches the activeConversationId
@@ -245,11 +302,22 @@ class ChatProvider extends ChangeNotifier {
               "content": m.content,
             };
           }).toList();
+      
+      // Get the chat preferences from Firestore and assign them accordingly
+      final data = await getPreferences();
+      if (data != null) {
+        length = data["length"];
+        tone = data["tone"];
+        vocabLevel = data["vocabLevel"];
+      }
 
-      // Send through a response to Flask server with formattedContext
+      // Send through a response to Flask server with formattedContext and chat preferences
       final stream = _apiService.streamMessageFromFlask(
         formattedContext,
         lastUserMessage.content,
+        tone,
+        vocabLevel,
+        length
       );
 
       notifyListeners(); // Update UI
@@ -425,11 +493,8 @@ class ChatProvider extends ChangeNotifier {
     // Finished loading
     _isLoading = false;
 
-    await saveMessagesToFirestore(
-      boundConversationId,
-      boundMessages,
-    ); 
-    
+    await saveMessagesToFirestore(boundConversationId, boundMessages);
+
     // Make sure all messages are persisted first
     await generateTitle(boundConversationId, boundMessages);
 
