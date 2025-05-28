@@ -79,11 +79,17 @@ class ChatProvider extends ChangeNotifier {
         .collection("Preferences")
         .doc(uid);
     final preferenceDoc = await preferenceDocRef.get();
+    final data = preferenceDoc.data();
 
     if (preferenceDoc.exists) {
-      final data = preferenceDoc.data();
       return data;
     } else {
+      // Before returning null, set preferences in case the collection doesn't exist yet
+      preferenceDocRef.set({
+        'length': 0,
+        'tone': 0,
+        'vocabLevel': 0,
+      });
       return null;
     }
   }

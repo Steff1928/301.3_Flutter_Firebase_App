@@ -79,6 +79,12 @@ class _UpdateVocabPageState extends State<UpdateVocabPage> {
         _currentValue = data["vocabLevel"];
         _originalValue = data["vocabLevel"];
       });
+    } else {
+      // If the collection doesn't exist yet, set the values to 0
+      setState(() {
+        _currentValue = 0;
+        _originalValue = 0;
+      });
     }
   }
 

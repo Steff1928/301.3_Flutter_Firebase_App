@@ -78,6 +78,12 @@ class _UpdateResponseLengthPageState extends State<UpdateResponseLengthPage> {
         _currentValue = data["length"];
         _originalValue = data["length"];
       });
+    } else {
+      // If the collection doesn't exist yet, set the values to 0
+      setState(() {
+        _currentValue = 0;
+        _originalValue = 0;
+      });
     }
   }
 

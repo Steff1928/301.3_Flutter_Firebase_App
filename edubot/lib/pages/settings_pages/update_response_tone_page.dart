@@ -78,6 +78,12 @@ class _UpdateResponseTonePageState extends State<UpdateResponseTonePage> {
         _currentValue = data["tone"];
         _originalValue = data["tone"];
       });
+    } else {
+      // If the collection doesn't exist yet, set the values to 0
+      setState(() {
+        _currentValue = 0;
+        _originalValue = 0;
+      });
     }
   }
 

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:edubot/services/authentication/auth_manager.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
@@ -13,6 +14,7 @@ Service class to handle Llama API
 class LlamaApiService {
   // Flask Url (Android IP: 10.0.2.2 - Web IP: localhost or 127.0.0.0)
   final String uri = kIsWeb ? 'http://localhost:5001' : 'http://10.0.2.2:5001';
+  final user = FirebaseAuth.instance.currentUser;
 
   // Sends a message to the Flask server and returns a stream of responses.
   Stream<String> streamMessageFromFlask(
@@ -23,10 +25,18 @@ class LlamaApiService {
     int? length,
   ) async* {
     final AuthManager authManager = AuthManager();
+
+    // Get the ID token
+    final idToken = await user?.getIdToken();
+
+    if (idToken == null) {
+      throw Exception(
+        "Unable to get Firebase ID token. User may not be logged in.",
+      );
+    }
+
     // Assign the URL
-    final url = Uri.parse(
-      '$uri/stream_chat',
-    );
+    final url = Uri.parse('$uri/stream_chat');
     // Assign the body with context, message, and display name
     final body = {
       'context': context,
@@ -34,13 +44,14 @@ class LlamaApiService {
       'displayName': authManager.getCurrentUser()?.displayName,
       'tone': tone ?? 0,
       'vocab_complexity': vocabLevel ?? 0,
-      'token_length': length ?? 0
+      'token_length': length ?? 0,
     };
 
     // Create a POST request with the URL and headers
     final request =
         http.Request('POST', url)
           ..headers['Content-Type'] = 'application/json'
+          ..headers['Authorization'] = 'Bearer $idToken'
           ..body = jsonEncode(body);
 
     // Await the response from the server and store the streamed response
@@ -99,10 +110,22 @@ class LlamaApiService {
   Future<String> generateTitleFromFlask(
     List<Map<String, String>> context,
   ) async {
+    // Get the ID token
+    final idToken = await user?.getIdToken();
+
+    if (idToken == null) {
+      throw Exception(
+        "Unable to get Firebase ID token. User may not be logged in.",
+      );
+    }
+
     final url = Uri.parse('$uri/make_title');
 
     // Headers
-    final headers = {'Content-Type': 'application/json'};
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $idToken',
+    };
 
     // JSON Payload
     final body = jsonEncode({"context": context});
@@ -205,7 +228,7 @@ class LlamaApiService {
   // Get the file from S3 and process the contents
   Future<String> processFileFromS3(String fileName) async {
     final url = Uri.parse('$uri/process-file');
-    
+
     // Headers
     final headers = {'Content-Type': 'application/json'};
 
