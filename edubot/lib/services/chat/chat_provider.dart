@@ -76,7 +76,7 @@ class ChatProvider extends ChangeNotifier {
 
   // Get the chatbot preferences method
   Future<Map<String, dynamic>?> getPreferences() async {
-     // Get an instance of Firestore and AuthManager
+    // Get an instance of Firestore and AuthManager
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
     final AuthManager authManager = AuthManager();
     // Assign the uid
@@ -98,11 +98,7 @@ class ChatProvider extends ChangeNotifier {
       return data;
     } else {
       // Before returning null, set preferences in case the collection doesn't exist yet
-      preferenceDocRef.set({
-        'length': 0,
-        'tone': 0,
-        'vocabLevel': 0,
-      });
+      preferenceDocRef.set({'length': 0, 'tone': 0, 'vocabLevel': 0});
       return null;
     }
   }
@@ -321,7 +317,7 @@ class ChatProvider extends ChangeNotifier {
               "content": m.content,
             };
           }).toList();
-      
+
       // Get the chat preferences from Firestore and assign them accordingly
       final data = await getPreferences();
       if (data != null) {
@@ -336,7 +332,7 @@ class ChatProvider extends ChangeNotifier {
         lastUserMessage.content,
         tone,
         vocabLevel,
-        length
+        length,
       );
 
       notifyListeners(); // Update UI
@@ -486,16 +482,29 @@ class ChatProvider extends ChangeNotifier {
       // Send through a response to Flask server with formattedContext
       final response = await _apiService.processFileFromS3(fileName);
 
+      // Assign the file content as a seperate message
+      final fileContent = Message(
+        content: response['og_text'],
+        isUser: true,
+        timeStamp: DateTime.now(),
+        messageType: MessageType.fileContent
+      );
+
       // Response message from Llama
       final responseMessage = Message(
-        content: response,
+        content: response['summary'],
         isUser: false,
         timeStamp: DateTime.now(),
       );
 
+      // Add file content to messages lists (this will not be displayed on the UI)
+      boundMessages.add(fileContent);
+      _messages.add(fileContent);
+
       // Add response message to chat
       boundMessages.add(responseMessage);
       _messages.add(responseMessage);
+
     } catch (e) {
       // Set error message
       final errorMessage = Message(

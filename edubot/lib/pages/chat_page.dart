@@ -487,6 +487,11 @@ class _ChatPageState extends State<ChatPage> {
                       // Get each message
                       final message = chatProvider.messages[index];
 
+                      // Skip messsages with file type "fileContent"
+                      if (message.messageType == MessageType.fileContent) {
+                        return const SizedBox.shrink(); // Acts like continue
+                      }
+
                       // If the message sent by the user is a file, set the file extension
                       if (message.messageType == MessageType.text) {
                         return ChatBubble(message: message);

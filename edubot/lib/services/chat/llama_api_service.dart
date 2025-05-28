@@ -226,7 +226,7 @@ class LlamaApiService {
   }
 
   // Get the file from S3 and process the contents
-  Future<String> processFileFromS3(String fileName) async {
+  Future<Map<String, dynamic>> processFileFromS3(String fileName) async {
     final url = Uri.parse('$uri/process-file');
 
     // Headers
@@ -234,14 +234,17 @@ class LlamaApiService {
 
     // JSON Payload
     final body = jsonEncode({"file_key": fileName});
-
+  
     try {
       // Send a POST request to the Flask server to process the file
       final response = await http.post(url, headers: headers, body: body);
       // If successful, parse the JSON response and return the summary
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        return data['summary'];
+        return {
+          'summary': data['summary'],
+          'og_text': data['og_text'],
+        };
       } else {
         // If the response is not successful, throw an error with status code
         throw Exception("Server error: ${response.statusCode}");

@@ -8,6 +8,7 @@ Message class to structure message content
 enum MessageType {
   text,
   file,
+  fileContent
 }
 
 class Message {
