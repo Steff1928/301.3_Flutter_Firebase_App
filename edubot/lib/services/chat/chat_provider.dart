@@ -35,15 +35,19 @@ class ChatProvider extends ChangeNotifier {
     _messages.removeRange(0, messages.length);
   }
 
+  // Update chatbot preferences method
   Future<void> updatePreferences(
     int? length,
     int? tone,
     int? vocabLevel,
   ) async {
+    // Get an instance of Firestore and AuthManager
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
     final AuthManager authManager = AuthManager();
+    // Assign the uid
     final String? uid = authManager.getCurrentUser()?.uid;
 
+    // Store a reference to the "Preferences" subcollection and get the document
     final preferenceDocRef = firestore
         .collection("Users")
         .doc(uid)
@@ -51,6 +55,7 @@ class ChatProvider extends ChangeNotifier {
         .doc(uid);
     final preferenceDoc = await preferenceDocRef.get();
 
+    // If the "Preferences" subcollection does not exist, create it with initial values
     if (!preferenceDoc.exists) {
       await preferenceDocRef.set({
         'length': length ?? 0,
@@ -58,6 +63,7 @@ class ChatProvider extends ChangeNotifier {
         'vocabLevel': vocabLevel ?? 0,
       });
     } else {
+      // Based on the preference passed, update the data within Firestore using the reference
       if (length != null) {
         await preferenceDocRef.update({'length': length});
       } else if (tone != null) {
@@ -68,19 +74,26 @@ class ChatProvider extends ChangeNotifier {
     }
   }
 
+  // Get the chatbot preferences method
   Future<Map<String, dynamic>?> getPreferences() async {
+     // Get an instance of Firestore and AuthManager
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
     final AuthManager authManager = AuthManager();
+    // Assign the uid
     final String? uid = authManager.getCurrentUser()?.uid;
 
+    // Store a reference to the "Preferences" subcollection and get the document
     final preferenceDocRef = firestore
         .collection("Users")
         .doc(uid)
         .collection("Preferences")
         .doc(uid);
     final preferenceDoc = await preferenceDocRef.get();
+
+    // Store the data in a seperate variable
     final data = preferenceDoc.data();
 
+    // If the "Preferences" subcollection exists, return the data
     if (preferenceDoc.exists) {
       return data;
     } else {
