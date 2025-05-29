@@ -33,7 +33,7 @@ class SecondaryButton extends StatelessWidget {
           ),
           label: Text(
             text,
-            style: TextStyle(fontFamily: "Montserrat", fontSize: 16),
+            style: TextStyle(fontFamily: "Montserrat", fontSize: 16, fontWeight: FontWeight.w500),
           ),
         ),
       ),

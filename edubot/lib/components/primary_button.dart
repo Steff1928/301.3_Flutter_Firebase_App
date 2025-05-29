@@ -24,8 +24,6 @@ class PrimaryButton extends StatelessWidget {
           onPressed: onPressed,
           // Add button styling
           style: ElevatedButton.styleFrom(
-            backgroundColor: Color(0xFF23565A),
-            foregroundColor: Color(0xFFFAFAFA),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15.0),
             ),
@@ -33,7 +31,7 @@ class PrimaryButton extends StatelessWidget {
           // Set the button content to text passed in
           label: Text(
             text,
-            style: TextStyle(fontFamily: "Montserrat", fontSize: 16),
+            style: TextStyle(fontFamily: "Montserrat", fontSize: 16, fontWeight: FontWeight.w500),
           ),
         ),
       ),

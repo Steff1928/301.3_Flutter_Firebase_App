@@ -2,6 +2,7 @@ import 'package:edubot/components/error_tile.dart';
 import 'package:edubot/components/primary_button.dart';
 import 'package:edubot/components/primary_text_field.dart';
 import 'package:edubot/components/sso_tile.dart';
+import 'package:edubot/components/custom_snack_bar.dart';
 import 'package:edubot/pages/password_recovery_page.dart';
 import 'package:edubot/services/authentication/auth_gate.dart';
 import 'package:edubot/services/authentication/auth_manager.dart';
@@ -53,45 +54,20 @@ class _UserLoginPageState extends State<UserLoginPage> {
 
     // Check if user is signed in (all messages displayed in the snackbar)
     if (authManager.getCurrentUser() != null) {
-      final snackBar = SnackBar(
-        content: Row(
-          children: [
-            Icon(Icons.check_circle, color: Colors.green),
-            SizedBox(width: 16),
-            Flexible(
-              child: Text(
-                "Login with Google successful",
-                style: TextStyle(fontFamily: "Nunito", fontSize: 16),
-              ),
-            ),
-          ],
-        ),
-        behavior: SnackBarBehavior.floating,
-        backgroundColor: Color(0xFF1A1A1A),
-        showCloseIcon: true,
+      showSnackbar(
+        scaffoldMessenger,
+        "Login with Google successful",
+        Icon(Icons.check_circle, color: Colors.green),
+        true,
       );
-
-      scaffoldMessenger.showSnackBar(snackBar);
     } else {
-      // Show error notification if Goole sign in fails
-      final snackBar = SnackBar(
-        content: Row(
-          children: [
-            Icon(Icons.error, color: Colors.red),
-            SizedBox(width: 16),
-            Flexible(
-              child: Text(
-                "Error signing in with Google",
-                style: TextStyle(fontFamily: "Nunito", fontSize: 16),
-              ),
-            ),
-          ],
-        ),
-        behavior: SnackBarBehavior.floating,
-        backgroundColor: Color(0xFF1A1A1A),
+      // Show error notification if Google sign in fails
+      showSnackbar(
+        scaffoldMessenger,
+        "Error signing in with Google",
+        Icon(Icons.error, color: Colors.red,),
+        false,
       );
-
-      scaffoldMessenger.showSnackBar(snackBar);
     }
 
     // Dismiss loading circle after user is finished with pop up (either closing it or signing in)
@@ -111,6 +87,7 @@ class _UserLoginPageState extends State<UserLoginPage> {
     // Get AuthManager instance
     final AuthManager authManager = AuthManager();
     final navigator = Navigator.of(context);
+
     final scaffoldMessenger = ScaffoldMessenger.of(context);
 
     // Clear previous errors
@@ -134,25 +111,12 @@ class _UserLoginPageState extends State<UserLoginPage> {
           _emailController.text,
           _passwordController.text,
         );
-        // Show snackbar if login is successful
-        final snackBar = SnackBar(
-          content: Row(
-            children: [
-              Icon(Icons.check_circle, color: Colors.green),
-              SizedBox(width: 16),
-              Flexible(
-                child: Text(
-                  "Login successful",
-                  style: TextStyle(fontFamily: "Nunito", fontSize: 16),
-                ),
-              ),
-            ],
-          ),
-          behavior: SnackBarBehavior.floating,
-          backgroundColor: Color(0xFF1A1A1A),
-          showCloseIcon: true,
+        showSnackbar(
+          scaffoldMessenger,
+          "Login successful",
+          Icon(Icons.check_circle, color: Colors.green),
+          true,
         );
-        scaffoldMessenger.showSnackBar(snackBar);
       } catch (e) {
         navigator.pop();
         // Set the value of _errorMessage (removing "Exception: " prefix)
@@ -192,7 +156,7 @@ class _UserLoginPageState extends State<UserLoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFFAFAFA),
+      backgroundColor: Theme.of(context).colorScheme.surface,
       // Allow a scrollable widget
       body: SingleChildScrollView(
         child: Center(
@@ -210,7 +174,7 @@ class _UserLoginPageState extends State<UserLoginPage> {
                       fontFamily: "Cabin",
                       fontSize: 48,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF074F67),
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
                 ),
@@ -259,7 +223,7 @@ class _UserLoginPageState extends State<UserLoginPage> {
                             fontFamily: "Nunito",
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF05455B),
+                            color: Theme.of(context).colorScheme.onPrimary,
                           ),
                         ),
                       ),
@@ -286,7 +250,7 @@ class _UserLoginPageState extends State<UserLoginPage> {
                     style: TextStyle(
                       fontFamily: "Nunito",
                       fontSize: 16,
-                      color: Color(0xFF364B55),
+                      color: Theme.of(context).colorScheme.secondary,
                     ),
                   ),
                 ),
@@ -304,10 +268,10 @@ class _UserLoginPageState extends State<UserLoginPage> {
                         width: 318,
                         height: 52,
                       ),
-                
+
                       // Register Link
                       SizedBox(height: 15),
-                      
+
                       Padding(
                         padding: const EdgeInsets.only(bottom: 50.0),
                         child: Row(
@@ -318,7 +282,7 @@ class _UserLoginPageState extends State<UserLoginPage> {
                               style: TextStyle(
                                 fontFamily: "Nunito",
                                 fontSize: 16,
-                                color: Color(0xFF364B55),
+                                color: Theme.of(context).colorScheme.secondary,
                               ),
                             ),
                             GestureDetector(
@@ -329,7 +293,8 @@ class _UserLoginPageState extends State<UserLoginPage> {
                                   fontFamily: "Nunito",
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
-                                  color: Color(0xFF05455B),
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
                                 ),
                               ),
                             ),

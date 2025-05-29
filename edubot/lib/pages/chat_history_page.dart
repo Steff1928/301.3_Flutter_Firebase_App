@@ -116,7 +116,7 @@ class _ChatHistoryPageState extends State<ChatHistoryPage> {
         leading: Padding(
           padding: const EdgeInsets.only(top: 5.0, bottom: 5.0, left: 10),
           child: IconButton(
-            icon: Icon(Icons.arrow_back, color: Color(0xFF074F67)),
+            icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.primary),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ),
@@ -128,7 +128,7 @@ class _ChatHistoryPageState extends State<ChatHistoryPage> {
               fontFamily: "Nunito",
               fontSize: 24,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF074F67),
+              color: Theme.of(context).colorScheme.primary,
             ),
           ),
         ),
@@ -171,7 +171,7 @@ class _ChatHistoryPageState extends State<ChatHistoryPage> {
                           fontFamily: "Nunito",
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF1A1A1A),
+                          color: Theme.of(context).colorScheme.onSecondary,
                         ),
                       ),
                       SizedBox(height: 10),
@@ -180,7 +180,7 @@ class _ChatHistoryPageState extends State<ChatHistoryPage> {
                         style: TextStyle(
                           fontFamily: "Nunito",
                           fontSize: 16,
-                          color: Color(0xFF364B55),
+                          color: Theme.of(context).colorScheme.secondary,
                         ),
                       ),
                     ],

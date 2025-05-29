@@ -26,10 +26,10 @@ class ChatHistoryTile extends StatelessWidget {
         // Create an OutlinedButtom with rounded corners
         child: OutlinedButton(
           style: OutlinedButton.styleFrom(
-            foregroundColor: Color(0xFF05455B),
+            foregroundColor: Theme.of(context).colorScheme.primary,
             padding: EdgeInsets.only(left: 20, top: 20, bottom: 20, right: 10),
             side: BorderSide.none,
-            backgroundColor: Color(0xFFF1F5F8),
+            backgroundColor: Theme.of(context).brightness == Brightness.dark ? Color(0xFF364B55) : Color(0xFFF1F5F8),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
@@ -52,7 +52,7 @@ class ChatHistoryTile extends StatelessWidget {
                         fontFamily: "Nunito",
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF074F67),
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
                     Text(
@@ -63,7 +63,7 @@ class ChatHistoryTile extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: "Nunito",
                         fontSize: 16,
-                        color: Color(0xFF364B55),
+                        color: Theme.of(context).colorScheme.secondary,
                       ),
                     ),
                   ],
@@ -72,8 +72,7 @@ class ChatHistoryTile extends StatelessWidget {
               // IconButton to delete converation item
               IconButton(
                 onPressed: onIconPressed,
-                icon: Icon(Icons.delete_outline, size: 24, color: Color(0xFFCC0000)),
-                highlightColor: Colors.grey.shade400,
+                icon: Icon(Icons.delete_outline, size: 24, color: Theme.of(context).colorScheme.error),
               ),
             ],
           ),

@@ -1,3 +1,4 @@
+import 'package:edubot/components/custom_snack_bar.dart';
 import 'package:edubot/components/primary_button.dart';
 import 'package:edubot/components/primary_text_field.dart';
 import 'package:edubot/services/authentication/auth_manager.dart';
@@ -20,9 +21,9 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
     // Get an instance of the auth manager
     final AuthManager authManager = AuthManager();
 
-    // Get the build context in relation to the navigator and scaffold messanger
+    // Get the build context in relation to the navigator, scaffold messanger and themeData
     final navigator = Navigator.of(context);
-    final scaffoldMessager = ScaffoldMessenger.of(context);
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
 
     // Clear previous errors
     setState(() {
@@ -42,23 +43,12 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
     try {
       if (_emailController.text != "") {
         await authManager.resetPassword(_emailController.text);
-        final snackBar = SnackBar(
-          content: Row(
-            children: [
-              Icon(Icons.check_circle, color: Colors.green),
-              SizedBox(width: 16),
-              Flexible(
-                child: Text(
-                  "Email sent to: ${_emailController.text}",
-                  style: TextStyle(fontFamily: "Nunito", fontSize: 16),
-                ),
-              ),
-            ],
-          ),
-          behavior: SnackBarBehavior.floating,
-          backgroundColor: Color(0xFF1A1A1A),
+        showSnackbar(
+          scaffoldMessenger,
+          "Email sent to: ${_emailController.text}",
+          Icon(Icons.check_circle, color: Colors.green),
+          false,
         );
-        scaffoldMessager.showSnackBar(snackBar);
       } else {
         // Catch error if email is empty
         setState(() {
@@ -92,12 +82,15 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
         leading: Padding(
           padding: const EdgeInsets.only(top: 10.0, left: 10),
           child: IconButton(
-            icon: Icon(Icons.arrow_back, color: Color(0xFF074F67)),
+            icon: Icon(
+              Icons.arrow_back,
+              color: Theme.of(context).colorScheme.primary,
+            ),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ),
       ),
-      backgroundColor: Color(0xFFFAFAFA),
+      backgroundColor: Theme.of(context).colorScheme.surface,
       // Allow a scrollable widget
       body: SingleChildScrollView(
         child: Center(
@@ -115,7 +108,7 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
                       fontFamily: "Cabin",
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF074F67),
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
                 ),
@@ -128,7 +121,7 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
                     style: TextStyle(
                       fontFamily: "Nunito",
                       fontSize: 16,
-                      color: Color(0xFF364B55),
+                      color: Theme.of(context).colorScheme.secondary,
                     ),
                   ),
                 ),

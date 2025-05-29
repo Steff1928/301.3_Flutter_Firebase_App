@@ -1,3 +1,4 @@
+import 'package:edubot/components/custom_snack_bar.dart';
 import 'package:edubot/components/error_tile.dart';
 import 'package:edubot/components/primary_button.dart';
 import 'package:edubot/components/primary_text_field.dart';
@@ -23,7 +24,6 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
   final TextEditingController _confirmPassController = TextEditingController();
   // String to store error messages
   String? _errorMessage;
-
 
   // Sign user in with Google method
   void signInWithGoogle() async {
@@ -53,45 +53,20 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
 
     // Check if user is signed in (all messages displayed in the snackbar)
     if (authManager.getCurrentUser() != null) {
-      final snackBar = SnackBar(
-        content: Row(
-          children: [
-            Icon(Icons.check_circle, color: Colors.green),
-            SizedBox(width: 16),
-            Flexible(
-              child: Text(
-                "Login with Google successful",
-                style: TextStyle(fontFamily: "Nunito", fontSize: 16),
-              ),
-            ),
-          ],
-        ),
-        behavior: SnackBarBehavior.floating,
-        backgroundColor: Color(0xFF1A1A1A),
-        showCloseIcon: true,
+      showSnackbar(
+        scaffoldMessenger,
+        "Login with Google successful",
+        Icon(Icons.check_circle, color: Colors.green),
+        true,
       );
-
-      scaffoldMessenger.showSnackBar(snackBar);
     } else {
-      // Show error notification if Goole sign in fails
-      final snackBar = SnackBar(
-        content: Row(
-          children: [
-            Icon(Icons.error, color: Colors.red),
-            SizedBox(width: 16),
-            Flexible(
-              child: Text(
-                "Error signing in with Google",
-                style: TextStyle(fontFamily: "Nunito", fontSize: 16),
-              ),
-            ),
-          ],
-        ),
-        behavior: SnackBarBehavior.floating,
-        backgroundColor: Color(0xFF1A1A1A),
+      // Show error notification if Google sign in fails
+      showSnackbar(
+        scaffoldMessenger,
+        "Error signing in with Google",
+        Icon(Icons.error, color: Colors.red),
+        false,
       );
-
-      scaffoldMessenger.showSnackBar(snackBar);
     }
 
     // Dismiss loading circle after user is finished with pop up (either closing it or signing in)
@@ -144,24 +119,12 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
             _displayNameController.text,
           );
           // Show snackbar if account creation is successful
-          final snackBar = SnackBar(
-            content: Row(
-              children: [
-                Icon(Icons.check_circle, color: Colors.green),
-                SizedBox(width: 16),
-                Flexible(
-                  child: Text(
-                    "Account created successfully",
-                    style: TextStyle(fontFamily: "Nunito", fontSize: 16),
-                  ),
-                ),
-              ],
-            ),
-            behavior: SnackBarBehavior.floating,
-            backgroundColor: Color(0xFF1A1A1A),
-            showCloseIcon: true,
+          showSnackbar(
+            scaffoldMessenger,
+            "Account created successfully",
+            Icon(Icons.check_circle, color: Colors.green),
+            true,
           );
-          scaffoldMessenger.showSnackBar(snackBar);
         } catch (e) {
           // Set the value of "_errorMessage" (removing "Exception: " prefix)
           setState(() {
@@ -216,7 +179,7 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       // Page style
-      backgroundColor: Color(0xFFFAFAFA),
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: SingleChildScrollView(
         child: Center(
           child: ConstrainedBox(
@@ -233,7 +196,7 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
                       fontFamily: "Cabin",
                       fontSize: 48,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF074F67),
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
                 ),
@@ -303,7 +266,7 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
                     style: TextStyle(
                       fontFamily: "Nunito",
                       fontSize: 16,
-                      color: Color(0xFF364B55),
+                      color: Theme.of(context).colorScheme.secondary,
                     ),
                   ),
                 ),
@@ -331,7 +294,7 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
                             style: TextStyle(
                               fontFamily: "Nunito",
                               fontSize: 16,
-                              color: Color(0xFF364B55),
+                              color: Theme.of(context).colorScheme.secondary,
                             ),
                           ),
                           GestureDetector(
@@ -342,7 +305,7 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
                                 fontFamily: "Nunito",
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xFF05455B),
+                                color: Theme.of(context).colorScheme.onPrimary,
                               ),
                             ),
                           ),

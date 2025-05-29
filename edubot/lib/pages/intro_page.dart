@@ -20,7 +20,10 @@ class IntroPage extends StatelessWidget {
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               stops: <double>[0.25, 1],
-              colors: <Color>[Color(0xFFFAFAFA), Color(0xFF96C0CA)],
+              colors: <Color>[
+                Theme.of(context).colorScheme.surface,
+                Theme.of(context).colorScheme.inverseSurface
+              ],
             ),
           ),
 
@@ -34,7 +37,6 @@ class IntroPage extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-              
                   // Title
                   Padding(
                     padding: const EdgeInsets.only(top: 25),
@@ -46,15 +48,14 @@ class IntroPage extends StatelessWidget {
                           "EduBot",
                           style: TextStyle(
                             fontSize: 64,
-                            color: Color(0xFF074F67),
+                            color: Theme.of(context).colorScheme.primary,
                             fontFamily: "Cabin",
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1.28,
                           ),
                         ),
-                      
+
                         SizedBox(height: 7), // Spacing
-              
                         // Subtitle #1
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 25),
@@ -63,15 +64,14 @@ class IntroPage extends StatelessWidget {
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 16,
-                              color: Color(0xFF364B55),
+                              color: Theme.of(context).colorScheme.secondary,
                               fontFamily: "Nunito",
                               letterSpacing: 0.32,
                             ),
                           ),
                         ),
-                      
+
                         SizedBox(height: 7), // Spacing
-              
                         // Subtitle #2
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 25),
@@ -80,7 +80,7 @@ class IntroPage extends StatelessWidget {
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 16,
-                              color: Color(0xFF364B55),
+                              color: Theme.of(context).colorScheme.secondary,
                               fontFamily: "Nunito",
                               letterSpacing: 0.32,
                             ),
@@ -88,8 +88,8 @@ class IntroPage extends StatelessWidget {
                         ),
                       ],
                     ),
-                  ),              
-                      
+                  ),
+
                   // Image
                   Padding(
                     padding: const EdgeInsets.only(top: 17),
@@ -99,9 +99,8 @@ class IntroPage extends StatelessWidget {
                     ),
                   ),
 
-                  SizedBox(height: 58,),
-                      
-              
+                  SizedBox(height: 58),
+
                   // Login button
                   Padding(
                     padding: const EdgeInsets.only(bottom: 58.0),
@@ -114,14 +113,16 @@ class IntroPage extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => LoginOrRegister(showLoginPage: true,),
+                                builder:
+                                    (context) =>
+                                        LoginOrRegister(showLoginPage: true),
                               ),
                             );
                           },
                         ),
-                                    
+
                         SizedBox(height: 10),
-                                    
+
                         // Register button
                         SecondaryButton(
                           text: "Create Account",
@@ -130,16 +131,18 @@ class IntroPage extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => LoginOrRegister(showLoginPage: false,),
+                                builder:
+                                    (context) =>
+                                        LoginOrRegister(showLoginPage: false),
                               ),
                             );
                           },
                         ),
 
-                        SizedBox(height: 25,)
+                        SizedBox(height: 25),
                       ],
                     ),
-                  ),                      
+                  ),
                 ],
               ),
             ),

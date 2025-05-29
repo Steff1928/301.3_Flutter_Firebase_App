@@ -1,3 +1,4 @@
+import 'package:edubot/components/custom_snack_bar.dart';
 import 'package:edubot/components/primary_button.dart';
 import 'package:edubot/services/chat/chat_provider.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,7 @@ class _UpdateVocabPageState extends State<UpdateVocabPage> {
   Future<void> updateVocab(BuildContext context) async {
     // Get the chatprovider and store the context in a navigator and scaffoldMessenger
     final chatProvider = Provider.of<ChatProvider>(context, listen: false);
+
     final navigator = Navigator.of(context);
     final scaffoldMessenger = ScaffoldMessenger.of(context);
 
@@ -41,24 +43,12 @@ class _UpdateVocabPageState extends State<UpdateVocabPage> {
     try {
       await chatProvider.updatePreferences(null, null, _currentValue!.toInt());
       // Display snack bar if successful
-      final snackBar = SnackBar(
-        content: Row(
-          children: [
-            Icon(Icons.check_circle, color: Colors.green),
-            SizedBox(width: 16),
-            Flexible(
-              child: Text(
-                "Vocab Level updated successfully",
-                style: TextStyle(fontFamily: "Nunito", fontSize: 16),
-              ),
-            ),
-          ],
-        ),
-        behavior: SnackBarBehavior.floating,
-        backgroundColor: Color(0xFF1A1A1A),
-        showCloseIcon: true,
+      showSnackbar(
+        scaffoldMessenger,
+        "Vocab Level updated successfully",
+        Icon(Icons.check_circle, color: Colors.green),
+        true,
       );
-      scaffoldMessenger.showSnackBar(snackBar);
     } catch (e) {
       // Handle errors accordingly
       throw Exception("Error updating length: $e");
@@ -105,7 +95,10 @@ class _UpdateVocabPageState extends State<UpdateVocabPage> {
         leading: Padding(
           padding: const EdgeInsets.only(top: 5.0, bottom: 5.0, left: 10.0),
           child: IconButton(
-            icon: Icon(Icons.arrow_back, color: Color(0xFF074F67)),
+            icon: Icon(
+              Icons.arrow_back,
+              color: Theme.of(context).colorScheme.primary,
+            ),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ),
@@ -117,7 +110,7 @@ class _UpdateVocabPageState extends State<UpdateVocabPage> {
               fontFamily: "Nunito",
               fontSize: 24,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF074F67),
+              color: Theme.of(context).colorScheme.primary,
             ),
           ),
         ),
@@ -150,7 +143,7 @@ class _UpdateVocabPageState extends State<UpdateVocabPage> {
                               style: TextStyle(
                                 fontFamily: "Nunito",
                                 fontSize: 16,
-                                color: Color(0xFF364B55),
+                                color: Theme.of(context).colorScheme.secondary,
                               ),
                             ),
                           ),
@@ -169,7 +162,8 @@ class _UpdateVocabPageState extends State<UpdateVocabPage> {
                                 fontFamily: "Nunito",
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xFF1A1A1A),
+                                color:
+                                    Theme.of(context).colorScheme.onSecondary,
                               ),
                             ),
                           ),

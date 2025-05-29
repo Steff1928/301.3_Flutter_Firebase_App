@@ -1,7 +1,8 @@
 import 'package:edubot/services/authentication/auth_gate.dart';
 import 'package:edubot/services/chat/chat_provider.dart';
-//import 'package:edubot/themes/dark_mode.dart';
+import 'package:edubot/themes/dark_mode.dart';
 import 'package:edubot/themes/light_mode.dart';
+import 'package:edubot/themes/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
@@ -14,11 +15,15 @@ void main() async {
   // Initialize Firebase
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
   runApp(
     // Initialize the app within a ChangeNotifierProvider
     // to provide the ChatProvider to the entire app
-    ChangeNotifierProvider(
-      create: (context) => ChatProvider(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => ChatProvider()),
+        ChangeNotifierProvider(create: (context) => ThemeProvider()),
+      ],
       child: const MyApp(),
     ),
   );
@@ -29,6 +34,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = context.watch<ThemeProvider>();
+
     // Set the app theme, title and additional properties
     return MaterialApp(
       title: "EduBot",
@@ -36,7 +43,8 @@ class MyApp extends StatelessWidget {
       navigatorKey: navigatorKey,
       home: const AuthGate(),
       theme: lightmode,
-      //darkTheme: darkmode,
+      darkTheme: darkmode,
+      themeMode: themeProvider.themeMode,
     );
   }
 }

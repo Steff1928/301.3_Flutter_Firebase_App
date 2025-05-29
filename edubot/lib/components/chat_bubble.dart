@@ -23,14 +23,14 @@ class ChatBubble extends StatelessWidget {
   }
 
   // Method to determine the icon colour depending on the file extension
-  Color getColourForExtension(String ext) {
+  Color getColourForExtension(String ext, BuildContext context) {
     switch (ext.toLowerCase()) {
       case '.pdf':
-        return Colors.red;
+        return  Theme.of(context).brightness == Brightness.dark ? Color(0xFFFF6B6C) : Colors.red;
       case '.txt':
-        return Colors.black54;
+        return Theme.of(context).brightness == Brightness.dark ? Colors.white60 : Colors.black54;
       default:
-        return Colors.blueGrey;
+        return Theme.of(context).brightness == Brightness.dark ? Color(0xFF96C0CA) : Colors.blueGrey;
     }
   }
 
@@ -64,6 +64,8 @@ class ChatBubble extends StatelessWidget {
             color:
                 message.isUser
                     ? Color(0xFF99DAE6)
+                    : Theme.of(context).brightness == Brightness.dark
+                    ? Color(0xFF364B55)
                     : Color(
                       0xFFF0F0F0,
                     ), // Set the background color based on the message sender
@@ -83,7 +85,7 @@ class ChatBubble extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade200,
+                    color: Theme.of(context).brightness == Brightness.dark ? Color(0xFF364B55) : Colors.grey.shade200,
                     borderRadius: BorderRadius.circular(5),
                   ),
 
@@ -92,7 +94,7 @@ class ChatBubble extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.description,
-                        color: getColourForExtension(ext!),
+                        color: getColourForExtension(ext!, context),
                       ),
                       SizedBox(width: 12),
                       Flexible(
@@ -105,11 +107,19 @@ class ChatBubble extends StatelessWidget {
                                 fontFamily: "Nunito",
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
+                                color: Theme.of(context).colorScheme.onSecondary,
                               ),
                               overflow: TextOverflow.ellipsis,
                             ),
                             SizedBox(height: 2),
-                            Text(ext.toUpperCase().replaceRange(0, 1, ''), style: TextStyle(fontFamily: 'Nunito', fontSize: 14),),
+                            Text(
+                              ext.toUpperCase().replaceRange(0, 1, ''),
+                              style: TextStyle(
+                                fontFamily: 'Nunito',
+                                fontSize: 14,
+                                color: Theme.of(context).colorScheme.onSecondary,
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -131,7 +141,7 @@ class ChatBubble extends StatelessWidget {
                             fontFamily: "Nunito",
                             fontSize: 16,
                             fontStyle: FontStyle.italic,
-                            color: Color(0xFF1A1A1A),
+                            color: Theme.of(context).colorScheme.onSecondary,
                           ),
                         ),
                       ],
@@ -141,7 +151,7 @@ class ChatBubble extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: "Nunito",
                         fontSize: 16,
-                        color: Color(0xFF1A1A1A),
+                        color: !message.isUser ? Theme.of(context).colorScheme.onSecondary : Color(0xFF1A1A1A),
                       ),
                     ),
             ],

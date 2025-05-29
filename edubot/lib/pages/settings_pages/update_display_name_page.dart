@@ -1,3 +1,4 @@
+import 'package:edubot/components/custom_snack_bar.dart';
 import 'package:edubot/components/primary_button.dart';
 import 'package:edubot/components/primary_text_field.dart';
 import 'package:edubot/pages/chat_page.dart';
@@ -19,6 +20,7 @@ class _UpdateDisplayNamePageState extends State<UpdateDisplayNamePage> {
   Future<void> updateDisplayName(BuildContext context) async {
     AuthManager authManager = AuthManager();
     String newDisplayName = _displayNameController.text.trim();
+
     final scaffoldMessenger = ScaffoldMessenger.of(context);
     final navigator = Navigator.of(context);
 
@@ -53,25 +55,12 @@ class _UpdateDisplayNamePageState extends State<UpdateDisplayNamePage> {
     }
 
     // Show snackbar if update is successful
-    final snackBar = SnackBar(
-      content: Row(
-        children: [
-          Icon(Icons.check_circle, color: Colors.green),
-          SizedBox(width: 16),
-          Flexible(
-            child: Text(
-              "Display Name updated successfully",
-              style: TextStyle(fontFamily: "Nunito", fontSize: 16),
-            ),
-          ),
-        ],
-      ),
-      behavior: SnackBarBehavior.floating,
-      backgroundColor: Color(0xFF1A1A1A),
-      showCloseIcon: true,
+    showSnackbar(
+      scaffoldMessenger,
+      "Display Name updated successfully",
+      Icon(Icons.check_circle, color: Colors.green),
+      true,
     );
-
-    scaffoldMessenger.showSnackBar(snackBar);
   }
 
   // Method to handle input changes and enable/disable the button
@@ -81,7 +70,7 @@ class _UpdateDisplayNamePageState extends State<UpdateDisplayNamePage> {
       _isButtonEnabled =
           _displayNameController.text.isNotEmpty &&
           authManager.getCurrentUser()?.displayName!.toLowerCase() !=
-              _displayNameController.text.toLowerCase();
+              _displayNameController.text.toLowerCase().trim();
     });
   }
 
@@ -119,7 +108,10 @@ class _UpdateDisplayNamePageState extends State<UpdateDisplayNamePage> {
         leading: Padding(
           padding: const EdgeInsets.only(top: 5.0, bottom: 5.0, left: 10.0),
           child: IconButton(
-            icon: Icon(Icons.arrow_back, color: Color(0xFF074F67)),
+            icon: Icon(
+              Icons.arrow_back,
+              color: Theme.of(context).colorScheme.primary,
+            ),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ),
@@ -131,7 +123,7 @@ class _UpdateDisplayNamePageState extends State<UpdateDisplayNamePage> {
               fontFamily: "Nunito",
               fontSize: 24,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF074F67),
+              color: Theme.of(context).colorScheme.primary,
             ),
           ),
         ),
@@ -156,7 +148,7 @@ class _UpdateDisplayNamePageState extends State<UpdateDisplayNamePage> {
                       style: TextStyle(
                         fontFamily: "Nunito",
                         fontSize: 16,
-                        color: Color(0xFF364B55),
+                        color: Theme.of(context).colorScheme.secondary,
                       ),
                     ),
                   ),

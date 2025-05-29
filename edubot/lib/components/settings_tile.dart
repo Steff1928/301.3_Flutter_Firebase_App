@@ -18,17 +18,17 @@ class SettingsTile extends StatelessWidget {
     return ListTile(
       // Set the tile style
       contentPadding: EdgeInsets.symmetric(horizontal: 27),
-      leading: Icon(icon, color: Color(0xFF1A1A1A)),
+      leading: Icon(icon, color: Theme.of(context).colorScheme.onSecondary),
       title: Text(
         title,
         style: TextStyle(
           fontFamily: "Nunito",
           fontSize: 16,
-          color: Color(0xFF1A1A1A),
+          color: Theme.of(context).colorScheme.onSecondary,
         ),
       ),
       onTap: onTap,
-      trailing: Icon(Icons.arrow_forward_ios, color: Color(0xFF364B55)),
+      trailing: Icon(Icons.arrow_forward_ios, color: Theme.of(context).colorScheme.secondary),
     );
   }
 }

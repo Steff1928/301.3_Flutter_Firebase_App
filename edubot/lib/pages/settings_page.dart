@@ -46,7 +46,7 @@ class SettingsPage extends StatelessWidget {
         leading: Padding(
           padding: const EdgeInsets.only(top: 5.0, bottom: 5.0, left: 10.0),
           child: IconButton(
-            icon: Icon(Icons.arrow_back, color: Color(0xFF074F67)),
+            icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.primary),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ),
@@ -58,7 +58,7 @@ class SettingsPage extends StatelessWidget {
               fontFamily: "Nunito",
               fontSize: 24,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF074F67),
+              color: Theme.of(context).colorScheme.primary,
             ),
           ),
         ),
@@ -97,7 +97,7 @@ class SettingsPage extends StatelessWidget {
                               fontFamily: "Nunito",
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xFF1A1A1A),
+                              color: Theme.of(context).colorScheme.onSecondary,
                             ),
                           ),
                         ),
@@ -111,7 +111,7 @@ class SettingsPage extends StatelessWidget {
                     // Parent widget
                     Expanded(
                       child: Material(
-                        color: Color(0xFFF1F5F8),
+                        color: Theme.of(context).brightness == Brightness.dark ? Color(0xFF364B55) : Color(0xFFF1F5F8),
                         borderRadius: BorderRadius.circular(12),
 
                         // Container to allow padding
@@ -134,7 +134,7 @@ class SettingsPage extends StatelessWidget {
                                         fontFamily: "Nunito",
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold,
-                                        color: Color(0xFF364B55),
+                                        color: Theme.of(context).brightness == Brightness.dark ? Color(0xFF99DAE6) : Color(0xFF364B55),
                                       ),
                                     ),
                                   ),
@@ -182,7 +182,7 @@ class SettingsPage extends StatelessWidget {
                                         fontFamily: "Nunito",
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold,
-                                        color: Color(0xFF364B55),
+                                        color: Theme.of(context).brightness == Brightness.dark ? Color(0xFF99DAE6) : Color(0xFF364B55),
                                       ),
                                     ),
                                   ),
@@ -203,7 +203,7 @@ class SettingsPage extends StatelessWidget {
                                         fontFamily: "Nunito",
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold,
-                                        color: Color(0xFF364B55),
+                                        color: Theme.of(context).brightness == Brightness.dark ? Color(0xFF99DAE6) : Color(0xFF364B55),
                                       ),
                                     ),
                                   ),
@@ -264,7 +264,7 @@ class SettingsPage extends StatelessWidget {
                                         fontFamily: "Nunito",
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold,
-                                        color: Color(0xFF364B55),
+                                        color: Theme.of(context).brightness == Brightness.dark ? Color(0xFF99DAE6) : Color(0xFF364B55),
                                       ),
                                     ),
                                   ),
@@ -278,19 +278,19 @@ class SettingsPage extends StatelessWidget {
                                     ),
                                     leading: Icon(
                                       Icons.logout,
-                                      color: Color(0xFFCC0000),
+                                      color: Theme.of(context).colorScheme.error,
                                     ),
                                     title: Text(
                                       "Logout",
                                       style: TextStyle(
                                         fontFamily: "Nunito",
                                         fontSize: 16,
-                                        color: Color(0xFFCC0000),
+                                        color: Theme.of(context).colorScheme.error,
                                       ),
                                     ),
                                     trailing: Icon(
                                       Icons.arrow_forward_ios,
-                                      color: Color(0xFFCC0000),
+                                      color: Theme.of(context).colorScheme.error,
                                     ),
                                     onTap: () => logout(context),
                                   ),

@@ -1,3 +1,4 @@
+import 'package:edubot/components/custom_snack_bar.dart';
 import 'package:edubot/components/primary_button.dart';
 import 'package:edubot/components/primary_text_field.dart';
 import 'package:edubot/pages/chat_page.dart';
@@ -21,6 +22,7 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
   Future<void> updateEmail(BuildContext context) async {
     AuthManager authManager = AuthManager();
     String newEmail = _emailController.text.trim();
+
     final scaffoldMessenger = ScaffoldMessenger.of(context);
     final navigator = Navigator.of(context);
 
@@ -41,27 +43,16 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
     try {
       // Update the email in the AuthManager
       await authManager.updateEmail(newEmail);
-      final snackBar = SnackBar(
-          content: Row(
-            children: [
-              Icon(Icons.check_circle, color: Colors.green),
-              SizedBox(width: 16),
-              Flexible(
-                child: Text(
-                  "Email sent to: ${_emailController.text}",
-                  style: TextStyle(fontFamily: "Nunito", fontSize: 16),
-                ),
-              ),
-            ],
-          ),
-          behavior: SnackBarBehavior.floating,
-          backgroundColor: Color(0xFF1A1A1A),
-        );
-        scaffoldMessenger.showSnackBar(snackBar);
-        navigator.pushAndRemoveUntil(
-          MaterialPageRoute(builder: (_) => ChatPage()),
-          (route) => false,
-        );
+      showSnackbar(
+        scaffoldMessenger,
+        "Email sent to: ${_emailController.text}",
+        Icon(Icons.check_circle, color: Colors.green),
+        false,
+      );
+      navigator.pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => ChatPage()),
+        (route) => false,
+      );
     } catch (e) {
       // Handle any errors that occur during the update
       navigator.pop();
@@ -71,7 +62,7 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
                 ? e.toString().replaceFirst('Exception: ', '')
                 : e.toString();
       });
-    } 
+    }
   }
 
   // Method to check if the user is authenticated with Google
@@ -97,7 +88,7 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
       _isButtonEnabled =
           _emailController.text.isNotEmpty &&
           authManager.getCurrentUser()?.email !=
-              _emailController.text.toLowerCase();
+              _emailController.text.toLowerCase().trim();
     });
   }
 
@@ -144,7 +135,10 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
         leading: Padding(
           padding: const EdgeInsets.only(top: 5.0, bottom: 5.0, left: 10.0),
           child: IconButton(
-            icon: Icon(Icons.arrow_back, color: Color(0xFF074F67)),
+            icon: Icon(
+              Icons.arrow_back,
+              color: Theme.of(context).colorScheme.primary,
+            ),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ),
@@ -156,7 +150,7 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
               fontFamily: "Nunito",
               fontSize: 24,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF074F67),
+              color: Theme.of(context).colorScheme.primary,
             ),
           ),
         ),
@@ -181,7 +175,7 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
                       style: TextStyle(
                         fontFamily: "Nunito",
                         fontSize: 16,
-                        color: Color(0xFF364B55),
+                        color: Theme.of(context).colorScheme.secondary,
                       ),
                     ),
                   ),
@@ -191,7 +185,7 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
 
                 PrimaryTextField(
                   controller: _emailController,
-                  label: "Display Name",
+                  label: "Email",
                   obscureText: false,
                   isEnabled: _isGoogleUser ? false : true,
                   errorMessage: _errorMessage,
@@ -207,7 +201,7 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
                       style: TextStyle(
                         fontFamily: "Nunito",
                         fontSize: 14,
-                        color: Colors.red,
+                        color: Theme.of(context).colorScheme.error,
                       ),
                     ),
                   ),
@@ -218,9 +212,7 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
                   text: "Save",
                   height: 45,
                   onPressed:
-                      _isButtonEnabled
-                          ? () => updateEmail(context)
-                          : null,
+                      _isButtonEnabled ? () => updateEmail(context) : null,
                 ),
               ],
             ),

@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:edubot/components/chat_bubble.dart';
+import 'package:edubot/components/custom_snack_bar.dart';
 import 'package:edubot/components/loading_dialog.dart';
 import 'package:edubot/components/secondary_text_field.dart';
 import 'package:edubot/main.dart';
@@ -207,47 +208,22 @@ class _ChatPageState extends State<ChatPage> {
       });
 
       // Notify the user where the previous conversation
-      final snackBar = SnackBar(
-        content: Row(
-          children: [
-            Icon(Icons.info, color: Colors.blue),
-            SizedBox(width: 16),
-            Flexible(
-              child: Text(
-                "See Chat History for previous conversation.",
-                style: TextStyle(fontFamily: "Nunito", fontSize: 16),
-              ),
-            ),
-          ],
-        ),
-        behavior: SnackBarBehavior.floating,
-        backgroundColor: Color(0xFF1A1A1A),
-        showCloseIcon: true,
+      showSnackbar(
+        scaffoldMessenger,
+        "See Chat History for previous conversation",
+        Icon(Icons.info, color: Colors.blue),
+        true,
       );
-
-      scaffoldMessenger.showSnackBar(snackBar); // Show snackbar
     } else {
       // If new conversation already started, notify the user
-      final snackBar = SnackBar(
-        content: Row(
-          children: [
-            Icon(Icons.warning, color: Colors.amberAccent),
-            SizedBox(width: 16),
-            Flexible(
-              child: Text(
-                "New conversation already started",
-                style: TextStyle(fontFamily: "Nunito", fontSize: 16),
-              ),
-            ),
-          ],
-        ),
-        behavior: SnackBarBehavior.floating,
-        backgroundColor: Color(0xFF1A1A1A),
-        showCloseIcon: true,
+      showSnackbar(
+        scaffoldMessenger,
+        "New conversation already started",
+        Icon(Icons.warning, color: Colors.amberAccent.shade700),
+        true,
       );
-
-      scaffoldMessenger.showSnackBar(snackBar); // Show snackbar
     }
+    
 
     navigator.pop(); // Dismiss loading circle
   }
@@ -315,7 +291,7 @@ class _ChatPageState extends State<ChatPage> {
       final message = _userInputController.text.trim();
       _userInputController.clear();
 
-      // If the user did not send a file name, send a regular message, 
+      // If the user did not send a file name, send a regular message,
       // else process the file contents and return a summary
       if (_selectedFileName == null) {
         // Trigger title generation in the background
@@ -360,7 +336,7 @@ class _ChatPageState extends State<ChatPage> {
             fontFamily: "Nunito",
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: Color(0xFF074F67),
+            color: Theme.of(context).colorScheme.primary,
           ),
         ),
 
@@ -368,7 +344,11 @@ class _ChatPageState extends State<ChatPage> {
         actions: [
           // New conversation
           IconButton(
-            icon: Icon(Icons.loupe, size: 24, color: Color(0xFF074F67)),
+            icon: Icon(
+              Icons.loupe,
+              size: 24,
+              color: Theme.of(context).colorScheme.primary,
+            ),
             onPressed: () => startNewConversation(context),
           ),
 
@@ -377,7 +357,7 @@ class _ChatPageState extends State<ChatPage> {
             icon: Icon(
               Icons.history_rounded,
               size: 24,
-              color: Color(0xFF074F67),
+              color: Theme.of(context).colorScheme.primary,
               weight: 30,
             ),
             onPressed: () {
@@ -393,7 +373,7 @@ class _ChatPageState extends State<ChatPage> {
             icon: Icon(
               Icons.settings_rounded,
               size: 24,
-              color: Color(0xFF074F67),
+              color: Theme.of(context).colorScheme.primary,
             ),
             onPressed: () {
               Navigator.push(
@@ -425,10 +405,8 @@ class _ChatPageState extends State<ChatPage> {
                         );
                       }
                     });
-                     // Add a copy of the messages to the previous messages
-                    _previousMessages = List.from(
-                      chatProvider.messages,
-                    );
+                    // Add a copy of the messages to the previous messages
+                    _previousMessages = List.from(chatProvider.messages);
                   }
 
                   // If empty, display welcome message
@@ -442,7 +420,7 @@ class _ChatPageState extends State<ChatPage> {
                             fontFamily: "Nunito",
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF1A1A1A),
+                            color: Theme.of(context).colorScheme.onSecondary,
                           ),
                         ),
                         SizedBox(height: 10),
@@ -451,7 +429,7 @@ class _ChatPageState extends State<ChatPage> {
                           style: TextStyle(
                             fontFamily: "Nunito",
                             fontSize: 16,
-                            color: Color(0xFF364B55),
+                            color: Theme.of(context).colorScheme.secondary,
                           ),
                         ),
                       ],
@@ -525,7 +503,10 @@ class _ChatPageState extends State<ChatPage> {
                         ),
                         margin: EdgeInsets.only(bottom: 8),
                         decoration: BoxDecoration(
-                          color: Colors.grey.shade200,
+                          color:
+                              Theme.of(context).brightness == Brightness.dark
+                                  ? Color(0xFF364B55)
+                                  : Colors.grey.shade200,
                           borderRadius: BorderRadius.circular(10),
                         ),
 
@@ -534,7 +515,11 @@ class _ChatPageState extends State<ChatPage> {
                           children: [
                             Icon(
                               Icons.insert_drive_file,
-                              color: Colors.blueGrey,
+                              color:
+                                  Theme.of(context).brightness ==
+                                          Brightness.dark
+                                      ? Color(0xFF96C0CA)
+                                      : Colors.blueGrey,
                             ),
                             SizedBox(width: 12),
                             Expanded(
@@ -543,12 +528,19 @@ class _ChatPageState extends State<ChatPage> {
                                 style: TextStyle(
                                   fontFamily: "Nunito",
                                   fontWeight: FontWeight.w600,
+                                  color:
+                                      Theme.of(context).colorScheme.onSecondary,
                                 ),
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
                             IconButton(
-                              icon: Icon(Icons.close_rounded, size: 18),
+                              icon: Icon(
+                                Icons.close_rounded,
+                                size: 24,
+                                color:
+                                    Theme.of(context).colorScheme.onSecondary,
+                              ),
                               onPressed: () {
                                 setState(() {
                                   _selectedFileName = null;
@@ -574,7 +566,10 @@ class _ChatPageState extends State<ChatPage> {
                           icon: Icon(
                             Icons.file_upload_outlined,
                             size: 24,
-                            color: Color(0xFF074F67),
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Color(0xFFECF6F9)
+                                    : Color(0xFF074F67),
                           ),
                         ),
                       ),
@@ -594,17 +589,25 @@ class _ChatPageState extends State<ChatPage> {
                           decoration: BoxDecoration(
                             color:
                                 _isSendEnabled
-                                    ? Color(0xFF2B656B)
+                                    ? Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? Color(0xFF99DAE6)
+                                        : Color(0xFF2B656B)
+                                    : Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? Color(0xFF99DAE6).withValues(alpha: 0.75)
                                     : Color(0xFF2B656B).withValues(alpha: 0.75),
                             borderRadius: BorderRadius.circular(25),
                           ),
                           child: IconButton(
                             onPressed: _isSendEnabled ? sendMessage : null,
                             icon: Icon(Icons.send),
-                            disabledColor: Color(
-                              0xFFFAFAFA,
-                            ).withValues(alpha: 0.75),
-                            color: Color(0xFFFAFAFA),
+                            disabledColor: Theme.of(context)
+                                .colorScheme
+                                .onSecondaryFixed
+                                .withValues(alpha: 0.75),
+                            color:
+                                Theme.of(context).colorScheme.onSecondaryFixed,
                           ),
                         ),
                       ),
