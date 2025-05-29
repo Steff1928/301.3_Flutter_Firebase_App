@@ -42,7 +42,7 @@ ThemeData darkmode = ThemeData(
 
   // Snackbar theme
   snackBarTheme: SnackBarThemeData(
-    backgroundColor: Color(0xFFECF6F9)
+    backgroundColor: Colors.grey.shade300
   ),
 
   // Alert dialog theme
