@@ -41,5 +41,10 @@ ThemeData lightmode = ThemeData(
 
   snackBarTheme: SnackBarThemeData(
     backgroundColor: Color(0xFF1A1A1A)
+  ),
+
+  // Alert dialog theme
+  dialogTheme: DialogThemeData(
+    backgroundColor: Colors.grey.shade300,
   )
 );

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:edubot/components/chat_history_tile.dart';
+import 'package:edubot/components/custom_dialog.dart';
 import 'package:edubot/pages/chat_page.dart';
 import 'package:edubot/services/authentication/auth_manager.dart';
 import 'package:edubot/services/chat/chat_provider.dart';
@@ -73,6 +74,8 @@ class _ChatHistoryPageState extends State<ChatHistoryPage> {
     String conversationId,
     BuildContext context,
   ) async {
+    Navigator.of(context).pop();
+    
     // Get auth & firestore
     final firestore = FirebaseFirestore.instance;
     final AuthManager authManager = AuthManager();
@@ -116,7 +119,10 @@ class _ChatHistoryPageState extends State<ChatHistoryPage> {
         leading: Padding(
           padding: const EdgeInsets.only(top: 5.0, bottom: 5.0, left: 10),
           child: IconButton(
-            icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.primary),
+            icon: Icon(
+              Icons.arrow_back,
+              color: Theme.of(context).colorScheme.primary,
+            ),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ),
@@ -206,9 +212,18 @@ class _ChatHistoryPageState extends State<ChatHistoryPage> {
                           context,
                         ),
                     onIconPressed:
-                        () => deleteConversation(
-                          conversationItems[index].id,
-                          context,
+                        () => showDialog(
+                          context: context,
+                          builder: (context) {
+                            return CustomDialog(
+                              onCancel: () => Navigator.of(context).pop(),
+                              onDelete:
+                                  () => deleteConversation(
+                                    conversationItems[index].id,
+                                    context,
+                                  ),
+                            );
+                          },
                         ),
                   );
                 },
