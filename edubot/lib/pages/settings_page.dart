@@ -129,7 +129,7 @@ class SettingsPage extends StatelessWidget {
                                   Padding(
                                     padding: const EdgeInsets.only(left: 27.0),
                                     child: Text(
-                                      "ACCOUNT",
+                                      "GENERAL",
                                       style: TextStyle(
                                         fontFamily: "Nunito",
                                         fontSize: 18,
