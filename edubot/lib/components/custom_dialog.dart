@@ -10,7 +10,7 @@ class CustomDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       content: SizedBox(
-        height: 140,
+        height: 160,
         width: 500,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -27,7 +27,7 @@ class CustomDialog extends StatelessWidget {
                   fontFamily: "Nunito",
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.onSecondary,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ),
             ),
@@ -63,7 +63,7 @@ class CustomDialog extends StatelessWidget {
                       fontFamily: "Nunito",
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onSecondary,
+                      color: Theme.of(context).colorScheme.secondary,
                     ),
                   ),
                 ),

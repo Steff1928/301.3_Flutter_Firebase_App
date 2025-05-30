@@ -12,7 +12,7 @@ class ErrorTile extends StatelessWidget {
       padding: const EdgeInsets.only(top: 10.0, left: 48, right: 48),
       child: Container(
         decoration: BoxDecoration(
-          border: Border.all(width: 1, color: Color(0xFFCC0000)),
+          border: Border.all(width: 1, color: Theme.of(context).colorScheme.error),
           borderRadius: BorderRadius.circular(5),
           color: Colors.red.shade100,
         ),
@@ -21,7 +21,7 @@ class ErrorTile extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.only(right: 15.0),
-              child: Icon(Icons.error_outline, color: Color(0xFFCC0000)),
+              child: Icon(Icons.error_outline, color: Theme.of(context).colorScheme.error),
             ),
             // Allow text wrapping
             Flexible(
