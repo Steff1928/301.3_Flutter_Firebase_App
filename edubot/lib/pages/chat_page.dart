@@ -560,7 +560,7 @@ class _ChatPageState extends State<ChatPage> {
                     children: [
                       // Attach file button
                       Padding(
-                        padding: const EdgeInsets.only(left: 2.0),
+                        padding: const EdgeInsets.only(left: 5.0),
                         child: IconButton(
                           onPressed: pickFile,
                           icon: Icon(

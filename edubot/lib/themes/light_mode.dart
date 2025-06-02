@@ -16,8 +16,6 @@ ThemeData lightmode = ThemeData(
     style: ElevatedButton.styleFrom(
       backgroundColor: Color(0xFF23565A),
       foregroundColor: Color(0xFFFAFAFA),
-      // disabledBackgroundColor: Colors.grey.shade200,
-      // disabledForegroundColor: Color(0xFF1A1A1A).withValues(alpha: 0.2),
     ),
   ),
   inputDecorationTheme: InputDecorationTheme(

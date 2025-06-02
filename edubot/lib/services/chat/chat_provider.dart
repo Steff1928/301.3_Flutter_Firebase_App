@@ -13,9 +13,11 @@ class ChatProvider extends ChangeNotifier {
   // Get a list of messages & initialise loading state/empty AI message
   final List<Message> _messages = [];
 
+  // Detect loading times
   bool _isLoading = false;
   bool _isEmptyAiMessageAdded = false;
 
+  // Chatbot Preferences
   int? length;
   int? tone;
   int? vocabLevel;

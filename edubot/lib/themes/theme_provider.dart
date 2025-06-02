@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// Enum to determine the app theme mode
 enum AppThemeMode { system, light, dark }
 
 class ThemeProvider with ChangeNotifier {
