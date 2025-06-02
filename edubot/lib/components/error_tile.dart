@@ -14,7 +14,7 @@ class ErrorTile extends StatelessWidget {
         decoration: BoxDecoration(
           border: Border.all(width: 1, color: Theme.of(context).colorScheme.error),
           borderRadius: BorderRadius.circular(5),
-          color: Colors.red.shade100,
+          color: Theme.of(context).colorScheme.error.withValues(alpha: 0.25),
         ),
         padding: EdgeInsets.all(15),
         child: Row(
@@ -27,7 +27,7 @@ class ErrorTile extends StatelessWidget {
             Flexible(
               child: Text(
                 errorMessage,
-                style: TextStyle(fontSize: 16, color: Color(0xFF1A1A1A)),
+                style: TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.error),
               ),
             ),
           ],
