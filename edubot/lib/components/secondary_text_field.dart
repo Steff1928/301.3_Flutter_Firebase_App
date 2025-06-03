@@ -38,8 +38,7 @@ class SecondaryTextField extends StatelessWidget {
 
         // Style
         decoration: InputDecoration(
-          isDense: true,
-          contentPadding: EdgeInsets.symmetric(vertical: 14, horizontal: 15),
+          contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
           hintText: "Type a Message...",
           hintStyle: TextStyle(
             fontFamily: "Nunito",

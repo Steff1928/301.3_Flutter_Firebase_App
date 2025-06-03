@@ -490,7 +490,7 @@ class _ChatPageState extends State<ChatPage> {
               padding: const EdgeInsets.symmetric(vertical: 10.0),
               // Column with both file container and input row
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   // Only display file container if _selectedFileName is not null
                   if (_selectedFileName != null)
@@ -521,7 +521,9 @@ class _ChatPageState extends State<ChatPage> {
                                       ? Color(0xFF96C0CA)
                                       : Colors.blueGrey,
                             ),
+
                             SizedBox(width: 12),
+
                             Expanded(
                               child: Text(
                                 _selectedFileName!,
@@ -534,6 +536,7 @@ class _ChatPageState extends State<ChatPage> {
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
+                            
                             IconButton(
                               icon: Icon(
                                 Icons.close_rounded,
@@ -601,7 +604,7 @@ class _ChatPageState extends State<ChatPage> {
                           ),
                           child: IconButton(
                             onPressed: _isSendEnabled ? sendMessage : null,
-                            icon: Icon(Icons.send),
+                            icon: Icon(Icons.send, size: 24,),
                             disabledColor: Theme.of(context)
                                 .colorScheme
                                 .onSecondaryFixed
