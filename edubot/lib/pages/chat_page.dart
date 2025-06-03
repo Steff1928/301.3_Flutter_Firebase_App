@@ -42,6 +42,7 @@ class _ChatPageState extends State<ChatPage> {
   String? _selectedFilePath;
   String? _selectedFileType;
   String? _selectedFileExtension;
+  int? _selectedFileSize;
   Uint8List? _selectedFileBytes; // Web only (testing)
 
   // Scroll to the bottom of the conversation upon inital chat page load
@@ -112,7 +113,7 @@ class _ChatPageState extends State<ChatPage> {
     // Get the file from the platform and store in result - only allow document-related extensions (eg. 'pdf')
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['pdf', 'doc', 'docx', 'txt'],
+      allowedExtensions: ['pdf', 'docx', 'txt'], // Removed '.doc' support as it doesn't work with linux
     );
 
     // Check that file picked is not null
@@ -147,8 +148,13 @@ class _ChatPageState extends State<ChatPage> {
         fileBytes = await file.readAsBytes();
       }
 
+      // Get the length of the file bytes
+      int fileSize = fileBytes.lengthInBytes;
+
       setState(() {
-        _selectedFileBytes = fileBytes; // Update _selectedFileBytes
+        // Update _selectedFileBytes and _selectedFileSize
+        _selectedFileBytes = fileBytes;
+        _selectedFileSize = fileSize;
       });
     }
   }
@@ -307,6 +313,7 @@ class _ChatPageState extends State<ChatPage> {
           _selectedFileType ?? 'application/octet-stream',
           _selectedFilePath ?? '',
           _selectedFileBytes!,
+          _selectedFileSize!,
         );
       }
     }
@@ -477,6 +484,7 @@ class _ChatPageState extends State<ChatPage> {
                         return ChatBubble(
                           message: message,
                           fileExtension: _selectedFileExtension,
+                          fileSize: message.fileSize,
                         );
                       }
                     },

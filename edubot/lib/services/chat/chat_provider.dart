@@ -210,11 +210,6 @@ class ChatProvider extends ChangeNotifier {
           'messages': contextMessages.map((m) => m.toJson()).toList(),
           'lastMessageTimeStamp': DateTime.now().millisecondsSinceEpoch,
         }));
-
-    // Save activeConversationId
-    // firestore.collection("Users").doc(authManager.getCurrentUser()?.uid).update(
-    //   {'activeConversationId': conversationId},
-    // );
   }
 
   // Load messages from Firestore method
@@ -432,6 +427,7 @@ class ChatProvider extends ChangeNotifier {
     String fileType,
     String filePath,
     Uint8List fileBytes,
+    int fileSize,
   ) async {
     // Set user message
     final userMessage = Message(
@@ -439,6 +435,7 @@ class ChatProvider extends ChangeNotifier {
       isUser: true,
       timeStamp: DateTime.now(),
       messageType: MessageType.file,
+      fileSize: fileSize,
     );
 
     // Add user message to chat

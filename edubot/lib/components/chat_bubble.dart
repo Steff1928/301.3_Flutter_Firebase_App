@@ -7,11 +7,13 @@ class ChatBubble extends StatelessWidget {
   final Message message;
   final bool isLoading;
   final String? fileExtension;
+  final int? fileSize;
   const ChatBubble({
     super.key,
     required this.message,
     this.isLoading = false,
     this.fileExtension,
+    this.fileSize,
   });
 
   // Method to extract the file extension from it's name
@@ -22,15 +24,41 @@ class ChatBubble extends StatelessWidget {
     return null;
   }
 
+  // Method to determine file size
+  String? formatFileSize(int? bytes) {
+    // Kilobytes & Megabytes storage values
+    const int kb = 1024;
+    const int mb = kb * 1024;
+
+    // Ensure that the file bytes exist
+    if (bytes != null) {
+      if (bytes >= mb) {
+        return '${(bytes / mb).toStringAsFixed(2)} MB';
+      } else if (bytes >= kb) {
+        return '${(bytes / kb).toStringAsFixed(2)} KB';
+      } else {
+        return '$bytes B';
+      }
+    } else {
+      return null;
+    }
+  }
+
   // Method to determine the icon colour depending on the file extension
   Color getColourForExtension(String ext, BuildContext context) {
     switch (ext.toLowerCase()) {
       case '.pdf':
-        return  Theme.of(context).brightness == Brightness.dark ? Color(0xFFFF6B6C) : Colors.red;
+        return Theme.of(context).brightness == Brightness.dark
+            ? Color(0xFFFF6B6C)
+            : Colors.red;
       case '.txt':
-        return Theme.of(context).brightness == Brightness.dark ? Colors.white60 : Colors.black54;
+        return Theme.of(context).brightness == Brightness.dark
+            ? Colors.white60
+            : Colors.black54;
       default:
-        return Theme.of(context).brightness == Brightness.dark ? Color(0xFF96C0CA) : Colors.blueGrey;
+        return Theme.of(context).brightness == Brightness.dark
+            ? Color(0xFF96C0CA)
+            : Colors.blueGrey;
     }
   }
 
@@ -85,7 +113,10 @@ class ChatBubble extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).brightness == Brightness.dark ? Color(0xFF364B55) : Colors.grey.shade200,
+                    color:
+                        Theme.of(context).brightness == Brightness.dark
+                            ? Color(0xFF364B55)
+                            : Colors.grey.shade200,
                     borderRadius: BorderRadius.circular(5),
                   ),
 
@@ -107,17 +138,19 @@ class ChatBubble extends StatelessWidget {
                                 fontFamily: "Nunito",
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
-                                color: Theme.of(context).colorScheme.onSecondary,
+                                color:
+                                    Theme.of(context).colorScheme.onSecondary,
                               ),
                               overflow: TextOverflow.ellipsis,
                             ),
                             SizedBox(height: 2),
                             Text(
-                              ext.toUpperCase().replaceRange(0, 1, ''),
+                              '${ext.toUpperCase().replaceRange(0, 1, '')} | ${formatFileSize(fileSize)}',
                               style: TextStyle(
                                 fontFamily: 'Nunito',
                                 fontSize: 14,
-                                color: Theme.of(context).colorScheme.onSecondary,
+                                color:
+                                    Theme.of(context).colorScheme.onSecondary,
                               ),
                             ),
                           ],
@@ -151,7 +184,10 @@ class ChatBubble extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: "Nunito",
                         fontSize: 16,
-                        color: !message.isUser ? Theme.of(context).colorScheme.onSecondary : Color(0xFF1A1A1A),
+                        color:
+                            !message.isUser
+                                ? Theme.of(context).colorScheme.onSecondary
+                                : Color(0xFF1A1A1A),
                       ),
                     ),
             ],

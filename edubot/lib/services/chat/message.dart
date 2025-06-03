@@ -17,12 +17,14 @@ class Message {
   final bool isUser;
   final DateTime timeStamp;
   final MessageType messageType;
+  final int? fileSize;
 
   Message({
     required this.content,
     required this.isUser,
     required this.timeStamp,
     this.messageType = MessageType.text,
+    this.fileSize
   });
 
   // Decode the data from JSON after it's been retrieved from Firestore
@@ -37,6 +39,7 @@ class Message {
       isUser: isUser,
       timeStamp: DateTime.parse(json['timeStamp']),
       messageType: MessageType.values.byName(json['messageType']),
+      fileSize: json['messageType'] == 'file' ? json['fileSize'] as int? : null,
     );
   }
 
@@ -47,6 +50,7 @@ class Message {
       'isUser': isUser,
       'timeStamp': timeStamp.toIso8601String(),
       'messageType': messageType.name,
+      if (messageType == MessageType.file) 'fileSize': fileSize,
     };
   }
 }
