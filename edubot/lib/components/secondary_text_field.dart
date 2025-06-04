@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class SecondaryTextField extends StatelessWidget {
@@ -38,7 +39,8 @@ class SecondaryTextField extends StatelessWidget {
 
         // Style
         decoration: InputDecoration(
-          contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+          isDense: kIsWeb ? true : false,
+          contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 15),
           hintText: "Type a Message...",
           hintStyle: TextStyle(
             fontFamily: "Nunito",

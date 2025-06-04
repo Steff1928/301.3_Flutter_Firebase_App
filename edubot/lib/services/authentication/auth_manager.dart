@@ -33,7 +33,10 @@ class AuthManager {
         // Handle errors
         if (e.code == 'unknown') {
           throw Exception("Unknown email");
-        } else if (e.code == 'requires-recent-login') {
+        } else if (e.code == 'invalid-new-email') {
+          throw Exception("Invalid new email");
+        }
+        else if (e.code == 'requires-recent-login') {
           throw Exception("Requires recent login");
         } else {
           throw Exception("Error updating email: ${e.code}");

@@ -14,7 +14,7 @@ class ErrorTile extends StatelessWidget {
         decoration: BoxDecoration(
           border: Border.all(width: 1, color: Theme.of(context).colorScheme.error),
           borderRadius: BorderRadius.circular(5),
-          color: Theme.of(context).colorScheme.error.withValues(alpha: 0.25),
+          color: Colors.red.shade300.withValues(alpha: 0.25),
         ),
         padding: EdgeInsets.all(15),
         child: Row(
