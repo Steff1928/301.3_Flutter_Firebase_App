@@ -338,7 +338,7 @@ class _ChatPageState extends State<ChatPage> {
       appBar: AppBar(
         forceMaterialTransparency: true,
         title: Text(
-          "Edubot",
+          "EduBot",
           style: TextStyle(
             fontFamily: "Nunito",
             fontSize: 24,
