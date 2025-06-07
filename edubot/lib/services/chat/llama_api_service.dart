@@ -12,7 +12,7 @@ Service class to handle Llama API
 */
 
 class LlamaApiService {
-  // Flask Url (Android IP: 10.0.2.2 - Web IP: localhost or 127.0.0.0)
+  // Flask Url (Android IP: 10.0.2.2 - Web IP: localhost or 127.0.0.0 - AWS IP: 54.153.130.139)
   final String uri = kIsWeb ? 'http://localhost:5001' : 'http://10.0.2.2:5001';
   final user = FirebaseAuth.instance.currentUser;
 
