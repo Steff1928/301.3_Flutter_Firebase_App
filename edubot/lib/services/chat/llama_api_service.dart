@@ -194,10 +194,8 @@ class LlamaApiService {
       body: fileBytes,
     );
 
-    // If response is successful, print success message
-    if (response.statusCode == 200) {
-      print('File uploaded successfully!');
-    } else {
+    // If response failed, throw exception
+    if (response.statusCode != 200) {
       // If response is not successful, throw an error with status code and body
       throw ('Upload failed: ${response.statusCode} ${response.body}');
     }
@@ -216,10 +214,8 @@ class LlamaApiService {
       body: fileBytes,
     );
 
-    // If response is successful, print success message
-    if (response.statusCode == 200) {
-      print("File uploaded successfully (web)!");
-    } else {
+    // If response failed, throw exception
+    if (response.statusCode != 200) {
       // If response is not successful, throw an error with status code and body
       throw Exception("Upload failed: ${response.statusCode} ${response.body}");
     }
@@ -234,17 +230,14 @@ class LlamaApiService {
 
     // JSON Payload
     final body = jsonEncode({"file_key": fileName});
-  
+
     try {
       // Send a POST request to the Flask server to process the file
       final response = await http.post(url, headers: headers, body: body);
       // If successful, parse the JSON response and return the summary
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        return {
-          'summary': data['summary'],
-          'og_text': data['og_text'],
-        };
+        return {'summary': data['summary'], 'og_text': data['og_text']};
       } else {
         // If the response is not successful, throw an error with status code
         throw Exception("Server error: ${response.statusCode}");

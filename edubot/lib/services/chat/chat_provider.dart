@@ -383,8 +383,6 @@ class ChatProvider extends ChangeNotifier {
     String? conversationId,
     List<Message> contextMessages,
   ) async {
-    print('Current Messages: ${contextMessages.map((m) => m.content)}');
-
     // Get auth & firestore
     AuthManager authManager = AuthManager();
     FirebaseFirestore firestore = FirebaseFirestore.instance;

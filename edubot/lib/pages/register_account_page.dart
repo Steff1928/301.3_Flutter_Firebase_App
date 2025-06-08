@@ -81,6 +81,8 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
     }
   }
 
+
+
   // Create new user account method
   void registerNewUser(BuildContext context) async {
     // Get auth manager
@@ -104,19 +106,27 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
       },
     );
 
+    // Assign controller values to local variables
+      final String displayName = _displayNameController.text.trim();
+      final String email = _emailController.text.trim();
+      final String password = _passwordController.text.trim();
+      final String confirmPass = _confirmPassController.text.trim();
+
     // Check if confirm pass matches pass
-    if (_confirmPassController.text == _passwordController.text) {
+    if (confirmPass == password) {
+      // Check if all fields are filled
+      final areFieldsFilled = displayName.isNotEmpty &&
+          email.isNotEmpty &&
+          password.isNotEmpty &&
+          confirmPass.isNotEmpty;
+
       // Check to see if all fields are filled, if so, attempt to create an account
-      // TODO: Clean up code
-      if (_displayNameController.text != "" &&
-          _emailController.text != "" &&
-          _passwordController.text != "" &&
-          _confirmPassController.text != "") {
+      if (areFieldsFilled) {
         try {
           await authManager.createAccount(
-            _emailController.text,
-            _passwordController.text,
-            _displayNameController.text,
+            email,
+            password,
+            displayName,
           );
           // Show snackbar if account creation is successful
           showSnackbar(
@@ -151,7 +161,7 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
     }
     // Throw an error if passwords don't match
     else {
-      if (_confirmPassController.text != "" && _passwordController.text != "") {
+      if (confirmPass.isNotEmpty && password.isNotEmpty) {
         setState(() {
           _errorMessage = "Confirm password doesn't match password.";
         });
