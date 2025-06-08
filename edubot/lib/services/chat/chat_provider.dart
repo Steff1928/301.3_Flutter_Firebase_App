@@ -45,7 +45,7 @@ class ChatProvider extends ChangeNotifier {
     _messages
       ..clear()
       ..addAll(newMessages);
-    notifyListeners();
+    notifyListeners(); // Update the UI as intended
   }
 
   /*

@@ -198,8 +198,6 @@ class FirebaseProvider extends ChangeNotifier {
       listen: false,
     );
 
-    print(chatProvider.messages.map((m) => m.toJson()));
-
     if (uid == null) return; // Return nothing if a uid could not be found
 
     try {
