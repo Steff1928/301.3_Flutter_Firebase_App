@@ -1,6 +1,6 @@
 import 'package:edubot/components/custom_snack_bar.dart';
 import 'package:edubot/components/primary_button.dart';
-import 'package:edubot/services/chat/chat_provider.dart';
+import 'package:edubot/services/firebase/firebase_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -22,7 +22,7 @@ class _UpdateResponseLengthPageState extends State<UpdateResponseLengthPage> {
 
   // Update chatbot tone method
   Future<void> updateLength(BuildContext context) async {
-    final chatProvider = Provider.of<ChatProvider>(context, listen: false);
+    final firebaseProvider = Provider.of<FirebaseProvider>(context, listen: false);
 
     final navigator = Navigator.of(context);
     final scaffoldMessenger = ScaffoldMessenger.of(context);
@@ -41,7 +41,7 @@ class _UpdateResponseLengthPageState extends State<UpdateResponseLengthPage> {
 
     // Try update preferences, passing null for the other values
     try {
-      await chatProvider.updatePreferences(_currentValue!.toInt(), null, null);
+      await firebaseProvider.updatePreferences(_currentValue!.toInt(), null, null);
 
       // Display snack bar if successful
       showSnackbar(
@@ -61,8 +61,8 @@ class _UpdateResponseLengthPageState extends State<UpdateResponseLengthPage> {
 
   // Load the chatbot response length from Firestore method and store it in both _currentValue and _originalValue
   void loadLength() async {
-    final chatProvider = Provider.of<ChatProvider>(context, listen: false);
-    final data = await chatProvider.getPreferences();
+    final firebaseProvider = Provider.of<FirebaseProvider>(context, listen: false);
+    final data = await firebaseProvider.getPreferences();
 
     if (data != null && mounted) {
       setState(() {

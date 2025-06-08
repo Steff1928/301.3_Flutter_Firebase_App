@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:edubot/services/chat/chat_provider.dart';
+import 'package:edubot/services/firebase/firebase_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -11,7 +11,7 @@ class GoogleService {
 
   // Google sign in
   Future<void> signInWithGoogle(BuildContext context) async {
-    final chatProvider = Provider.of<ChatProvider>(context, listen: false);
+    final firebaseProvider = Provider.of<FirebaseProvider>(context, listen: false);
 
     // Sign in with credential
     final GoogleSignIn googleSignIn = GoogleSignIn();
@@ -39,7 +39,7 @@ class GoogleService {
         );
 
         // Set details within Firestore database (prevent 'activeConversationId' getting overridden if it doesn't exist)
-        String? conversationId = await chatProvider.getSavedConversationId();
+        String? conversationId = await firebaseProvider.getSavedConversationId();
 
         _firestore.collection("Users").doc(userCredential.user?.uid).set({
           'uid': userCredential.user!.uid,

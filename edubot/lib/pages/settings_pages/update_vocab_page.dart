@@ -1,6 +1,6 @@
 import 'package:edubot/components/custom_snack_bar.dart';
 import 'package:edubot/components/primary_button.dart';
-import 'package:edubot/services/chat/chat_provider.dart';
+import 'package:edubot/services/firebase/firebase_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -22,7 +22,7 @@ class _UpdateVocabPageState extends State<UpdateVocabPage> {
   // Update chabot vocabulary level method
   Future<void> updateVocab(BuildContext context) async {
     // Get the chatprovider and store the context in a navigator and scaffoldMessenger
-    final chatProvider = Provider.of<ChatProvider>(context, listen: false);
+    final firebaseProvider = Provider.of<FirebaseProvider>(context, listen: false);
 
     final navigator = Navigator.of(context);
     final scaffoldMessenger = ScaffoldMessenger.of(context);
@@ -41,7 +41,7 @@ class _UpdateVocabPageState extends State<UpdateVocabPage> {
 
     // Try update preferences, passing null for the other values
     try {
-      await chatProvider.updatePreferences(null, null, _currentValue!.toInt());
+      await firebaseProvider.updatePreferences(null, null, _currentValue!.toInt());
       // Display snack bar if successful
       showSnackbar(
         scaffoldMessenger,
@@ -61,8 +61,8 @@ class _UpdateVocabPageState extends State<UpdateVocabPage> {
 
   // Load vocab level for Chat Provider and store it in both _currentValue and _originalValue
   void loadVocab() async {
-    final chatProvider = Provider.of<ChatProvider>(context, listen: false);
-    final data = await chatProvider.getPreferences();
+    final firebaseProvider = Provider.of<FirebaseProvider>(context, listen: false);
+    final data = await firebaseProvider.getPreferences();
 
     if (data != null && mounted) {
       setState(() {

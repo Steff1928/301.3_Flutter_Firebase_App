@@ -12,6 +12,7 @@ import 'package:edubot/pages/settings_page.dart';
 import 'package:edubot/services/authentication/auth_manager.dart';
 import 'package:edubot/services/chat/chat_provider.dart';
 import 'package:edubot/services/chat/message.dart';
+import 'package:edubot/services/firebase/firebase_provider.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -96,7 +97,7 @@ class _ChatPageState extends State<ChatPage> {
 
     // Try load message from Firestore using the global context
     try {
-      await Provider.of<ChatProvider>(
+      await Provider.of<FirebaseProvider>(
         navigatorKey.currentContext!,
         listen: false,
       ).loadMessagesFromFirestore();
@@ -168,6 +169,9 @@ class _ChatPageState extends State<ChatPage> {
     // Get ChatProvider to access the current list of messages
     final chatProvider = Provider.of<ChatProvider>(context, listen: false);
 
+    // Get FirebaseProvider to access Firestore methods
+    final firebaseProvider = Provider.of<FirebaseProvider>(context, listen: false);
+
     // Establish a context for navigating and snack bar management
     final navigator = Navigator.of(context);
     final scaffoldMessenger = ScaffoldMessenger.of(context);
@@ -185,7 +189,7 @@ class _ChatPageState extends State<ChatPage> {
     );
 
     // Get conversationId from Firestore if it exists
-    String? conversationId = await chatProvider.getSavedConversationId();
+    String? conversationId = await firebaseProvider.getSavedConversationId();
 
     // Allocate an empty document in 'Conversations' to store chats
     final hasContent = chatProvider.messages.any(
