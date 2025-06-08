@@ -84,7 +84,7 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   // Load message
-  Future<void> loadMessages(BuildContext providerContext) async {
+  Future<void> loadMessages() async {
     // After widget tree is built, show loading circle with global context
     WidgetsBinding.instance.addPostFrameCallback((_) {
       navigatorKey.currentState?.push(
@@ -272,7 +272,7 @@ class _ChatPageState extends State<ChatPage> {
 
     // Once dependency is changed, communicate with ChatProvider to load messages from Firestore (only do this once)
     if (!_conversationHasLoaded) {
-      loadMessages(context);
+      loadMessages();
       _conversationHasLoaded = true;
     }
   }

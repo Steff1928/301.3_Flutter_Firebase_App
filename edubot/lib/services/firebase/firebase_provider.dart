@@ -116,7 +116,7 @@ class FirebaseProvider extends ChangeNotifier {
     // Get the saved conversationId
     String? conversationId = await getSavedConversationId();
 
-    // Store the history in a subcollection called 'History' with temporary values ONLY if the a historyDoc does not already exist
+    // Store the history in a subcollection called 'History' with temporary values ONLY if a historyDoc does not already exist
     if (conversationId != null) {
       final historyDocRef = firestore
           .collection("Users")
@@ -198,6 +198,8 @@ class FirebaseProvider extends ChangeNotifier {
       listen: false,
     );
 
+    print(chatProvider.messages.map((m) => m.toJson()));
+
     if (uid == null) return; // Return nothing if a uid could not be found
 
     try {
@@ -228,9 +230,8 @@ class FirebaseProvider extends ChangeNotifier {
           data['messages'],
         ); // Get the raw JSON data
 
-        chatProvider.messages.clear(); // Clear previous messages
-        chatProvider.messages.addAll(
-          messagesRaw.map((msg) => Message.fromJson(msg)),
+        chatProvider.setMessages(
+          messagesRaw.map((msg) => Message.fromJson(msg)).toList(),
         ); // Format JSON data as a Message and add it to _messages
       }
     } catch (e) {
