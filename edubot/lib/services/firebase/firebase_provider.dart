@@ -128,8 +128,9 @@ class FirebaseProvider extends ChangeNotifier {
       if (!historyDoc.exists) {
         await historyDocRef.set({
           'conversationId': conversationId,
-          'title': 'Loading...', // TEMP
           'description': 'Loading...', // TEMP
+          'title': 'Loading...', // TEMP
+          'lastMessageTimeStamp': DateTime.now().millisecondsSinceEpoch,
         });
       }
     } else {
@@ -157,8 +158,9 @@ class FirebaseProvider extends ChangeNotifier {
           .doc(conversationId)
           .set(({
             'conversationId': conversationId,
-            'title': 'Loading...', // TEMP
             'description': 'Loading...', // TEMP
+            'title': 'Loading...', // TEMP
+            'lastMessageTimeStamp': DateTime.now().millisecondsSinceEpoch,
           }));
     }
 

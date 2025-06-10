@@ -24,7 +24,10 @@ class _ChatHistoryPageState extends State<ChatHistoryPage> {
     final firestore = FirebaseFirestore.instance;
     final AuthManager authManager = AuthManager();
     final chatProvider = Provider.of<ChatProvider>(context, listen: false);
-    final firebaseProvider = Provider.of<FirebaseProvider>(context, listen: false);
+    final firebaseProvider = Provider.of<FirebaseProvider>(
+      context,
+      listen: false,
+    );
     final navigator = Navigator.of(context);
 
     // Show loading circle
@@ -39,7 +42,8 @@ class _ChatHistoryPageState extends State<ChatHistoryPage> {
     });
 
     // Get the current conversation ID
-    String? currentConversationId = await firebaseProvider.getSavedConversationId();
+    String? currentConversationId =
+        await firebaseProvider.getSavedConversationId();
 
     // Remove a conversation if has no data in it (eg. the user created a new conversation but didn't start it)
     if (chatProvider.messages.isEmpty) {
@@ -77,7 +81,7 @@ class _ChatHistoryPageState extends State<ChatHistoryPage> {
     BuildContext context,
   ) async {
     Navigator.of(context).pop();
-    
+
     // Get auth & firestore
     final firestore = FirebaseFirestore.instance;
     final AuthManager authManager = AuthManager();
@@ -86,7 +90,10 @@ class _ChatHistoryPageState extends State<ChatHistoryPage> {
     final chatProvider = Provider.of<ChatProvider>(context, listen: false);
 
     // Get FirebaseProvider to access Firestore methods
-    final firebaseProvider = Provider.of<FirebaseProvider>(context, listen: false);
+    final firebaseProvider = Provider.of<FirebaseProvider>(
+      context,
+      listen: false,
+    );
 
     // Delete the converation and history item corresponding to conversationID
     await firestore
@@ -104,7 +111,8 @@ class _ChatHistoryPageState extends State<ChatHistoryPage> {
         .delete();
 
     // Get the active conversation ID
-    String? currentConversationId = await firebaseProvider.getSavedConversationId();
+    String? currentConversationId =
+        await firebaseProvider.getSavedConversationId();
 
     // If the the converation the user wanted to delete is the same one that is currently in their chat view,
     // clear messages
@@ -155,6 +163,7 @@ class _ChatHistoryPageState extends State<ChatHistoryPage> {
                     .collection('Users')
                     .doc(AuthManager().getCurrentUser()?.uid)
                     .collection('History')
+                    .orderBy('lastMessageTimeStamp', descending: true)
                     .snapshots(),
             builder: (context, snapshot) {
               // Show loading indicator

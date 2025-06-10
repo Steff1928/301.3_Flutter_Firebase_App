@@ -202,8 +202,9 @@ class ChatProvider extends ChangeNotifier {
           .doc(conversationId)
           .set(({
             'conversationId': conversationId,
-            'title': response,
             'description': contextMessages.last.content.replaceAll('\n', ' '),
+            'title': response,
+            'lastMessageTimeStamp': DateTime.now().millisecondsSinceEpoch,
           }));
     } catch (e) {
       // Handle errors

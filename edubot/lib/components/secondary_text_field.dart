@@ -18,6 +18,7 @@ class SecondaryTextField extends StatelessWidget {
       child: TextField(
         controller: controller,
         enabled: enabled,
+        textCapitalization: TextCapitalization.sentences,
 
         // Text field styling
         cursorColor: Theme.of(context).colorScheme.primary,
