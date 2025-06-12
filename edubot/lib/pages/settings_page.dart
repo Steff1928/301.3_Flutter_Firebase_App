@@ -119,186 +119,188 @@ class SettingsPage extends StatelessWidget {
                           padding: EdgeInsets.only(top: 33),
 
                           // Parent column for both settings options and logout list tile
-                          child: Column(
-                            children: [
-                              // Secondary column for only settings tiles
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  // Account header
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 27.0),
-                                    child: Text(
-                                      "GENERAL",
-                                      style: TextStyle(
-                                        fontFamily: "Nunito",
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        color: Theme.of(context).brightness == Brightness.dark ? Color(0xFF99DAE6) : Color(0xFF364B55),
+                          child: SafeArea(
+                            child: Column(
+                              children: [
+                                // Secondary column for only settings tiles
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // Account header
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 27.0),
+                                      child: Text(
+                                        "GENERAL",
+                                        style: TextStyle(
+                                          fontFamily: "Nunito",
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: Theme.of(context).brightness == Brightness.dark ? Color(0xFF99DAE6) : Color(0xFF364B55),
+                                        ),
                                       ),
                                     ),
-                                  ),
-
-                                  SizedBox(height: 23),
-
-                                  // Email
-                                  SettingsTile(
-                                    title: "Email",
-                                    icon: Icons.email_outlined,
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder:
-                                              (context) => UpdateEmailPage(),
+                            
+                                    SizedBox(height: 23),
+                            
+                                    // Email
+                                    SettingsTile(
+                                      title: "Email",
+                                      icon: Icons.email_outlined,
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder:
+                                                (context) => UpdateEmailPage(),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                    // Display Name
+                                    SettingsTile(
+                                      title: "Display Name",
+                                      icon: Icons.person_outline,
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder:
+                                                (context) =>
+                                                    UpdateDisplayNamePage(),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                            
+                                    SizedBox(height: 23),
+                            
+                                    // Appearance header
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 27.0),
+                                      child: Text(
+                                        "APPEARANCE",
+                                        style: TextStyle(
+                                          fontFamily: "Nunito",
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: Theme.of(context).brightness == Brightness.dark ? Color(0xFF99DAE6) : Color(0xFF364B55),
                                         ),
-                                      );
-                                    },
-                                  ),
-                                  // Display Name
-                                  SettingsTile(
-                                    title: "Display Name",
-                                    icon: Icons.person_outline,
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder:
-                                              (context) =>
-                                                  UpdateDisplayNamePage(),
-                                        ),
-                                      );
-                                    },
-                                  ),
-
-                                  SizedBox(height: 23),
-
-                                  // Appearance header
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 27.0),
-                                    child: Text(
-                                      "APPEARANCE",
-                                      style: TextStyle(
-                                        fontFamily: "Nunito",
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        color: Theme.of(context).brightness == Brightness.dark ? Color(0xFF99DAE6) : Color(0xFF364B55),
                                       ),
                                     ),
-                                  ),
-
-                                  SizedBox(height: 23),
-
-                                  // Theme
-                                  DarkModeToggle(),
-
-                                  SizedBox(height: 23),
-
-                                  // Chatbot customisation header
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 27.0),
-                                    child: Text(
-                                      "CHATBOT PREFERENCES",
-                                      style: TextStyle(
-                                        fontFamily: "Nunito",
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        color: Theme.of(context).brightness == Brightness.dark ? Color(0xFF99DAE6) : Color(0xFF364B55),
+                            
+                                    SizedBox(height: 23),
+                            
+                                    // Theme
+                                    DarkModeToggle(),
+                            
+                                    SizedBox(height: 23),
+                            
+                                    // Chatbot customisation header
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 27.0),
+                                      child: Text(
+                                        "CHATBOT PREFERENCES",
+                                        style: TextStyle(
+                                          fontFamily: "Nunito",
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: Theme.of(context).brightness == Brightness.dark ? Color(0xFF99DAE6) : Color(0xFF364B55),
+                                        ),
                                       ),
                                     ),
-                                  ),
-
-                                  SizedBox(height: 23),
-
-                                  // Personalisation options
-                                  SettingsTile(
-                                    title: "Response Length",
-                                    icon: Icons.square_foot_rounded,
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder:
-                                              (context) =>
-                                                  UpdateResponseLengthPage(),
+                            
+                                    SizedBox(height: 23),
+                            
+                                    // Personalisation options
+                                    SettingsTile(
+                                      title: "Response Length",
+                                      icon: Icons.square_foot_rounded,
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder:
+                                                (context) =>
+                                                    UpdateResponseLengthPage(),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                    SettingsTile(
+                                      title: "Response Tone",
+                                      icon: Icons.record_voice_over_outlined,
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder:
+                                                (context) =>
+                                                    UpdateResponseTonePage(),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                    SettingsTile(
+                                      title: "Vocabulary",
+                                      icon: Icons.spellcheck_rounded,
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder:
+                                                (context) => UpdateVocabPage(),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                            
+                                    SizedBox(height: 23),
+                            
+                                    // Account header
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 27.0),
+                                      child: Text(
+                                        "ACCOUNT ACTIONS",
+                                        style: TextStyle(
+                                          fontFamily: "Nunito",
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: Theme.of(context).brightness == Brightness.dark ? Color(0xFF99DAE6) : Color(0xFF364B55),
                                         ),
-                                      );
-                                    },
-                                  ),
-                                  SettingsTile(
-                                    title: "Response Tone",
-                                    icon: Icons.record_voice_over_outlined,
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder:
-                                              (context) =>
-                                                  UpdateResponseTonePage(),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                  SettingsTile(
-                                    title: "Vocabulary",
-                                    icon: Icons.spellcheck_rounded,
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder:
-                                              (context) => UpdateVocabPage(),
-                                        ),
-                                      );
-                                    },
-                                  ),
-
-                                  SizedBox(height: 23),
-
-                                  // Account header
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 27.0),
-                                    child: Text(
-                                      "ACCOUNT ACTIONS",
-                                      style: TextStyle(
-                                        fontFamily: "Nunito",
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        color: Theme.of(context).brightness == Brightness.dark ? Color(0xFF99DAE6) : Color(0xFF364B55),
                                       ),
                                     ),
-                                  ),
-
-                                  SizedBox(height: 23),
-
-                                  // Logout list tile
-                                  ListTile(
-                                    contentPadding: EdgeInsets.symmetric(
-                                      horizontal: 27,
-                                    ),
-                                    leading: Icon(
-                                      Icons.logout,
-                                      color: Theme.of(context).colorScheme.error,
-                                    ),
-                                    title: Text(
-                                      "Logout",
-                                      style: TextStyle(
-                                        fontFamily: "Nunito",
-                                        fontSize: 16,
+                            
+                                    SizedBox(height: 23),
+                            
+                                    // Logout list tile
+                                    ListTile(
+                                      contentPadding: EdgeInsets.symmetric(
+                                        horizontal: 27,
+                                      ),
+                                      leading: Icon(
+                                        Icons.logout,
                                         color: Theme.of(context).colorScheme.error,
                                       ),
+                                      title: Text(
+                                        "Logout",
+                                        style: TextStyle(
+                                          fontFamily: "Nunito",
+                                          fontSize: 16,
+                                          color: Theme.of(context).colorScheme.error,
+                                        ),
+                                      ),
+                                      trailing: Icon(
+                                        Icons.arrow_forward_ios,
+                                        color: Theme.of(context).colorScheme.error,
+                                      ),
+                                      onTap: () => logout(context),
                                     ),
-                                    trailing: Icon(
-                                      Icons.arrow_forward_ios,
-                                      color: Theme.of(context).colorScheme.error,
-                                    ),
-                                    onTap: () => logout(context),
-                                  ),
-
-                                  SizedBox(height: 23),
-                                ],
-                              ),
-                            ],
+                            
+                                    SizedBox(height: 23),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
