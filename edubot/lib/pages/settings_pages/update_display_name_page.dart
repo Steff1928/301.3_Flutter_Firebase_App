@@ -128,6 +128,7 @@ class _UpdateDisplayNamePageState extends State<UpdateDisplayNamePage> {
           ),
         ),
       ),
+      //  Main content + styling
       body: SingleChildScrollView(
         child: Center(
           child: ConstrainedBox(

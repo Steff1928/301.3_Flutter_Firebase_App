@@ -81,8 +81,6 @@ class _RegisterAccountPageState extends State<RegisterAccountPage> {
     }
   }
 
-
-
   // Create new user account method
   void registerNewUser(BuildContext context) async {
     // Get auth manager

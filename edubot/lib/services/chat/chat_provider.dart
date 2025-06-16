@@ -40,7 +40,7 @@ class ChatProvider extends ChangeNotifier {
     _messages.removeRange(0, messages.length);
   }
 
-  // Update the UI with new message on first load
+  // Update the UI with new messages on first load
   void setMessages(List<Message> newMessages) {
     _messages
       ..clear()

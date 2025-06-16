@@ -105,9 +105,12 @@ class FirebaseProvider extends ChangeNotifier {
 
   // Manage activeConversationId in Firebase if the user does not have one
   Future<String?> determineConversationId() async {
+    // Get instance of auth & firestore and set uid equal to the current user id
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
     final AuthManager authManager = AuthManager();
     final String? uid = authManager.getCurrentUser()?.uid;
+
+    // Assign the chatProvider
     final chatProvider = Provider.of<ChatProvider>(
       navigatorKey.currentContext!,
       listen: false,
@@ -116,7 +119,8 @@ class FirebaseProvider extends ChangeNotifier {
     // Get the saved conversationId
     String? conversationId = await getSavedConversationId();
 
-    // Store the history in a subcollection called 'History' with temporary values ONLY if a historyDoc does not already exist
+    // Store the history in a subcollection called 'History' with temporary values ONLY 
+    // if a historyDoc does not already exist
     if (conversationId != null) {
       final historyDocRef = firestore
           .collection("Users")
@@ -151,6 +155,7 @@ class FirebaseProvider extends ChangeNotifier {
         'activeConversationId': conversationId,
       });
 
+      // Create a history document with temporary values
       firestore
           .collection("Users")
           .doc(uid)

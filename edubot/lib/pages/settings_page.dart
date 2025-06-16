@@ -18,6 +18,7 @@ class SettingsPage extends StatelessWidget {
 
   // Logout method
   void logout(BuildContext context) async {
+    // Get the AuthManager instance, navigator, and ChatProvider context
     final AuthManager authManager = AuthManager();
     final navigator = Navigator.of(context);
     final chatProviderContext = Provider.of<ChatProvider>(
@@ -25,9 +26,11 @@ class SettingsPage extends StatelessWidget {
       listen: false,
     );
 
+    // Sign out the user and remove any messages from the chat provider
     await authManager.signOut();
     chatProviderContext.removeMessage();
 
+    // Navigate to the AuthGate page and remove all previous routes
     if (authManager.getCurrentUser() == null) {
       navigator.pushAndRemoveUntil(
         MaterialPageRoute(builder: (_) => AuthGate()),

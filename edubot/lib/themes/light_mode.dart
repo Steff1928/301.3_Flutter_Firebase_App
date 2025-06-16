@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 ThemeData lightmode = ThemeData(
+  // General colours
   brightness: Brightness.light,
   colorScheme: ColorScheme.light(
     surface: Color(0xFFFAFAFA),
@@ -12,12 +13,14 @@ ThemeData lightmode = ThemeData(
     onSecondaryFixed: Color(0xFFECF6F9),
     error: Color(0xFFCC0000),
   ),
+  // Primary button theme
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
       backgroundColor: Color(0xFF23565A),
       foregroundColor: Color(0xFFFAFAFA),
     ),
   ),
+  // Text field theme
   inputDecorationTheme: InputDecorationTheme(
     contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
     labelStyle: TextStyle(
@@ -37,6 +40,7 @@ ThemeData lightmode = ThemeData(
     ),
   ),
 
+  // Snackbar theme
   snackBarTheme: SnackBarThemeData(
     backgroundColor: Color(0xFF1A1A1A)
   ),

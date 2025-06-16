@@ -258,8 +258,9 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   void dispose() {
+    // Remove listener and dispose of the controller
     _userInputController.removeListener(handleInputChange);
-    _userInputController.dispose(); // Dispose of the controller
+    _userInputController.dispose();
     super.dispose();
   }
 
@@ -302,7 +303,7 @@ class _ChatPageState extends State<ChatPage> {
       _userInputController.clear();
 
       // If the user did not send a file name, send a regular message,
-      // else process the file contents and return a summary
+      // else if selectedFileBytes is not null, process the file contents and return a summary
       if (_selectedFileName == null) {
         // Trigger title generation in the background
         await chatProvider.sendStream(message);

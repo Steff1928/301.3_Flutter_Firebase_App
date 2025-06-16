@@ -155,6 +155,7 @@ class _UpdateEmailPageState extends State<UpdateEmailPage> {
           ),
         ),
       ),
+      //  Main content + styling
       body: SingleChildScrollView(
         child: Center(
           child: ConstrainedBox(
